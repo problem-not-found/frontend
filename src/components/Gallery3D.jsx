@@ -1,9 +1,9 @@
-import { Canvas } from '@react-three/fiber';
-import { Environment } from '@react-three/drei';
-import { Suspense, useState } from 'react';
-import Exhibition from './Exhibition';
-import CameraController from './CameraController';
-import './Gallery3D.css';
+import { Canvas } from "@react-three/fiber";
+import { Environment } from "@react-three/drei";
+import { Suspense, useState } from "react";
+import Exhibition from "./Exhibition";
+import CameraController from "./CameraController";
+import "./Gallery3D.css";
 
 function LoadingFallback() {
   return (
@@ -31,38 +31,43 @@ function Gallery3D() {
         <h1>Artium Gallery</h1>
         <p>현대 미술의 새로운 시선</p>
       </div>
-      
+
       <div className="canvas-container">
         <Suspense fallback={<LoadingFallback />}>
           <Canvas
             camera={{
-              position: [0, 2, 8],
-              fov: 75
+              position: [0, 2, 0],
+              fov: 75,
             }}
             shadows
           >
-            {/* 조명 설정 */}
-            <ambientLight intensity={0.3} />
+            {/* 조명 설정 - 어둡고 분위기 있는 갤러리 */}
+            <ambientLight intensity={1} color="#2a2a2a" />
             <directionalLight
-              position={[10, 10, 5]}
-              intensity={1}
+              position={[15, 15, 8]}
+              intensity={0.3}
+              color="#4a4a4a"
               castShadow
               shadow-mapSize={[2048, 2048]}
+              shadow-camera-far={50}
+              shadow-camera-left={-25}
+              shadow-camera-right={25}
+              shadow-camera-top={25}
+              shadow-camera-bottom={-25}
             />
-            <pointLight position={[0, 3, 0]} intensity={0.5} />
-            
-            {/* 환경 설정 */}
-            <Environment preset="studio" />
-            
+
+            {/* 환경 설정 - 어두운 분위기 */}
+            <Environment preset="night" intensity={0.1} />
+
             {/* 전시장 */}
             <Exhibition onArtworkClick={handleArtworkClick} />
-            
+
             {/* 카메라 컨트롤러 */}
             <CameraController isModalOpen={!!selectedArtwork} />
           </Canvas>
         </Suspense>
       </div>
-      
+
       {/* 작품 정보 모달 */}
       {selectedArtwork && (
         <div className="artwork-modal-overlay" onClick={closeModal}>
@@ -89,14 +94,17 @@ function Gallery3D() {
           </div>
         </div>
       )}
-      
+
       <div className="gallery-footer">
         <div className="controls-info">
-          <p>🖱️ 클릭해서 시점 조작 활성화 | ⌨️ WASD로 이동 | 🔍 휠로 확대/축소 | ✋ 작품 클릭으로 정보 보기</p>
+          <p>
+            🖱️ 클릭해서 시점 조작 활성화 | ⌨️ WASD로 이동 | 🔍 휠로 확대/축소 |
+            ✋ 작품 클릭으로 정보 보기
+          </p>
         </div>
       </div>
     </div>
   );
 }
 
-export default Gallery3D; 
+export default Gallery3D;

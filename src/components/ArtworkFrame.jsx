@@ -17,10 +17,44 @@ function ArtworkFrame({ artwork, position, onArtworkClick }) {
     }
   }, [texture]);
   
+  // 벽 위치에 따른 회전 계산
+  const getRotation = () => {
+    const [x, y, z] = position;
+    
+    // 왼쪽 벽 (x = -9.9)
+    if (x < -9) {
+      return [0, Math.PI / 2, 0]; // 90도 회전
+    }
+    // 오른쪽 벽 (x = 9.9)
+    else if (x > 9) {
+      return [0, -Math.PI / 2, 0]; // -90도 회전
+    }
+    // 앞쪽 벽 (z = 4.9)
+    else if (z > 4) {
+      return [0, Math.PI, 0]; // 180도 회전
+    }
+    // 뒷벽 (z = -4.9) 또는 기본
+    else {
+      return [0, 0, 0]; // 회전 없음
+    }
+  };
+  
   // 호버 효과를 위한 애니메이션
   useFrame((state) => {
     if (frameRef.current) {
-      frameRef.current.position.z = position[2] + (hovered ? 0.1 : 0);
+      const [x, y, z] = position;
+      const offset = hovered ? 0.1 : 0;
+      
+      // 벽 방향에 따라 호버 오프셋 방향 조정
+      if (x < -9) { // 왼쪽 벽
+        frameRef.current.position.x = x + offset;
+      } else if (x > 9) { // 오른쪽 벽
+        frameRef.current.position.x = x - offset;
+      } else if (z > 4) { // 앞쪽 벽
+        frameRef.current.position.z = z - offset;
+      } else { // 뒷벽
+        frameRef.current.position.z = z + offset;
+      }
     }
   });
 
@@ -31,7 +65,7 @@ function ArtworkFrame({ artwork, position, onArtworkClick }) {
   };
 
   return (
-    <group ref={frameRef} position={position}>
+    <group ref={frameRef} position={position} rotation={getRotation()}>
       {/* 프레임 */}
       <Box
         args={[2.2, 1.7, 0.1]}

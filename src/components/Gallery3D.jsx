@@ -58,7 +58,7 @@ function Gallery3D() {
             <Exhibition onArtworkClick={handleArtworkClick} />
             
             {/* 카메라 컨트롤러 */}
-            <CameraController />
+            <CameraController isModalOpen={!!selectedArtwork} />
           </Canvas>
         </Suspense>
       </div>
@@ -92,7 +92,7 @@ function Gallery3D() {
       
       <div className="gallery-footer">
         <div className="controls-info">
-          <p>⌨️ WASD로 이동 | 🔍 휠로 확대/축소 | ✋ 클릭으로 작품 정보 보기</p>
+          <p>🖱️ 클릭해서 시점 조작 활성화 | ⌨️ WASD로 이동 | 🔍 휠로 확대/축소 | ✋ 작품 클릭으로 정보 보기</p>
         </div>
       </div>
     </div>

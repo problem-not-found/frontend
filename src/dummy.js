@@ -8,7 +8,7 @@ export const artworks = [
     description: "현대 도시 풍경을 따뜻한 색조로 표현한 작품",
     image: "https://picsum.photos/400/300?random=1",
     price: "150만원",
-    position: [-4, 1.5, -4.8]
+    position: [-4, 1.5, -4.9] // 뒷벽에 바짝 붙임
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ export const artworks = [
     description: "자연 속에서 찾은 평온함을 담은 추상화",
     image: "https://picsum.photos/400/300?random=2",
     price: "200만원",
-    position: [0, 1.5, -4.8]
+    position: [0, 1.5, -4.9] // 뒷벽에 바짝 붙임
   },
   {
     id: 3,
@@ -28,7 +28,7 @@ export const artworks = [
     description: "과거와 현재를 잇는 시간의 흐름을 표현",
     image: "https://picsum.photos/400/300?random=3",
     price: "180만원",
-    position: [4, 1.5, -4.8]
+    position: [4, 1.5, -4.9] // 뒷벽에 바짝 붙임
   },
   {
     id: 4,
@@ -38,7 +38,7 @@ export const artworks = [
     description: "푸른 바다의 무한함과 꿈을 그린 작품",
     image: "https://picsum.photos/400/300?random=4",
     price: "220만원",
-    position: [-4, 1.5, 0]
+    position: [-9.9, 1.5, 0] // 왼쪽 벽에 바짝 붙임
   },
   {
     id: 5,
@@ -48,7 +48,7 @@ export const artworks = [
     description: "따스한 봄날의 감성을 담은 서정적 작품",
     image: "https://picsum.photos/400/300?random=5",
     price: "160만원",
-    position: [4, 1.5, 0]
+    position: [9.9, 1.5, 0] // 오른쪽 벽에 바짝 붙임
   },
   {
     id: 6,
@@ -58,7 +58,7 @@ export const artworks = [
     description: "현대인의 고독과 소통에 대한 성찰",
     image: "https://picsum.photos/400/300?random=6",
     price: "190만원",
-    position: [0, 1.5, 4.8]
+    position: [0, 1.5, 4.9] // 앞쪽 벽에 바짝 붙임
   }
 ];
 

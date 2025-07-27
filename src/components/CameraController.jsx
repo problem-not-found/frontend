@@ -24,7 +24,7 @@ function CameraController({ isModalOpen }) {
   
   // 카메라를 눈 위치에 고정하고 줌은 FOV로 처리
   const cameraState = useRef({
-    position: new Vector3(0, 2, 8), // 실제 눈 위치
+    position: new Vector3(0, 2, 0), // 전시장 가운데에서 시작
     baseFOV: 75, // 기본 FOV
     zoomLevel: 1.0 // FOV 조정용 줌 레벨
   });

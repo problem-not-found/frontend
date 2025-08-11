@@ -1,12 +1,17 @@
+:root {
+  /* Brand colors */
+  --color-main: #f37021; /* 주황 - main color */
+  --color-point: #cfdde3; /* 하늘색 - point color */
+  --color-sub: #f6f1eb; /* 베이지 - sub color */
+}
+
 #root {
   position: relative;
   width: 100%;
-  background: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); /* 선택 사항 */
+  min-height: 100vh;
 }
 
 * {
-  margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Pretendard", sans-serif;
@@ -16,14 +21,9 @@ body {
   font-family: sans-serif;
   background-color: #fff;
   color: #000;
-
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; /* 필요에 따라 center로 */
-  min-height: 100vh;
   margin: 0;
+  min-height: 100vh;
 }
-
 
 h1,
 h2,
@@ -35,7 +35,6 @@ p {
   margin: 0;
   font-weight: normal;
   font-size: inherit;
-
 }
 
 button {
@@ -47,4 +46,3 @@ textarea:focus {
   border: none;
   outline: none;
 }
-

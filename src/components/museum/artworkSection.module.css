@@ -1,0 +1,22 @@
+.artworkGrid {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-right: 20px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.artworkGrid::-webkit-scrollbar {
+  display: none;
+}
+
+.artworkCard {
+  width: 140px;
+  height: 140px;
+  background-color: #ffffff;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid #000000;
+  flex-shrink: 0;
+}

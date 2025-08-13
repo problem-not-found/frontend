@@ -1,0 +1,35 @@
+.page {
+  background: #f2eee9;
+  color: #2a2a2a;
+  max-width: 430px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* 상단 스크롤 그림자 */
+.topShadow {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  height: 64px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.25) 0%,
+    rgba(0, 0, 0, 0.20) 20%,
+    rgba(0, 0, 0, 0.15) 40%,
+    rgba(0, 0, 0, 0.10) 60%,
+    rgba(0, 0, 0, 0.05) 80%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.topShadowVisible {
+  opacity: 1;
+}

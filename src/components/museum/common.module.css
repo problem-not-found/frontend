@@ -1,0 +1,62 @@
+/* Common Section Styles */
+.main {
+  padding: 0 0 0 24px;
+  flex: 1;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin: 30px 0 20px 0;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.sectionTitle h3 {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  color: #000000;
+  letter-spacing: -0.5px;
+  line-height: 25px;
+  margin: 0;
+}
+
+.sectionCount {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #000000;
+  letter-spacing: -0.4px;
+  line-height: 19px;
+}
+
+.sectionAction {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  color: #989898;
+  margin-right: 20px;
+  letter-spacing: -0.3px;
+  line-height: 26px;
+  text-decoration: none;
+  border-bottom: 1px solid #989898;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.sectionAction:hover {
+  color: #767676;
+}
+
+.sectionActionWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+  margin-bottom: 20px;
+}

@@ -19,4 +19,41 @@
   background-position: center;
   border: 1px solid #000000;
   flex-shrink: 0;
+  position: relative;
+}
+
+.moreOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(240, 240, 240, 0.4);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.moreOverlay:hover {
+  background-color: rgba(220, 220, 220, 0.5);
+}
+
+.overlayContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.moreText {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #333333;
+  letter-spacing: -0.35px;
+  line-height: 25px;
 }

@@ -3,8 +3,6 @@ import commonStyles from './common.module.css';
 import useUserStore from '../../stores/userStore';
 import exhibition1 from '../../assets/museum/큰사진1.png';
 import exhibition2 from '../../assets/museum/큰사진2.png';
-import artwork1 from '../../assets/museum/사진1.png';
-import artwork2 from '../../assets/museum/사진2.png';
 import lockImage from '../../assets/museum/잠금사진.png';
 
 export default function InsightSection({ insights = [] }) {
@@ -26,13 +24,13 @@ export default function InsightSection({ insights = [] }) {
       id: 3,
       title: "이번 달 가장 많이 본 작품",
       value: "조회수 1,250회",
-      image: artwork1
+      image: exhibition1
     },
     {
       id: 4,
       title: "관람객 선호도 1위",
       value: "만족도 98%",
-      image: artwork2
+      image: exhibition2
     }
   ];
 

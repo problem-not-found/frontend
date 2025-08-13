@@ -2,6 +2,14 @@ import exhibitionStyles from './exhibitionSection.module.css';
 import commonStyles from './common.module.css';
 
 export default function ExhibitionSection({ exhibitions = [] }) {
+  const maxVisible = 5;
+  const visibleExhibitions = exhibitions.slice(0, maxVisible);
+  const hasMoreExhibitions = exhibitions.length > maxVisible;
+
+  const handleShowMore = () => {
+    console.log('전체 전시 페이지로 이동');
+  };
+
   return (
     <section>
       <div className={commonStyles.sectionHeader}>
@@ -12,7 +20,7 @@ export default function ExhibitionSection({ exhibitions = [] }) {
       </div>
       
       <div className={exhibitionStyles.exhibitionGrid}>
-        {exhibitions.map((exhibition, index) => (
+        {visibleExhibitions.map((exhibition, index) => (
           <div key={exhibition.id || index}>
             <div 
               className={`${exhibitionStyles.exhibitionCard} ${exhibitionStyles.large}`}
@@ -26,6 +34,27 @@ export default function ExhibitionSection({ exhibitions = [] }) {
             </div>
           </div>
         ))}
+        
+        {hasMoreExhibitions && (
+          <div onClick={handleShowMore}>
+            <div 
+              className={`${exhibitionStyles.exhibitionCard} ${exhibitionStyles.large}`}
+              style={{
+                backgroundImage: exhibitions[maxVisible] ? `url(${exhibitions[maxVisible].image})` : 'none'
+              }}
+            >
+              <div className={exhibitionStyles.moreOverlay}>
+                <div className={exhibitionStyles.overlayContent}>
+                  <span className={exhibitionStyles.moreText}>더 보기</span>
+                </div>
+              </div>
+            </div>
+            <div className={exhibitionStyles.exhibitionInfo}>
+              <h4 className={exhibitionStyles.exhibitionTitle}>&nbsp;</h4>
+              <p className={exhibitionStyles.exhibitionDate}>&nbsp;</p>
+            </div>
+          </div>
+        )}
       </div>
       
       <div className={commonStyles.sectionActionWrapper}>

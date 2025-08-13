@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import PremiumBar from "../components/museum/PremiumBar";
 import MuseumProfile from "../components/museum/MuseumProfile";
 import ArtworkSection from "../components/museum/ArtworkSection";
@@ -20,6 +21,20 @@ import exhibition2 from "../assets/museum/큰사진2.png";
 export default function MuseumPage() {
   // Zustand에서 사용자 정보 가져오기
   const { user, subscription } = useUserStore();
+  
+  // 스크롤 상태 관리
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // 스크롤 이벤트 처리
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 10); // 10px 이상 스크롤 시 그림자 표시
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const artworks = [
     { id: 1, image: artwork1, title: "정원에서의 오후" },
@@ -65,11 +80,26 @@ export default function MuseumPage() {
       title: "도시 풍경 전시",
       date: "24.10.20 - 24.12.30",
       image: exhibition2
+    },
+    {
+      id: 5,
+      title: "자연과 빛의 조화",
+      date: "24.9.15 - 24.11.30",
+      image: exhibition1
+    },
+    {
+      id: 6,
+      title: "현대 미술의 흐름",
+      date: "24.8.1 - 24.10.15",
+      image: exhibition2
     }
   ];
 
   return (
     <div className={styles.page}>
+      {/* 상단 스크롤 그림자 */}
+      <div className={`${styles.topShadow} ${isScrolled ? styles.topShadowVisible : ''}`} />
+      
       <MuseumProfile user={user} />
       <PremiumBar />
       

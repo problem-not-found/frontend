@@ -9,6 +9,8 @@ const useUserStore = create(
       user: {
         id: 1,
         name: '김땡땡',
+        nickname: 'simonisnextdoor',
+        email: 'asd123@naver.com',
         profileImage: profileImage,
         title: '크리에이터의 전시장',
       },

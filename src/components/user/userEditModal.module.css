@@ -1,0 +1,185 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: #f6f1eb;
+  width: 393px;
+  max-height: 852px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.editHeader {
+  background-color: #cfdde3;
+  border: 1px solid #000;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+
+.editProfileImage {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+}
+
+.editProfileImageContainer {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #eeeeee;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.cameraIcon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  background-color: white;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.editFields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.editField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editLabel {
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 26px;
+  letter-spacing: -0.4px;
+  color: #434343;
+  text-align: left;
+}
+
+.editInput {
+  border: 1px solid #000000;
+  background-color: transparent;
+  padding: 8px 12px;
+  height: 40px;
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 26px;
+  letter-spacing: -0.4px;
+  color: #434343;
+}
+
+.completeButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #f6f1eb;
+  border: 1px solid #000;
+  padding: 6px 16px;
+  height: 36px;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
+  letter-spacing: -0.35px;
+  line-height: 25px;
+  cursor: pointer;
+}
+
+.editBioSection {
+  border: 1px solid #000;
+  border-top: none;
+  padding: 20px;
+  background-color: transparent;
+}
+
+.editBioInput {
+  width: 100%;
+  min-height: 80px;
+  border: 1px solid #000;
+  background-color: transparent;
+  padding: 12px;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-weight: 500;
+  color: #434343;
+  letter-spacing: -0.35px;
+  line-height: 22px;
+  resize: vertical;
+}
+
+.editContactSection {
+  border: 1px solid #000;
+  border-top: none;
+  padding: 20px;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.editContactItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.contactIcon {
+  width: 18px;
+  height: 18px;
+  font-size: 16px;
+}
+
+.editContactLabel {
+  font-family: Pretendard;
+  font-size: 14px;
+  font-weight: 500;
+  color: #434343;
+  letter-spacing: -0.35px;
+  line-height: 22px;
+  min-width: 80px;
+}
+
+.editContactInput {
+  flex: 1;
+  border: 1px solid #000;
+  background-color: transparent;
+  padding: 8px 12px;
+  height: 32px;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-weight: 500;
+  color: #434343;
+  letter-spacing: -0.35px;
+  line-height: 22px;
+}

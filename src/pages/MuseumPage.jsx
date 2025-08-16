@@ -97,7 +97,7 @@ export default function MuseumPage() {
 
   return (
     <div className={styles.page}>
-      {/* 상단 스크롤 그림자 */}
+      <div style={{height: '40px'}}></div>
       <div className={`${styles.topShadow} ${isScrolled ? styles.topShadowVisible : ''}`} />
       
       <MuseumProfile user={user} />

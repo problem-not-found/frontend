@@ -23,9 +23,7 @@
   height: 48px;
   width: 360px;
   background-color: #cfdde3;
-  border-top: 1px solid #000000;
-  border-right: 1px solid #000000;
-  border-bottom: 1px solid #000000;
+  border: 1px solid #000000;
   border-left: none;
   display: flex;
   align-items: center;

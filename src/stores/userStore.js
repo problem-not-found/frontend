@@ -20,14 +20,37 @@ const useUserStore = create(
       
       // 구독 정보
       subscription: {
-        isPremium: false, // 구독 상태별 조건부 렌더링 확인
+        isPremium: true, // 구독 상태별 조건부 렌더링 확인
         plan: 'premium', // 'free', 'premium', 'pro'
+        startDate: new Date().toISOString(),
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+
+      // 거래 정보
+      tradeInfo: {
+        isRegistered: false, // 거래 정보 등록 여부
+        accountNumber: '1234567890',
+        bankName: '국민은행',
       },
 
       // 구독 상태 업데이트 (테스트용)
       updateSubscription: (subscriptionData) => {
         set(state => ({
           subscription: { ...state.subscription, ...subscriptionData }
+        }))
+      },
+
+      // 거래 정보 업데이트
+      updateTradeInfo: (tradeData) => {
+        set(state => ({
+          tradeInfo: { ...state.tradeInfo, ...tradeData }
+        }))
+      },
+
+      // 사용자 정보 업데이트
+      updateUser: (userData) => {
+        set(state => ({
+          user: { ...state.user, ...userData }
         }))
       }
     }),
@@ -36,7 +59,8 @@ const useUserStore = create(
       partialize: (state) => ({
         user: state.user,
         isLoggedIn: state.isLoggedIn,
-        subscription: state.subscription
+        subscription: state.subscription,
+        tradeInfo: state.tradeInfo
       })
     }
   )

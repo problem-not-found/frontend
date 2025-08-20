@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import FeedPage from "../pages/FeedPage";
 import MuseumPage from "../pages/MuseumPage";
+import MyTypePage from "../pages/MyTypePage";
 import Gallery3D from "../components/Gallery3D";
 
 // 간단한 플레이스홀더 페이지들
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
   { path: "/", element: <FeedPage /> },
   { path: "/gallery", element: <Gallery3D /> },
   { path: "/museum", element: <MuseumPage /> },
+  { path: "/mytype", element: <MyTypePage /> },
   { path: "/search", element: <SearchPage /> },
   { path: "/taste", element: <TastePage /> },
   { path: "/user", element: <UserPage /> },

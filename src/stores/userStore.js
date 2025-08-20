@@ -13,6 +13,16 @@ const useUserStore = create(
         title: '크리에이터의 전시장',
       },
       
+      // 사용자 선호도
+      preferences: {
+        exhibitions: [],
+        artworkMoods: [],
+        gender: '',
+        age: '',
+        nickname: '',
+        userId: '',
+      },
+      
       // 로그인 상태
       isLoggedIn: true,
       
@@ -27,6 +37,27 @@ const useUserStore = create(
         set(state => ({
           subscription: { ...state.subscription, ...subscriptionData }
         }))
+      },
+
+      // 사용자 선호도 업데이트
+      updatePreferences: (preferenceData) => {
+        set(state => ({
+          preferences: { ...state.preferences, ...preferenceData }
+        }))
+      },
+
+      // 전시 선호도 업데이트
+      updateExhibitionPreferences: (exhibitions) => {
+        set(state => ({
+          preferences: { ...state.preferences, exhibitions }
+        }))
+      },
+
+      // 작품 분위기 선호도 업데이트
+      updateArtworkMoodPreferences: (artworkMoods) => {
+        set(state => ({
+          preferences: { ...state.preferences, artworkMoods }
+        }))
       }
     }),
     {
@@ -34,7 +65,8 @@ const useUserStore = create(
       partialize: (state) => ({
         user: state.user,
         isLoggedIn: state.isLoggedIn,
-        subscription: state.subscription
+        subscription: state.subscription,
+        preferences: state.preferences
       })
     }
   )

@@ -6,7 +6,6 @@
   position: relative;
 }
 
-/* 상단 스크롤 그림자 */
 .topShadow {
   position: fixed;
   top: 0;

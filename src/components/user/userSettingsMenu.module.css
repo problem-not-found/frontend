@@ -1,0 +1,55 @@
+.settingsContainer {
+  width: 100%;
+  margin: 65px auto ;
+  background: transparent;
+}
+
+.settingItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 25px 15px 35px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.settingItem:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.settingContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.settingIcon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.settingTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 25px;
+  letter-spacing: -0.4px;
+  color: #434343;
+  text-align: left;
+}
+
+.chevron {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chevronIcon {
+  width: 24px;
+  height: 24px;
+}

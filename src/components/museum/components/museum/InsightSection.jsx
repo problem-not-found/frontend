@@ -1,9 +1,9 @@
 import insightStyles from './insightSection.module.css';
 import commonStyles from './common.module.css';
-import useUserStore from '../../stores/userStore';
-import exhibition1 from '../../assets/museum/큰사진1.png';
-import exhibition2 from '../../assets/museum/큰사진2.png';
-import lockImage from '../../assets/museum/잠금사진.png';
+import useUserStore from '@/stores/userStore';
+import exhibition1 from '@/assets/museum/큰사진1.png';
+import exhibition2 from '@/assets/museum/큰사진2.png';
+import lockImage from '@/assets/museum/잠금사진.png';
 
 export default function InsightSection({ insights = [] }) {
   const { subscription } = useUserStore();

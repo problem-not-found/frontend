@@ -1,0 +1,240 @@
+.container {
+  min-height: 100vh;
+  background-color: #f6f1eb;
+  padding: 0 32px 100px;
+  position: relative;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+/* 헤더 */
+.header {
+  padding: 10px 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.backIcon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.title {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 25px;
+  letter-spacing: -0.5px;
+  color: #000;
+  margin: 0;
+}
+
+.searchContainer {
+  margin: 0 32px 32px 32px;
+}
+
+.searchInput {
+  width: 100%;
+  height: 48px;
+  background-color: #f6f1eb;
+  border: 1px solid #f37021;
+  border-radius: 0;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 19px;
+  letter-spacing: -0.4px;
+  color: #f37021;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.searchInput::placeholder {
+  color: #f37021;
+}
+
+.searchIcon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.instructionText {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 25px;
+  letter-spacing: -0.35px;
+  color: #434343;
+  margin: 0 32px 16px 32px;
+}
+
+.participantList {
+  margin: 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.participantCard {
+  width: 100%;
+  height: 63px;
+  background-color: #cfdde3;
+  border-radius: 0;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.participantCard.selected {
+  background-color: #f37021;
+}
+
+.participantCard:hover {
+  background-color: #e0e8ed;
+}
+
+.participantCard.selected:hover {
+  background-color: #e65a1a;
+}
+
+.profileImage {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #eeeeee;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.profileImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.participantInfo {
+  flex: 1;
+}
+
+.participantName {
+  font-size: 20px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 26px;
+  letter-spacing: -0.5px;
+  color: #000;
+  margin: 0;
+}
+
+.bottomButton {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 344px;
+  height: 48px;
+  background-color: #f37021;
+  border: 1px solid #000;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 25px;
+  letter-spacing: -0.4px;
+  color: #000;
+  transition: background-color 0.2s ease;
+}
+
+.bottomButton:hover {
+  background-color: #e65a1a;
+}
+
+.bottomButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.notificationBanner {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 312px;
+  height: 32px;
+  background-color: #cfdde3;
+  border: 1px solid #000;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 16px;
+  letter-spacing: -0.3px;
+  color: #000;
+  text-align: center;
+  padding: 0 20px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  .header {
+    padding: 16px 24px;
+  }
+  
+  .searchContainer {
+    margin: 0 24px 24px 24px;
+  }
+  
+  .participantList {
+    margin: 0 24px;
+  }
+  
+  .bottomButton {
+    width: calc(100% - 48px);
+    max-width: 344px;
+  }
+  
+  .notificationBanner {
+    width: calc(100% - 48px);
+    max-width: 312px;
+  }
+}

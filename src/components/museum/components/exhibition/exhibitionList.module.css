@@ -1,0 +1,287 @@
+.container {
+  min-height: 100vh;
+  background-color: #f6f1eb;
+  padding: 0 32px 100px;
+  position: relative;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+/* 헤더 */
+.header {
+  padding: 10px 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f6f1eb;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.backIcon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.title {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 25px;
+  letter-spacing: -0.5px;
+  color: #000;
+  margin: 0;
+}
+
+.editButton {
+  background: #cfdde3;
+  border: 1px solid #000;
+  padding: 6px 16px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.35px;
+  color: #000;
+  cursor: pointer;
+}
+
+.editButtonActive {
+  background: #f37021;
+  color: #000;
+}
+
+/* 스크롤 헤더 */
+.scrollHeader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #f6f1eb;
+  border-bottom: 1px solid #e0e0e0;
+  z-index: 200;
+  padding: 10px 32px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.scrollHeaderContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+.scrollBackButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scrollBackIcon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  transform: rotate(90deg);
+}
+
+.scrollTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 25px;
+  letter-spacing: -0.5px;
+  color: #000;
+  margin: 0;
+}
+
+/* 빈 상태 */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 200px 0;
+  text-align: center;
+}
+
+.emptyIcon {
+  width: 56px;
+  height: 56px;
+  background-color: #f37021;
+  border: 1px solid #000;
+  border-radius: 0;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyIconImage {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.emptyText {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.5px;
+  color: #f37021;
+  margin: 0;
+}
+
+/* 검색 결과 없음 */
+.searchEmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 40px 20px;
+}
+
+.searchEmptyIcon {
+  width: 56px;
+  height: 56px;
+  background-color: #f37021;
+  border: 1px solid #000;
+  border-radius: 0;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchEmptyIconImage {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.searchEmptyText {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.5px;
+  color: #f37021;
+  text-align: center;
+}
+
+/* 전시 그리드 */
+.exhibitionGrid {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.exhibitionGridLayout {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.exhibitionVerticalLayout {
+  grid-template-columns: 1fr;
+}
+
+/* 등록/삭제 버튼 */
+.addButtonContainer {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.addButton {
+  width: 366px;
+  height: 48px;
+  background: #f37021;
+  border: 1px solid #000;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.4px;
+  color: #000;
+  cursor: pointer;
+}
+
+.addButton:hover {
+  background: #e55a00;
+}
+
+.addButton.disabledButton {
+  background: #d9d9d9;
+  color: #757575;
+  cursor: not-allowed;
+}
+
+.addButton.disabledButton:hover {
+  background: #d9d9d9;
+}
+
+/* 로딩 */
+.loadingMore {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #f37021;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loadingMore p {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.35px;
+  color: #757575;
+  margin: 0;
+}

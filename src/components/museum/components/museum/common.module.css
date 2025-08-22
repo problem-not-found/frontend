@@ -48,10 +48,17 @@
   border-bottom: 1px solid #989898;
   padding-top: 0;
   padding-bottom: 0;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  cursor: pointer;
+  transition: color 0.2s;
 }
 
 .sectionAction:hover {
   color: #767676;
+  border-bottom-color: #767676;
 }
 
 .sectionActionWrapper {

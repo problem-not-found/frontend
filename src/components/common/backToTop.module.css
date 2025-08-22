@@ -1,7 +1,7 @@
 .button {
   position: fixed;
   right: calc(50% - 215px + 16px);
-  bottom: 96px;
+  bottom: 120px;
   width: 44px;
   height: 44px;
   background: var(--color-main);

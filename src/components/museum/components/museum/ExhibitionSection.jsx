@@ -58,7 +58,7 @@ export default function ExhibitionSection({ exhibitions = [] }) {
       </div>
       
       <div className={commonStyles.sectionActionWrapper}>
-        <a href="#" className={commonStyles.sectionAction}>
+        <a href="/exhibition/my" className={commonStyles.sectionAction}>
           내 전시 등록&보러가기
         </a>
       </div>

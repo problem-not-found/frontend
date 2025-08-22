@@ -1,4 +1,4 @@
-import useUserStore from '../../stores/userStore';
+import useUserStore from '@/stores/userStore';
 import styles from './premiumBar.module.css';
 
 export default function PremiumBar() {

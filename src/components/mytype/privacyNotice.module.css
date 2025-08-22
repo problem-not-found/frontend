@@ -1,0 +1,14 @@
+.container {
+  margin-bottom: 40px;
+}
+
+.notice {
+  color: var(--color-main-color, #F37021);
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 25px; /* 178.571% */
+  text-align: start;
+  margin: 0;
+}

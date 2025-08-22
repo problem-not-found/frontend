@@ -1,0 +1,64 @@
+.container {
+  margin-bottom: 10px;
+}
+
+.title {
+  color: var(--color-main-color, #F37021);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 22px;
+  margin: 0 0 16px 0;
+}
+
+.inputContainer {
+  margin-bottom: 8px;
+}
+
+.input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #ff6b35;
+  color: #000;
+  font-size: 16px;
+  background-color: transparent;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  order: 2px solid #ff6b35;
+}
+
+.input::placeholder {
+  color: #999;
+}
+
+.helperText {
+  color: var(--color-grayscale2, #989898);
+font-family: Pretendard;
+font-size: 12px;
+font-style: normal;
+font-weight: 600;
+line-height: 27px; /* 225% */
+letter-spacing: -0.24px;
+  margin: 0;
+}
+
+.available {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.highlight {
+  color: var(--color-grayscale1, #434343);
+  font-family: Pretendard;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 27px;
+  letter-spacing: -0.24px;
+}
+
+.underline {
+  text-decoration: underline;
+}

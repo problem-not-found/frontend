@@ -1,16 +1,19 @@
-
+import { useNavigate } from 'react-router-dom';
 import artworkStyles from './artworkSection.module.css';
 import commonStyles from './common.module.css';
 
 export default function ArtworkSection({ artworks = [] }) {
+  const navigate = useNavigate();
   const maxVisible = 5;
   const visibleArtworks = artworks.slice(0, maxVisible);
   const hasMoreArtworks = artworks.length > maxVisible;
 
   const handleShowMore = () => {
-    // TODO: 전체 작품 페이지로 이동하는 로직 구현
-    console.log('전체 작품 페이지로 이동');
-    // window.location.href = '/artworks'; // 추후 라우팅 구현 시 사용
+    navigate('/artwork/my'); // 내 작품 페이지로 이동
+  };
+
+  const handleGoToMyArtworks = () => {
+    navigate('/artwork/my'); // 내 작품 페이지로 이동
   };
 
   return (
@@ -51,9 +54,9 @@ export default function ArtworkSection({ artworks = [] }) {
       </div>
       
       <div className={commonStyles.sectionActionWrapper}>
-        <a href="#" className={commonStyles.sectionAction}>
+        <button onClick={handleGoToMyArtworks} className={commonStyles.sectionAction}>
           내 작품 등록&보러가기
-        </a>
+        </button>
       </div>
     </section>
   );

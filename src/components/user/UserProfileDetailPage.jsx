@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import useUserStore from "../stores/userStore";
-import AppFooter from "../components/footer/AppFooter";
-import styles from "../components/user/userProfileDetail.module.css";
+import useUserStore from "@/stores/userStore";
+import AppFooter from "@/components/footer/AppFooter";
+import styles from "@/components/user/userProfileDetail.module.css";
 
 export default function UserProfileDetailPage() {
   const navigate = useNavigate();
-  const { user, tradeInfo, subscription } = useUserStore();
+  const { user, subscription } = useUserStore();
 
   const handleEditClick = () => {
     navigate('/user/edit');
@@ -13,10 +13,6 @@ export default function UserProfileDetailPage() {
 
   const handleBackClick = () => {
     navigate('/user');
-  };
-
-  const handleTradeInfoClick = () => {
-    console.log('거래 정보 관련 액션');
   };
 
   const handleMembershipClick = () => {
@@ -58,27 +54,12 @@ export default function UserProfileDetailPage() {
           </p>
         </div>
 
-        <div className={styles.contactSection}>
-          <div className={styles.contactItem}>
-            <img src="/src/assets/user/mail2.png" alt="mail" className={styles.contactIcon} />
-            <span className={styles.contactText}>
-              이메일 <span className={styles.contactValue}>{user.email}</span>
-            </span>
-          </div>
-          <div className={styles.contactItem}>
-            <img src="/src/assets/user/instagram.png" alt="instagram" className={styles.contactIcon} />
-            <span className={styles.contactText}>
-              인스타그램 <span className={styles.contactValue}>@{user.instagram || user.nickname}</span>
-            </span>
-          </div>
-        </div>
-
         <div className={styles.actionButtons}>
           <button 
-            className={`${styles.actionButton} ${tradeInfo.isRegistered ? styles.tradeRegistered : ''}`}
-            onClick={handleTradeInfoClick}
+            className={`${styles.actionButton} ${styles.contactRegistered}`}
+            onClick={() => navigate('/user/contact')}
           >
-            {tradeInfo.isRegistered ? '거래 정보 등록됨' : '거래 정보 등록하기'}
+            연락 정보 등록하기
           </button>
           <button 
             className={`${styles.actionButton} ${subscription.isPremium ? styles.premiumSubscribed : ''}`}

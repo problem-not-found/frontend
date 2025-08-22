@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
-import PremiumBar from "../components/museum/PremiumBar";
-import MuseumProfile from "../components/museum/MuseumProfile";
-import ArtworkSection from "../components/museum/ArtworkSection";
-import ExhibitionSection from "../components/museum/ExhibitionSection";
-import InsightSection from "../components/museum/InsightSection";
-import BackToTopButton from "../components/common/BackToTopButton";
-import AppFooter from "../components/footer/AppFooter";
-import useUserStore from "../stores/userStore";
-import styles from "../components/museum/museum.module.css";
-import commonStyles from "../components/museum/common.module.css";
+import PremiumBar from "@museum/components/museum/PremiumBar";
+import MuseumProfile from "@museum/components/museum/MuseumProfile";
+import ArtworkSection from "@museum/components/museum/ArtworkSection";
+import ExhibitionSection from "@museum/components/museum/ExhibitionSection";
+import InsightSection from "@museum/components/museum/InsightSection";
+import BackToTopButton from "@/components/common/BackToTopButton";
+import AppFooter from "@/components/footer/AppFooter";
+import useUserStore from "@/stores/userStore";
+import styles from "@museum/components/museum/museum.module.css";
+import commonStyles from "@museum/components/museum/common.module.css";
 
 // 이미지 import
-import artwork1 from "../assets/museum/사진1.png";
-import artwork2 from "../assets/museum/사진2.png";
-import artwork3 from "../assets/museum/사진3.png";
-import exhibition1 from "../assets/museum/큰사진1.png";
-import exhibition2 from "../assets/museum/큰사진2.png";
+import artwork1 from "@/assets/museum/큰사진3.png";
+import artwork2 from "@/assets/museum/큰사진4.png";
+import artwork3 from "@/assets/museum/큰사진5.png";
+import exhibition1 from "@/assets/museum/큰사진1.png";
+import exhibition2 from "@/assets/museum/큰사진2.png";
 
 
 export default function MuseumPage() {

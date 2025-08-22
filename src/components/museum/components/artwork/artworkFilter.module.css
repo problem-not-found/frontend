@@ -1,0 +1,118 @@
+.filterContainer {
+  margin-bottom: 24px;
+}
+
+.searchContainer {
+  margin-bottom: 16px;
+}
+
+.searchForm {
+  position: relative;
+  width: 100%;
+}
+
+.searchInput {
+  width: 100%;
+  height: 48px;
+  padding: 12px 50px 12px 20px;
+  border: 1px solid #f37021;
+  background-color: #f2eee9;
+  border-radius: 0;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+  color: #f37021;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: #f37021;
+}
+
+.searchInputFocused {
+  box-shadow: 0 0 0 2px rgba(243, 112, 33, 0.2);
+}
+
+.searchButton {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.controlsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 23px;
+  min-height: 40px;
+}
+
+.sortInfo {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #989898;
+  letter-spacing: -0.3px;
+  line-height: 40px;
+  margin: 0;
+  padding: 0;
+}
+
+.layoutControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+}
+
+.layoutToggle {
+  display: flex;
+  gap: 8px;
+}
+
+.layoutButton {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #000;
+  background-color: #cfdde3;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.layoutButton:hover {
+  background-color: #bcd1d8;
+}
+
+.layoutIcon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.rotated {
+  transform: rotate(90deg);
+}
+
+.layoutButtonActive {
+  background-color: #cfdde3;
+  border-color: #000;
+  box-shadow: inset 0 0 0 0.5px #000;
+}
+
+.layoutButton:not(.layoutButtonActive) {
+  border-color: #757575;
+}

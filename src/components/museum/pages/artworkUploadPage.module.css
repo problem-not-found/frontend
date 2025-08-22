@@ -1,0 +1,386 @@
+.page {
+  min-height: 100vh;
+  background-color: #f6f1eb;
+  padding: 0 32px 100px;
+  position: relative;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+.container {
+  width: 100%;
+}
+
+/* 헤더 */
+.header {
+  padding: 10px 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.backIcon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.title {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 25px;
+  letter-spacing: -0.5px;
+  color: #000;
+  margin: 0;
+}
+
+.saveButton {
+  background: #cfdde3;
+  border: 1px solid #000;
+  padding: 6px 16px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.35px;
+  color: #000;
+  cursor: pointer;
+}
+
+.draftsButton {
+  background: #f6f1eb;
+  border: 1px solid #000;
+  padding: 6px 16px;
+  margin-left: 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.35px;
+  color: #000;
+  cursor: pointer;
+}
+
+.draftsButton:hover {
+  background: #e8e0d8;
+}
+
+/* 폼 */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 이미지 섹션 */
+.imageSection {
+  margin-bottom: 8px;
+}
+
+
+
+.imageSlideContainer {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.imageSlideContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.imageSlide {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+.imageUploadBox {
+  width: 224px;
+  height: 224px;
+  background-color: #d9d9d9;
+  border: 1px solid #000;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageTag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #f37021;
+  border: 1px solid #000;
+  padding: 3.5px 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.3px;
+  color: #000;
+}
+
+.detailTag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #cfdde3;
+  border: 1px solid #000;
+  padding: 3.5px 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.3px;
+  color: #000;
+}
+
+.imageLabel {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.imagePlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+}
+
+.cameraIcon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+}
+
+.plusCircleIcon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 8px;
+}
+
+.placeholderText {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.35px;
+  color: #757575;
+  margin: 0;
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imageInput {
+  display: none;
+}
+
+.detailImagePreview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.removeImageButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  line-height: 1;
+  font-family: Arial, sans-serif;
+}
+
+.removeImageButton:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* 입력 필드들 */
+.inputGroup {
+  margin-bottom: 12px;
+}
+
+.titleInput {
+  width: 100%;
+  height: 48px;
+  padding: 0 18px;
+  border: 1px solid #000;
+  background: #f6f1eb;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 25px;
+  letter-spacing: -0.4px;
+  color: #000;
+}
+
+.titleInput::placeholder {
+  color: #434343;
+}
+
+.titleInput:focus {
+  outline: none;
+  border: 1px solid #000;
+}
+
+.descriptionInput {
+  width: 100%;
+  height: 308px;
+  padding: 18px;
+  border: 1px solid #000;
+  background: #f6f1eb;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.4px;
+  color: #000;
+  resize: none;
+}
+
+.descriptionInput::placeholder {
+  color: #434343;
+}
+
+.descriptionInput:focus {
+  outline: none;
+  border: 1px solid #000;
+}
+
+/* 추가 기능 버튼들 */
+.additionalFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  margin-right: -32px;
+}
+
+.featureButton {
+  width: 100%;
+  height: 48px;
+  background: #cedde4;
+  border: 1px solid #000;
+  border-right: none;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 19px;
+  letter-spacing: -0.4px;
+  color: #434343;
+  cursor: pointer;
+  text-align: left;
+  padding: 0 20px;
+}
+
+.featureButton:hover {
+  background: #b8cdd6;
+}
+
+/* 연락 정보 등록됨 상태일 때 주황색으로 바뀌고 왼쪽 벽으로 이동 */
+.featureButton.contactRegistered {
+  background-color: #F37021;
+  color: #000000;
+  text-align: right;
+  margin-left: -32px;
+  border-right: 1px solid #000;
+  border-left: none;
+}
+
+/* 제출 버튼 */
+.submitButtonContainer {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.submitButton {
+  width: 366px;
+  height: 48px;
+  background: #f37021;
+  border: 1px solid #000;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.4px;
+  color: #000;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background: #e55a00;
+}
+
+.errorContainer {
+  position: fixed;
+  bottom: 200px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 349px;
+  height: 32px;
+}
+
+/* 개별 에러 메시지 */
+.errorMessageBox {
+  background-color: #cfdde3;
+  border: 1px solid #000;
+  padding: 8px 20px;
+  font-family: 'Pretendard';
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: -0.3px;
+  color: #000;
+  text-align: center;
+  box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.20);
+}

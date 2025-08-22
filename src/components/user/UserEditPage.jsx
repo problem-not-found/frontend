@@ -1,13 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useUserStore from "../stores/userStore";
-import AppFooter from "../components/footer/AppFooter";
-import styles from "../components/user/userEdit.module.css";
+import useUserStore from "@/stores/userStore";
+import AppFooter from "@/components/footer/AppFooter";
+import styles from "@/components/user/userEdit.module.css";
 
 export default function UserEditPage() {
   const navigate = useNavigate();
   const { user, updateUser } = useUserStore();
-  const [showCustomDomain, setShowCustomDomain] = useState(false);
   const [userId, setUserId] = useState(user.nickname || "simonisnextdoor");
   const [userIdStatus, setUserIdStatus] = useState("available");
   const [userIdMessage, setUserIdMessage] = useState("");
@@ -16,27 +15,15 @@ export default function UserEditPage() {
   const [formData, setFormData] = useState({
     name: user.name || "김땡땡",
     nickname: user.nickname || "simonisnextdoor", 
-    bio: "",
-    email: user.email || "asd123@naver.com",
-    emailUsername: user.email ? user.email.split('@')[0] : "asd123",
-    emailDomain: user.email ? user.email.split('@')[1] : "naver.com",
-    customDomain: "",
-    instagram: user.nickname || "simonisnextdoor"
+    bio: ""
   });
 
   const handleCompleteClick = () => {
-    // 이메일 주소 조합
-    const finalEmail = showCustomDomain 
-      ? `${formData.emailUsername}@${formData.customDomain}`
-      : `${formData.emailUsername}@${formData.emailDomain}`;
-
     // userStore 업데이트
     updateUser({
       name: formData.name,
       nickname: formData.nickname,
-      email: finalEmail,
-      bio: formData.bio,
-      instagram: formData.instagram
+      bio: formData.bio
     });
 
     // 편집 완료 후 프로필 상세 페이지로 이동
@@ -45,10 +32,6 @@ export default function UserEditPage() {
 
   const handleBackClick = () => {
     navigate('/user/profile');
-  };
-
-  const handleDomainChange = (e) => {
-    setShowCustomDomain(e.target.value === 'custom');
   };
 
   // 아이디 중복 체크 함수 (실제로는 API 호출)
@@ -92,26 +75,6 @@ export default function UserEditPage() {
   // 입력 필드 변경 핸들러
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleEmailUsernameChange = (e) => {
-    const value = e.target.value;
-    setFormData(prev => ({ ...prev, emailUsername: value }));
-  };
-
-  const handleEmailDomainChange = (e) => {
-    const value = e.target.value;
-    if (value === 'custom') {
-      setShowCustomDomain(true);
-    } else {
-      setShowCustomDomain(false);
-      setFormData(prev => ({ ...prev, emailDomain: value }));
-    }
-  };
-
-  const handleCustomDomainChange = (e) => {
-    const value = e.target.value;
-    setFormData(prev => ({ ...prev, customDomain: value }));
   };
 
   useEffect(() => {
@@ -190,59 +153,6 @@ export default function UserEditPage() {
             value={formData.bio}
             onChange={(e) => handleInputChange('bio', e.target.value)}
           />
-        </div>
-
-        <div className={styles.editContactSection}>
-          <div className={styles.editContactItem}>
-            <img src="/src/assets/user/mail2.png" alt="mail" className={styles.contactIcon} />
-            <span className={`${styles.editContactLabel} ${styles.email}`}>이메일</span>
-            <div className={styles.emailInputContainer}>
-              <input 
-                type="text" 
-                className={styles.emailUsernameInput}
-                placeholder="아이디"
-                value={formData.emailUsername}
-                onChange={handleEmailUsernameChange}
-              />
-              <span className={styles.emailAt}>@</span>
-              {showCustomDomain ? (
-                <input 
-                  type="text" 
-                  className={styles.emailDomainInput}
-                  placeholder="도메인 입력"
-                  value={formData.customDomain}
-                  onChange={handleCustomDomainChange}
-                  onBlur={(e) => {
-                    if (!e.target.value) {
-                      setShowCustomDomain(false);
-                    }
-                  }}
-                />
-              ) : (
-                <select 
-                  className={styles.emailDomainSelect} 
-                  value={formData.emailDomain}
-                  onChange={handleEmailDomainChange}
-                >
-                  <option value="naver.com">naver.com</option>
-                  <option value="gmail.com">gmail.com</option>
-                  <option value="kakao.com">kakao.com</option>
-                  <option value="hanmail.net">hanmail.net</option>
-                  <option value="custom">직접입력</option>
-                </select>
-              )}
-            </div>
-          </div>
-          <div className={styles.editContactItem}>
-            <img src="/src/assets/user/instagram.png" alt="instagram" className={styles.contactIcon} />
-            <span className={`${styles.editContactLabel} ${styles.instagram}`}>인스타그램</span>
-            <input 
-              type="text" 
-              className={styles.editContactInput}
-              value={formData.instagram}
-              onChange={(e) => handleInputChange('instagram', e.target.value)}
-            />
-          </div>
         </div>
       </div>
       

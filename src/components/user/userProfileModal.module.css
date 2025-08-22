@@ -157,3 +157,21 @@
   cursor: pointer;
   text-align: left;
 }
+
+/* 연락정보 등록됨 상태일 때 주황색으로 바뀌고 왼쪽 벽으로 이동 */
+.actionButton.contactRegistered {
+  background-color: #F37021;
+  color: #000000;
+  text-align: right;
+  margin-left: -20px;
+  margin-right: auto;
+}
+
+/* 멤버십 구독 중일 때 주황색으로 바뀌고 왼쪽 벽으로 이동 */
+.actionButton.premiumSubscribed {
+  background-color: #F37021;
+  color: #000000;
+  text-align: right;
+  margin-left: -20px;
+  margin-right: auto;
+}

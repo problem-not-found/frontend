@@ -12,7 +12,7 @@
 }
 
 .modalContent {
-  background: #f6f1eb;
+  background: #CFDDE3;
   width: 393px;
   max-height: 852px;
   overflow-y: auto;
@@ -103,7 +103,7 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  background-color: #f6f1eb;
+  background-color: #CFDDE3;
   border: 1px solid #000;
   padding: 6px 16px;
   height: 36px;

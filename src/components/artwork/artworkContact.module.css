@@ -1,0 +1,57 @@
+.contactSection {
+  margin: 8px 0 0;
+  background: #CFDDE3;
+  padding: 22px 21px;
+}
+
+.contactContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iconSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.iconContainer {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.textSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 258px;
+}
+
+.contactIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.contactText {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: -0.025em;
+  color: #434343;
+  margin: 0;
+}
+
+.contactValue {
+  color: var(--color-main-color, #F37021);
+  font-family: 'Pretendard';
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 22px;
+  letter-spacing: -0.35px;
+}

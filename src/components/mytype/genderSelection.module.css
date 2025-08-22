@@ -22,7 +22,7 @@
 }
 
 .genderButton {
-  padding: 16px 24px;
+  padding: 11px;
   border: 1px solid #ff6b35;
   background-color: transparent;
   color: var(--color-grayscale1, #434343);

@@ -1,0 +1,19 @@
+.container {
+  width: 100%;
+  padding: 0;
+  margin: 20px 0;
+  overflow: visible;
+}
+
+
+.dividerLine {
+  width: 1px;
+  height: 244px;
+  background-color: #989898;
+  margin: 40px auto;
+}
+
+.main {
+    padding-top: 66px;
+    padding-left: 16px;
+}

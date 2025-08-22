@@ -1,0 +1,118 @@
+.card {
+  position: relative;
+  height: 414px;
+  background-color: #E8DDD0;
+  margin: 0 auto;
+  overflow: hidden;
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+}
+
+.artworkBackground {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 57px 31px 0 31px;
+}
+
+.artworkScrollContainer {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  height: 268px;
+}
+
+.artworkScrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.artworkFrame {
+  flex-shrink: 0;
+  width: 268px;
+  height: 268px;
+  border: 1px solid #000000;
+  overflow: hidden;
+}
+
+.artworkImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileSection {
+    position: absolute;
+    bottom: 20px;
+    left: 30px;
+    display: flex;
+    z-index: 10;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.profileImage {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: 1px solid #000000;
+  object-fit: cover;
+  flex-shrink: 0;
+  margin-bottom: 6px;
+  background-color: #fff;
+}
+
+.nameSection {
+  text-align: left;
+}
+
+.name {
+    color: #000;
+    font-family: Pretendard;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 26px; /* 108.333% */
+    letter-spacing: -0.6px;
+}
+
+.username {
+    color: #989898;
+font-family: Pretendard;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 26px; /* 216.667% */
+    letter-spacing: -0.3px;
+  margin: 0;
+}
+
+.creatorLabel {
+  color: #757575;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: -0.4px;
+}
+
+.trendingLabel {
+  position: absolute;
+  top: 21px;
+  left: 39px;
+  z-index: 10;
+}
+
+.trendingLabel span {
+    color: var(--color-grayscale1, #434343);
+    text-align: center;
+    font-feature-settings: 'liga' off, 'clig' off;
+    font-family: Pretendard;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 26px; /* 130% */
+    letter-spacing: -0.5px;
+}

@@ -1,22 +1,36 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./cardCompact.module.css";
 import defaultImg from "../../assets/feed/예시2.png";
+import likeIcon from "../../assets/feed/like.svg";
+import unlikeIcon from "../../assets/feed/unlike.svg";
 
 export default function CardCompact({ item = {}, showBookmark = false }) {
   const [isLiked, setIsLiked] = useState(false);
+  const navigate = useNavigate();
 
   const {
+    id = 1,
     img = defaultImg,
     title = "이몽규 네온 사진전",
     date = "24.11.26 - 24.11.30",
   } = item;
 
-  const handleLikeClick = () => {
+  const handleLikeClick = (e) => {
+    e.stopPropagation();
     setIsLiked(!isLiked);
   };
 
+  const handleCardClick = () => {
+    navigate(`/exhibition/${id}`);
+  };
+
   return (
-    <div className={styles.card} style={{ minWidth: "160px", width: "160px" }}>
+    <div 
+      className={styles.card} 
+      style={{ minWidth: "160px", width: "160px", cursor: "pointer" }}
+      onClick={handleCardClick}
+    >
       <div className={styles.thumb}>
         <img src={img} alt={title} className={styles.image} />
       </div>
@@ -31,7 +45,11 @@ export default function CardCompact({ item = {}, showBookmark = false }) {
             aria-label="북마크"
             onClick={handleLikeClick}
           >
-            {isLiked ? "♥" : "♡"}
+            <img 
+              src={isLiked ? likeIcon : unlikeIcon} 
+              alt={isLiked ? "좋아요 취소" : "좋아요"} 
+              className={styles.heartIcon}
+            />
           </button>
         )}
       </div>

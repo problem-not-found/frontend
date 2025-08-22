@@ -1,3 +1,4 @@
+import { useState } from "react";
 import FeedHeader from "../components/feed/Header";
 import FeedSearchBar from "../components/feed/SearchBar";
 import FeedHeroCard from "../components/feed/HeroCard";
@@ -7,11 +8,15 @@ import ExhibitionCardSmall from "../components/feed/CardSmall";
 import ExhibitionCardMedium from "../components/feed/CardMedium";
 import ExhibitionCardCompact from "../components/feed/CardCompact";
 import NearbyExhibitionCard from "../components/feed/NearbyCard";
+
+import CreatorContent from "../components/feed/CreatorContent";
 import BackToTopButton from "../components/common/BackToTopButton";
 import AppFooter from "../components/footer/AppFooter";
 import styles from "../components/feed/feed.module.css";
 
 export default function FeedPage() {
+  const [activeTab, setActiveTab] = useState('전시'); // '전시', '작품', '크리에이터'
+
   // 임시 목데이터 (API 연동 전)
   const myTaste = [
     {
@@ -50,18 +55,122 @@ export default function FeedPage() {
     },
   ];
 
+  // 크리에이터 데이터
+  const trendingCreator = {
+    id: 0,
+    name: "정땡땡 크리에이터",
+    username: "@simonisnextdoor",
+    profileImage: "/creator-profile.png",
+    artworks: [
+      { id: 1, image: "/artwork1.png" },
+      { id: 2, image: "/artwork2.png" },
+      { id: 3, image: "/artwork3.png" },
+    ]
+  };
+
+  const recentCreators = [
+    {
+      id: 1,
+      name: "김땡땡 크리에이터",
+      username: "@simonisnextdoor",
+      profileImage: "/creator-profile.png",
+      artworks: [
+        { id: 4, image: "/artwork1.png" },
+        { id: 5, image: "/artwork2.png" },
+      ]
+    },
+    {
+      id: 2,
+      name: "박땡땡 크리에이터",
+      username: "@simonisnextdoor",
+      profileImage: "/creator-profile.png",
+      artworks: [
+        { id: 6, image: "/artwork2.png" },
+        { id: 7, image: "/artwork3.png" },
+      ]
+    },
+    {
+      id: 3,
+      name: "이땡땡 크리에이터",
+      username: "@simonisnextdoor",
+      profileImage: "/creator-profile.png",
+      artworks: [
+        { id: 8, image: "/artwork3.png" },
+        { id: 9, image: "/artwork1.png" },
+      ]
+    },
+    {
+      id: 4,
+      name: "최땡땡 크리에이터",
+      username: "@simonisnextdoor",
+      profileImage: "/creator-profile.png",
+      artworks: [
+        { id: 10, image: "/artwork1.png" },
+        { id: 11, image: "/artwork2.png" },
+      ]
+    }
+  ];
+
+  const similarAgeCreators = [
+    {
+      id: 5,
+      name: "김땡땡 크리에이터",
+      username: "@simonisnextdoor",
+      profileImage: "/creator-profile.png",
+      artworks: [
+        { id: 12, image: "/artwork1.png" },
+        { id: 13, image: "/artwork2.png" },
+      ]
+    },
+    {
+      id: 6,
+      name: "정땡땡 크리에이터",
+      username: "@simonisnextdoor",
+      profileImage: "/creator-profile.png",
+      artworks: [
+        { id: 14, image: "/artwork1.png" },
+        { id: 15, image: "/artwork2.png" },
+        { id: 16, image: "/artwork3.png" },
+      ]
+    },
+    {
+      id: 7,
+      name: "박땡땡 크리에이터",
+      username: "@simonisnextdoor",
+      profileImage: "/creator-profile.png",
+      artworks: [
+        { id: 17, image: "/artwork2.png" },
+        { id: 18, image: "/artwork3.png" },
+      ]
+    },
+    {
+      id: 8,
+      name: "이땡땡 크리에이터",
+      username: "@simonisnextdoor",
+      profileImage: "/creator-profile.png",
+      artworks: [
+        { id: 19, image: "/artwork3.png" },
+        { id: 20, image: "/artwork1.png" },
+      ]
+    }
+  ];
+
   return (
     <div className={styles.page}>
-      <FeedHeader />
+      <FeedHeader activeTab={activeTab} onTabChange={setActiveTab} />
       <FeedSearchBar placeholder="키워드로 검색하기" />
-      <FeedHeroCard
-        title="정땡땡 유화전 : 끝나지 않은 여행"
-        subtitle="지금 뜨는 전시"
-      />
-
-      <main className={styles.main}>
+      
+      {(activeTab === '전시' || activeTab === '작품') && (
+        <FeedHeroCard
+          title="정땡땡 유화전 : 끝나지 않은 여행"
+          subtitle={activeTab === '전시' ? "지금 뜨는 전시" : "지금 뜨는 작품"}
+        />
+      )}
+      
+      {(activeTab === '전시' || activeTab === '작품') && (
+        <main className={styles.main}>
         <SectionHeading
-          title="내 취향 저격 전시 리스트"
+          title={activeTab === '전시' ? "내 취향 저격 전시 리스트" : "내 취향 저격 작품 리스트"}
           caption="좋아하는 것 기반으로 분석해서 모아봤어요."
           isFirst={true}
         />
@@ -98,16 +207,26 @@ export default function FeedPage() {
           showVerticalLine={true}
           verticalLineHeight={199}
         />
-      </main>
-      <SectionHeading
-        title="내 주변 전시"
-        caption="내 위치 기준 가까운 곳에서 오프라인 전시를 진행 중인 곳이에요."
-      />
-      <div className={styles.nearbyList}>
-        {nearby.map((n) => (
-          <NearbyExhibitionCard key={n.id} item={n} />
-        ))}
-      </div>
+        
+        <SectionHeading
+          title="내 주변 전시"
+          caption="내 위치 기준 가까운 곳에서 오프라인 전시를 진행 중인 곳이에요."
+        />
+        <div className={styles.nearbyList}>
+          {nearby.map((n) => (
+            <NearbyExhibitionCard key={n.id} item={n} />
+          ))}
+        </div>
+        </main>
+      )}
+
+      {activeTab === '크리에이터' && (
+        <CreatorContent 
+          trendingCreator={trendingCreator}
+          recentCreators={recentCreators}
+          similarAgeCreators={similarAgeCreators}
+        />
+      )}
 
       <BackToTopButton />
       <AppFooter />

@@ -5,12 +5,20 @@ import heroImg from "../../assets/feed/메인 이미지.png";
 import sample1 from "../../assets/feed/예시1.png";
 import sample2 from "../../assets/feed/예시2.png";
 
-export default function HeroCard({ images }) {
+export default function HeroCard({ images, exhibitions, pieces }) {
   const navigate = useNavigate();
-  const slides =
-    Array.isArray(images) && images.length > 0
-      ? images
-      : [heroImg, sample1, sample2];
+  
+  // exhibitions 또는 pieces 데이터가 있으면 그것을 사용, 없으면 기본 이미지 사용
+  const slides = exhibitions && exhibitions.length > 0
+    ? exhibitions.map(exhibition => exhibition.thumbnailImageUrl || heroImg)
+    : pieces && pieces.length > 0
+      ? pieces.map(piece => piece.imageUrl || heroImg)
+      : Array.isArray(images) && images.length > 0
+        ? images
+        : [heroImg, sample1, sample2];
+        
+  const itemData = exhibitions || pieces || [];
+  const isExhibition = !!exhibitions;
 
   const [index, setIndex] = useState(0);
   const startXRef = useRef(0);
@@ -44,8 +52,18 @@ export default function HeroCard({ images }) {
   }, [slides.length]);
 
   const handleSlideClick = () => {
-    // 첫 번째 전시로 이동 (임시로 ID 1 사용)
-    navigate('/exhibition/1');
+    // 현재 슬라이드의 전시 또는 작품으로 이동
+    if (itemData.length > 0 && itemData[index]) {
+      if (isExhibition) {
+        navigate(`/exhibition/${itemData[index].exhibitionId}`);
+      } else {
+        // 작품인 경우 작품 상세 페이지로 이동
+        navigate(`/artwork/${itemData[index].pieceId}`);
+      }
+    } else {
+      // 기본 이미지인 경우 첫 번째 전시로 이동
+      navigate('/exhibition/1');
+    }
   };
 
   return (
@@ -71,6 +89,17 @@ export default function HeroCard({ images }) {
                 alt={`slide-${i + 1}`}
                 className={styles.slideImage}
               />
+              {/* 전시/작품 정보 오버레이 */}
+              {itemData[i] && (
+                <div className={styles.slideOverlay}>
+                  <div className={styles.exhibitionInfo}>
+                    <p className={styles.subtitle}>
+                      {isExhibition ? "지금 뜨는 전시" : "지금 뜨는 작품"}
+                    </p>
+                    <h3 className={styles.title}>{itemData[i].title}</h3>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>

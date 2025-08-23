@@ -1,5 +1,6 @@
 
 import { useNavigate } from 'react-router-dom';
+import { ClipLoader } from 'react-spinners';
 import styles from './exhibitionReviews.module.css';
 
 const ReviewItem = ({ reviewer, reviewText, avatarSrc }) => (
@@ -17,18 +18,10 @@ const ReviewItem = ({ reviewer, reviewText, avatarSrc }) => (
 
 const ExhibitionReviews = ({
   exhibitionId = "1",
-  reviews = [
-    {
-      id: 1,
-      reviewer: "정영진",
-      reviewText: "좋네요. 어떤 의도로 만들어진 작품인지 너무 잘 와닿았고 여운이 한참동안 가시질 않았어요. 좋은 작품 잘 봤습니다!! 특히 ~~작품이 좋았어여"
-    },
-    {
-      id: 2,
-      reviewer: "정영진",
-      reviewText: "좋네요. 어떤 의도로 만들어진 작품인지 너무 잘 와닿았고 여운이 한참동안 가시질 않았어요. 좋은 작품 잘 봤습니다!! 특히 ~~작품이 좋았어여"
-    }
-  ]
+  reviews = [],
+  totalElements = 0,
+  loading = false,
+  error = null
 }) => {
   const navigate = useNavigate();
 
@@ -39,8 +32,8 @@ const ExhibitionReviews = ({
     <>
       {/* Clean Reviews Header */}
       <div className={styles.reviewsHeader}>
-        <h3 className={styles.sectionTitle}>클린 감상평</h3>
-        {reviews.length > 1 && (
+        <h3 className={styles.sectionTitle}>클린 감상평 ({totalElements})</h3>
+        {totalElements > 3 && (
           <div className={styles.moreReviews} onClick={handleMoreReviews}>
             <span className={styles.moreReviewsText}>리뷰 더 보기</span>
           </div>
@@ -49,14 +42,48 @@ const ExhibitionReviews = ({
 
       {/* Reviews Section */}
       <div className={styles.reviewsSection}>
-        {reviews.map((review, index) => (
-          <ReviewItem
-            key={review.id || index}
-            reviewer={review.reviewer}
-            reviewText={review.reviewText}
-            avatarSrc={review.avatarSrc}
-          />
-        ))}
+        {loading ? (
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '100px',
+            margin: '20px 0'
+          }}>
+            <ClipLoader color="var(--color-main)" size={25} />
+          </div>
+        ) : error ? (
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '100px',
+            margin: '20px 0',
+            color: '#666'
+          }}>
+            감상평을 불러올 수 없습니다.
+          </div>
+        ) : reviews.length === 0 ? (
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '100px',
+            margin: '20px 0',
+            color: '#666'
+          }}>
+            아직 감상평이 없습니다.
+          </div>
+        ) : (
+          reviews.map((review, index) => (
+            <ReviewItem
+              key={review.reviewId || index}
+              reviewer="익명" // 프로필 사진 비워둠에 따라 익명 처리
+              reviewText={review.content}
+              avatarSrc={null} // 프로필 사진 비워둠
+            />
+          ))
+        )}
       </div>
     </>
   );

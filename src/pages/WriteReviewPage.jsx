@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createReview } from '../apis/reviews';
+import { createReview } from '../apis/review/reviews';
 import BackToTopButton from '../components/common/BackToTopButton';
 import styles from './writeReviewPage.module.css';
 

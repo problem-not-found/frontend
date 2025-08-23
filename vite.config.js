@@ -22,12 +22,6 @@ export default defineConfig({
       '/api': {
         target: 'https://api.artium.life',
         changeOrigin: true,
-        secure: true,
-        configure: (proxy, options) => {
-          proxy.on('proxyReq', (proxyReq, req, res) => {
-            console.log('Proxying request:', req.method, req.url);
-          });
-        }
       }
     }
   }

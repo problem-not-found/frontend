@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { testLogin, redirectToKakaoLogin } from '../apis/auth';
+import { testLogin, redirectToKakaoLogin } from '../apis/login/auth';
 import logoImage from '../assets/login/logo.png';
 import styles from './loginPage.module.css';
 

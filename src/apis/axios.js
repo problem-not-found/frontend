@@ -94,6 +94,10 @@ const privateApi = axios.create({
  */
 privateApi.interceptors.request.use(
   (config) => {
+    const accessToken = getCookie("ACCESS_TOKEN");
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
     return config;
   },
   (error) => {
@@ -113,19 +117,19 @@ privateApi.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = getCookie("refreshToken");
-        const response = await publicApi.post("/auth/refresh", {
+        const refreshToken = getCookie("REFRESH_TOKEN");
+        const response = await publicApi.post("/api/auths/refresh", {
           refreshToken,
         });
 
         const newToken = response.data.token;
-        setCookie("accessToken", newToken, 7); // 새 토큰을 쿠키에 저장 (7일 유지)
+        setCookie("ACCESS_TOKEN", newToken, 7); // 새 토큰을 쿠키에 저장 (7일 유지)
 
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return privateApi(originalRequest);
       } catch (refreshError) {
-        deleteCookie("accessToken");
-        deleteCookie("refreshToken");
+        deleteCookie("ACCESS_TOKEN");
+        deleteCookie("REFRESH_TOKEN");
          window.location.href = "/login";
         return Promise.reject(refreshError);
       }

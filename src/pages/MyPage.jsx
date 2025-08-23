@@ -6,7 +6,7 @@ import styles from "@/components/user/myPage.module.css";
 export default function MyPage() {
   return (
     <div className={styles.page}>
-      <div style={{height: '40px'}}></div>
+      <div style={{height: '10px'}}></div>
       <div className={styles.content}>
         {/* 첫 번째 화면: 기본 마이페이지 */}
         <UserProfileHeader />

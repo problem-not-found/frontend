@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import FeedPage from "../pages/FeedPage";
 import MuseumPage from "../pages/MuseumPage";
 import MyPage from "../pages/MyPage";
+import MyTypePage from "../pages/MyTypePage";
 import UserProfileDetailPage from "@/components/user/UserProfileDetailPage";
 import UserEditPage from "@/components/user/UserEditPage";
 import ContactEditPage from "@/components/user/ContactEditPage";

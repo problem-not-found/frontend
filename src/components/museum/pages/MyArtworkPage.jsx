@@ -2,14 +2,21 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ArtworkList from '@museum/components/artwork/ArtworkList';
 import useArtworkDraftStore from '@museum/services/artworkDraftStore';
+import useArtworkStore from '@museum/services/artworkStore';
 import styles from './myArtworkPage.module.css';
 
 export default function MyArtworkPage() {
   const navigate = useNavigate();
   const { hasDraft } = useArtworkDraftStore();
+  const { loadArtworks } = useArtworkStore();
   
   // 스크롤 상태 관리 (기존 뮤지엄 페이지와 동일)
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // 컴포넌트 마운트 시 작품 목록 로드
+  useEffect(() => {
+    loadArtworks(true, 3);
+  }, [loadArtworks]);
 
   // 스크롤 이벤트 처리
   useEffect(() => {

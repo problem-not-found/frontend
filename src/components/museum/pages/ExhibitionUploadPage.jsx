@@ -341,6 +341,21 @@ export default function ExhibitionUploadPage() {
           </div>
         </div>
 
+        {/* 하단 고정 전시 등록하기 버튼 */}
+        <div className={styles.submitButtonContainer}>
+          <button 
+            type="submit" 
+            className={styles.submitButton}
+            onClick={() => {
+              // TODO: 전시 등록 로직 구현
+              console.log('전시 등록:', exhibitionData);
+              alert('전시 등록 기능은 아직 구현되지 않았습니다.');
+            }}
+          >
+            전시 등록하기
+          </button>
+        </div>
+
       {/* 전시 작품 등록 모달 */}
       <ExhibitionArtworkModal
         isOpen={isArtworkModalOpen}

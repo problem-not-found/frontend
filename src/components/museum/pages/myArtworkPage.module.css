@@ -1,8 +1,58 @@
 .page {
-  background: #f2eee9;
-  color: #2a2a2a;
+  min-height: 100vh;
+  background-color: #f6f1eb;
+  position: relative;
   max-width: 430px;
   margin: 0 auto;
-  position: relative;
-  min-height: 100vh;
+}
+
+.errorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 20px;
+}
+
+.errorMessage {
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+}
+
+.errorMessage h2 {
+  color: #e74c3c;
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.errorMessage p {
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.retryButton {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.retryButton:hover {
+  background: #0056b3;
+}
+
+.retryButton:active {
+  background: #004085;
 }

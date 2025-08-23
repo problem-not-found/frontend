@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import ArtworkCard from './ArtworkCard';
 import ArtworkFilter from './ArtworkFilter';
 import useArtworkStore from '@museum/services/artworkStore';
+import useUserStore from '@/stores/userStore';
 import BackToTopButton from '@/components/common/BackToTopButton';
 import chevronLeft from '@/assets/museum/chevron-left.png';
 import arrowDown from '@/assets/museum/arrow-down.svg';
@@ -25,12 +26,14 @@ export default function ArtworkList({
     layoutMode,
     searchKeyword,
     isLoadingMore,
+    applicated,
     setLayoutMode,
     setSearchKeyword,
     loadMoreArtworks,
     hasMore,
     getFilteredArtworks,
-    deleteArtwork
+    deleteArtwork,
+    toggleApplicated
   } = useArtworkStore();
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -92,6 +95,10 @@ export default function ArtworkList({
     setSearchKeyword(keyword);
   };
 
+  const handleApplicatedChange = async () => {
+    await toggleApplicated();
+  };
+
   const handleArtworkSelection = (artwork) => {
     const newSelected = new Set(selectedArtworks);
     if (newSelected.has(artwork.id)) {
@@ -102,27 +109,45 @@ export default function ArtworkList({
     setSelectedArtworks(newSelected);
   };
 
-  const handleDeleteSelected = () => {
+  const handleDeleteSelected = async () => {
     if (selectedArtworks.size === 0) return;
     
     const count = selectedArtworks.size;
     if (confirm(`선택한 ${count}개 작품을 정말 삭제하시겠습니까?`)) {
       // 선택된 작품들을 실제로 삭제
-      Array.from(selectedArtworks).forEach(artworkId => {
-        deleteArtwork(artworkId);
-      });
+      const deletePromises = Array.from(selectedArtworks).map(artworkId => 
+        deleteArtwork(artworkId)
+      );
       
-      console.log('선택된 작품들 삭제 완료:', Array.from(selectedArtworks));
-      setSelectedArtworks(new Set());
+      try {
+        const results = await Promise.all(deletePromises);
+        const successCount = results.filter(result => result === true).length;
+        
+        if (successCount === selectedArtworks.size) {
+          console.log('선택된 작품들 삭제 완료:', Array.from(selectedArtworks));
+        } else {
+          console.warn('일부 작품 삭제에 실패했습니다.');
+        }
+        
+        setSelectedArtworks(new Set());
+      } catch (error) {
+        console.error('작품 삭제 중 오류 발생:', error);
+      }
     }
   };
 
-  const handleDeleteArtwork = (artwork) => {
+  const handleDeleteArtwork = async (artwork) => {
     if (confirm(`"${artwork.title}" 작품을 정말 삭제하시겠습니까?`)) {
-      // 여기서 실제 삭제 로직을 구현할 수 있습니다.
-      console.log('작품 삭제:', artwork);
-      // 예시: artworkStore에 deleteArtwork 함수가 있다면
-      deleteArtwork(artwork.id);
+      try {
+        const success = await deleteArtwork(artwork.id);
+        if (success) {
+          console.log('작품 삭제 완료:', artwork);
+        } else {
+          console.error('작품 삭제 실패:', artwork);
+        }
+      } catch (error) {
+        console.error('작품 삭제 중 오류 발생:', error);
+      }
     }
   };
 
@@ -220,6 +245,8 @@ export default function ArtworkList({
         onLayoutChange={handleLayoutChange}
         searchKeyword={searchKeyword}
         onSearchChange={handleSearchChange}
+        applicated={applicated}
+        onApplicatedChange={handleApplicatedChange}
       />
 
       {/* 작품 목록 */}

@@ -30,6 +30,9 @@ const useUserStore = create(
       // 로그인 상태
       isLoggedIn: true,
       
+      // 액세스 토큰 (API 호출용)
+      accessToken: 'your-access-token-here', // 실제 토큰으로 교체 필요
+      
       // 구독 정보
       subscription: {
         isPremium: false, // 구독 상태별 조건부 렌더링 확인
@@ -49,7 +52,7 @@ const useUserStore = create(
       invitation: {
         hasInvitation: true, // 공동 전시 참여 요청 여부
         hasSharedLibraryRequest: false, // 작품 공유 라이브러리 등록 필요 여부
-        invitationCount: 2, // 참여 요청 개수
+        invitationCount: 1, // 참여 요청 개수
       },
 
       // 구독 상태 업데이트 (테스트용)
@@ -79,6 +82,25 @@ const useUserStore = create(
         set(state => ({
           invitation: { ...state.invitation, ...invitationData }
         }))
+      },
+
+      // 액세스 토큰 업데이트
+      setAccessToken: (token) => {
+        set({ accessToken: token })
+      },
+
+      // 전시 선호도 업데이트
+      updateExhibitionPreferences: (exhibitions) => {
+        set(state => ({
+          preferences: { ...state.preferences, exhibitions }
+        }))
+      },
+
+      // 작품 분위기 선호도 업데이트
+      updateArtworkMoodPreferences: (artworkMoods) => {
+        set(state => ({
+          preferences: { ...state.preferences, artworkMoods }
+        }))
       }
     }),
     {
@@ -86,6 +108,8 @@ const useUserStore = create(
       partialize: (state) => ({
         user: state.user,
         isLoggedIn: state.isLoggedIn,
+        accessToken: state.accessToken,
+        preferences: state.preferences,
         subscription: state.subscription,
         contactInfo: state.contactInfo,
         invitation: state.invitation

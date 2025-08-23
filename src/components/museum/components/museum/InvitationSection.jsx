@@ -28,6 +28,6 @@ export default function InvitationSection({ hasInvitation, hasSharedLibraryReque
           <span>작품을 공유 라이브러리에 등록해주세요</span>
         </div>
       )}
-    </section>
+    </section>  
   );
 }

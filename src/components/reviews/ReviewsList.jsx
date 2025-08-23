@@ -6,11 +6,11 @@ const ReviewsList = ({ reviews = [] }) => {
     <div className={styles.reviewsList}>
       {reviews.map((review) => (
         <ReviewItem
-          key={review.id}
-          reviewer={review.reviewer}
-          reviewText={review.reviewText}
+          key={review.reviewId}
+          reviewer={review.reviewer || "익명"}
+          reviewText={review.content}
           avatarSrc={review.avatarSrc}
-          isOwnReview={review.isOwnReview}
+          isOwnReview={review.isAuthor}
         />
       ))}
     </div>

@@ -165,18 +165,20 @@ export const forceLogout = (message = '로그인이 만료되었습니다. 다�
  * 토큰이 필요없는 일반 요청 (public API)
  */
 const publicApi = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_URL,
+  baseURL: import.meta.env.DEV
+    ? ""
+    : import.meta.env.VITE_APP_API_URL,
   timeout: 30000,
-  withCredentials: true, //쿠키 자동 포함
 });
 
 /**
  * 토큰이 필요한 인증 요청 (private API)
  */
 const privateApi = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_URL,
+  baseURL: import.meta.env.DEV
+    ? ""
+    : import.meta.env.VITE_APP_API_URL,
   timeout: 30000,
-  withCredentials: true, //쿠키 자동 포함
 });
 
 /**
@@ -281,10 +283,10 @@ privateApi.interceptors.response.use(
         });
         debugCookies(); // 실패 시에도 쿠키 상태 확인
         
-        // // 401이면 토큰이 완전히 만료된 것이므로 로그인 페이지로
-        // if (refreshError.response?.status === 401 || refreshError.message === 'REFRESH_TOKEN이 없습니다.') {
-        //   forceLogout('세션이 만료되었습니다. 다시 로그인해주세요.');
-        // }
+        // 401이면 토큰이 완전히 만료된 것이므로 로그인 페이지로
+        if (refreshError.response?.status === 401 || refreshError.message === 'REFRESH_TOKEN이 없습니다.') {
+          forceLogout('세션이 만료되었습니다. 다시 로그인해주세요.');
+        }
         return Promise.reject(refreshError);
       }
     }

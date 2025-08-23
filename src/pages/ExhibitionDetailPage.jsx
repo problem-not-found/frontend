@@ -1,3 +1,5 @@
+import { useParams } from 'react-router-dom';
+import { ClipLoader } from 'react-spinners';
 import ExhibitionHeader from '../components/exhibition/ExhibitionHeader';
 import ExhibitionImage from '../components/exhibition/ExhibitionImage';
 import ExhibitionInfo from '../components/exhibition/ExhibitionInfo';
@@ -8,77 +10,115 @@ import ExhibitionVenue from '../components/exhibition/ExhibitionVenue';
 import ExhibitionReviews from '../components/exhibition/ExhibitionReviews';
 import ExhibitionParticipants from '../components/exhibition/ExhibitionParticipants';
 import BackToTopButton from '../components/common/BackToTopButton';
+import { useExhibitionDetail, usePieceImages, useParticipantCreators, useExhibitionReviewsPreview } from '../apis/exhibition/exhibition';
 import styles from './exhibitionDetailPage.module.css';
 
 const ExhibitionDetailPage = () => {
-  // 예시: API에서 받아오는 전시 데이터
-  const exhibitionType = "공동전시"; // 또는 "개인전시"
+  const { id } = useParams(); // URL에서 전시 ID 가져오기
+  const exhibitionId = id ? parseInt(id, 10) : null;
   
-  const participants = [
-    {
-      id: 1,
-      name: "김땡땡 크리에이터",
-      image: "/creator-profile.png"
-    },
-    {
-      id: 2,
-      name: "박땡땡 크리에이터", 
-      image: "/artwork1.png"
-    },
-    {
-      id: 3,
-      name: "이땡땡 크리에이터",
-      image: "/artwork2.png" 
-    },
-    {
-      id: 4,
-      name: "최땡땡 크리에이터",
-      image: "/artwork3.png"
-    },
-    {
-      id: 5,
-      name: "정땡땡 크리에이터",
-      image: "/creator-hero-image.png"
-    }
-  ];
+
+  
+  // 전시 상세 정보 가져오기
+  const { exhibition, loading: exhibitionLoading, error: exhibitionError } = useExhibitionDetail(exhibitionId);
+  
+  // 작품 이미지들 가져오기
+  const { pieceImages, loading: pieceImagesLoading, error: pieceImagesError } = usePieceImages(exhibition?.pieceIdList);
+  
+  // 참여 크리에이터들 가져오기
+  const { participants, loading: participantsLoading, error: participantsError } = useParticipantCreators(exhibition?.participantIdList);
+  
+  // 감상평 미리보기 가져오기
+  const { reviews, totalElements, loading: reviewsLoading, error: reviewsError } = useExhibitionReviewsPreview(exhibitionId);
+  
+  // 로딩 상태
+  if (exhibitionLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh' 
+      }}>
+        <ClipLoader color="var(--color-main)" size={40} />
+      </div>
+    );
+  }
+  
+  // 에러 상태
+  if (exhibitionError || !exhibition) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        flexDirection: 'column',
+        gap: '20px'
+      }}>
+        <h2>전시 정보를 불러올 수 없습니다.</h2>
+        <p>잠시 후 다시 시도해주세요.</p>
+      </div>
+    );
+  }
+  
+  // 이미지 슬라이드 구성: 썸네일 + 작품 이미지들
+  const slideImages = [
+    exhibition.thumbnailImageUrl,
+    ...(pieceImages?.map(piece => piece.imageUrl) || [])
+  ].filter(Boolean); // null/undefined 제거
+  
+  // 공동전시 여부 판단
+  const isGroupExhibition = exhibition.participantIdList && exhibition.participantIdList.length > 0;
 
   return (
     <div className={styles.container}>
       <ExhibitionHeader />
       
       <ExhibitionImage 
-        images={["/artwork1.png", "/artwork2.png", "/artwork3.png", "/creator-hero-image.png", "/example1.png"]} 
-        alt="전시 이미지" 
+        images={slideImages}
+        alt={exhibition.title}
+        loading={pieceImagesLoading}
       />
       
       <ExhibitionInfo 
-        date="24.12.5 - 25.2.19"
-        title="성북구 작가초대전 : 세 번째여름을 지나-"
+        date={`${exhibition.startDate} - ${exhibition.endDate}`}
+        title={exhibition.title}
         showDescription={false}
       />
       
       <ExhibitionCreator 
-        creatorName="김땡땡 크리에이터"
-        creatorImage="/creator-profile.png"
+        creatorName="전시 주최자" // API에서 크리에이터 정보 추가 시 수정 예정
+        creatorImage="/creator-profile.png" // API에서 크리에이터 정보 추가 시 수정 예정
       />
       
       <ExhibitionDescription 
-        description="이번 전시는 ---하다. 어떤 예술적 사조에 영향을 받았고, 어떤 것들을 통해 그런 감정을 전달하고자 했다. 이 전시를 감상할 때 ~한 점들을 생각하며 보면 더 재미있게 즐길 수 있을 것이다."
+        description={exhibition.description}
       />
       
       {/* 공동전시일 때만 참여 크리에이터 섹션 표시 */}
-      {exhibitionType === "공동전시" && (
-      <ExhibitionParticipants participants={participants} />
+      {isGroupExhibition && (
+        <ExhibitionParticipants 
+          participants={participants}
+          loading={participantsLoading}
+          error={participantsError}
+        />
       )}
 
-      <ExhibitionReviews exhibitionId="1" />
+      <ExhibitionReviews 
+        exhibitionId={exhibitionId.toString()}
+        reviews={reviews}
+        totalElements={totalElements}
+        loading={reviewsLoading}
+        error={reviewsError}
+      />
       
       <ExhibitionVenue 
-        venueName="석파정 서울 미술관 2관"
-        venueAddress="서울특별시 종로구 창의문로11길 4-1"
-        venueDates="24.11.26 - 24.11.30"
-        venueNote="아르티움 회원은 무료. 광화문역에서 하차 후 1164번 버스 탑승후 10분 소요."
-        mapImage="/wood-floor.jpg"
+        venueName={exhibition.addressName}
+        venueAddress={exhibition.address}
+        venueDates={`${exhibition.startDate} - ${exhibition.endDate}`}
+        venueNote={exhibition.offlineDescription}
+        mapImage="/wood-floor.jpg" // 지도 이미지는 추후 구현
       />
 
       <ExhibitionActions />

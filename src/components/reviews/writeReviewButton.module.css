@@ -1,0 +1,40 @@
+/* Write Review Button */
+.writeReviewContainer {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 344px;
+  z-index: 100;
+}
+
+.writeReviewButton {
+  width: 100%;
+  height: 48px;
+  background: var(--color-main);
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.2);
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.writeReviewButton:hover {
+  opacity: 0.9;
+}
+
+/* Responsive adjustments */
+@media (max-width: 430px) {
+  .writeReviewContainer {
+    width: calc(100% - 50px);
+    left: 25px;
+    transform: none;
+  }
+}

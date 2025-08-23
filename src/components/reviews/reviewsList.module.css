@@ -1,0 +1,10 @@
+/* Reviews List */
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: calc(100% + 64px);
+  margin-left: -32px;
+  margin-right: -32px;
+  margin-bottom: 20px;
+}

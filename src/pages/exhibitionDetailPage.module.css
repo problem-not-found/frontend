@@ -1,0 +1,18 @@
+.container {
+  max-width: 430px;
+  background: #F6F1EB;
+  position: relative;
+  margin: 0 auto;
+  /* 수평 스크롤 방지 */
+  overflow-x: hidden;
+  /* 전체 패딩 적용 */
+  padding: 10px 32px 40px 32px;
+  box-sizing: border-box;
+}
+
+/* Responsive adjustments */
+@media (max-width: 393px) {
+  .container {
+    width: 100%;
+  }
+}

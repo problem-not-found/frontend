@@ -1,0 +1,70 @@
+.itemContainer {
+  display: flex;
+  align-items: center;
+  padding: 8px 0px 8px 20px;
+  width: 100%;
+  height: 63.4px;
+  background: #CFDDE3;
+  border: 1px solid #000000;
+  margin-bottom: 8.52px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.itemContainer:hover {
+  opacity: 0.9;
+}
+
+.itemContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 267px;
+  flex-shrink: 0;
+}
+
+.profileImage {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #EEEEEE;
+}
+
+.textContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.creatorInfo {
+  width: 234px;
+}
+
+.creatorName {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 26px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  margin: 0;
+}
+
+.username {
+  color: var(--color-grayscale2, #989898);
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: -0.35px;
+}

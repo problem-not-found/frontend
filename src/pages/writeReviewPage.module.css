@@ -1,0 +1,156 @@
+.container {
+  max-width: 430px;
+  height: 100vh;
+  background: #F6F1EB;
+  position: relative;
+  margin: 0 auto;
+  overflow-x: hidden;
+  padding: 10px 32px 40px 32px;
+  box-sizing: border-box;
+}
+
+/* Header */
+.header {
+  padding: 0;
+  margin-bottom: 28px;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.backButton {
+  width: 44px;
+  height: 44px;
+  background: var(--color-main);
+  border: 1px solid #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.backButton:hover {
+  opacity: 0.8;
+}
+
+.headerTitle {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  margin: 0;
+}
+
+/* Notice */
+.notice {
+  margin-bottom: 24px;
+}
+
+.noticeText {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: -0.025em;
+  color: var(--color-main);
+  margin: 0;
+}
+
+/* Text Area */
+.textAreaContainer {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.textArea {
+  width: 100%;
+  height: 496px;
+  padding: 18px;
+  border: 1px solid #000000;
+  background: #F6F1EB;
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  resize: none;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.textArea::placeholder {
+  color: #434343;
+}
+
+.textArea:focus {
+  border-color: var(--color-main);
+}
+
+.charCount {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 12px;
+  color: #989898;
+  background: #F6F1EB;
+  padding: 2px 4px;
+}
+
+/* Submit Button */
+.submitContainer {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 344px;
+  z-index: 100;
+}
+
+.submitButton {
+  width: 100%;
+  height: 48px;
+  background: var(--color-main);
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.2);
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.submitButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 430px) {
+  .container {
+    width: 100%;
+  }
+  
+  .submitContainer {
+    width: calc(100% - 50px);
+    left: 25px;
+    transform: none;
+  }
+}

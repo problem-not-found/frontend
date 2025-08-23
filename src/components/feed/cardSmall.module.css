@@ -52,8 +52,8 @@
 }
 
 .like {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   background: var(--color-point);
   border: 1px solid #000;
   display: flex;
@@ -68,4 +68,9 @@
 
 .liked {
   color: var(--color-main);
+}
+
+.heartIcon {
+  width: 24px;
+  height: 24px;
 }

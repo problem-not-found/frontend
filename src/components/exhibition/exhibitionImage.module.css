@@ -1,0 +1,53 @@
+.exhibitionImageContainer {
+  position: relative;
+  width: 100%;
+  height: 304px;
+  margin: 20px 0 16px;
+  border: 1px solid #000000;
+  overflow: hidden;
+}
+
+.imageSlider {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.imageTrack {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.exhibitionImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.imageProgress {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 192px;
+  height: 4px;
+}
+
+.progressBar {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 2px;
+}
+
+.progressFill {
+  position: absolute;
+  height: 100%;
+  background: #FFFFFF;
+  border-radius: 2px;
+  transition: left 0.3s ease;
+}

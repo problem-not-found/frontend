@@ -23,6 +23,24 @@ body {
   color: #000;
   margin: 0;
   min-height: 100vh;
+  /* 스크롤바 숨김 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* 모든 요소의 스크롤바 숨김 */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* 웹킷 기반 브라우저의 스크롤바 숨김 */
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 h1,

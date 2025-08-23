@@ -1,0 +1,77 @@
+.filtersContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 32px 47px 40px;
+  background: #F6F1EB;
+}
+
+.categoryTabs {
+  display: flex;
+  gap: 36px;
+  align-items: center;
+}
+
+.categoryTab {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: 'Pretendard';
+  font-size: 15px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  padding: 0;
+}
+
+.activeTab {
+  font-weight: 700;
+  color: var(--color-main);
+}
+
+.inactiveTab {
+  font-weight: 500;
+  color: #434343;
+}
+
+.sortContainer {
+  position: relative;
+}
+
+.sortButton {
+  background: #CFDDE3;
+  border: 1px solid #000000;
+  padding: 4px 8px;
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  cursor: pointer;
+  outline: none;
+  min-width: 68px;
+  text-align: center;
+}
+
+.sortButton:hover {
+  opacity: 0.8;
+}
+
+.sortButton:focus {
+  border-color: var(--color-main);
+}
+
+.creatorNotice {
+  padding: 0 41px;
+  margin-bottom: 24px;
+}
+
+.noticeText {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 19px;
+  letter-spacing: -0.025em;
+  color: var(--color-main);
+  margin: 0;
+}

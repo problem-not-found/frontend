@@ -1,0 +1,30 @@
+.descriptionSection {
+  margin: 8px 0 0;
+  background: #CFDDE3;
+  padding: 22px 21px;
+  height: 164px;
+  box-sizing: border-box;
+}
+
+.descriptionContent {
+  width: 286px;
+}
+
+.medium {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: -0.025em;
+  color: #434343;
+}
+
+.description {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: -0.025em;
+  color: #434343;
+  margin: 0;
+}

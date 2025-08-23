@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./heroCard.module.css";
 import heroImg from "../../assets/feed/메인 이미지.png";
 import sample1 from "../../assets/feed/예시1.png";
 import sample2 from "../../assets/feed/예시2.png";
 
 export default function HeroCard({ images }) {
+  const navigate = useNavigate();
   const slides =
     Array.isArray(images) && images.length > 0
       ? images
@@ -41,6 +43,11 @@ export default function HeroCard({ images }) {
     return () => clearInterval(timer);
   }, [slides.length]);
 
+  const handleSlideClick = () => {
+    // 첫 번째 전시로 이동 (임시로 ID 1 사용)
+    navigate('/exhibition/1');
+  };
+
   return (
     <section className={styles.hero}>
       <div
@@ -53,7 +60,12 @@ export default function HeroCard({ images }) {
           style={{ transform: `translateX(-${index * 100}%)` }}
         >
           {slides.map((src, i) => (
-            <div className={styles.slide} key={i}>
+            <div 
+              className={styles.slide} 
+              key={i}
+              onClick={handleSlideClick}
+              style={{ cursor: 'pointer' }}
+            >
               <img
                 src={src}
                 alt={`slide-${i + 1}`}

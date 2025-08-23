@@ -1,0 +1,33 @@
+.tagsContainer {
+  padding: 25px 33px 0;
+  flex: 1;
+}
+
+.tagsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: 328px;
+}
+
+.tagItem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 7px 12px;
+  height: 40px;
+  background: #CFDDE3;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+}
+
+.tagText {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  text-align: center;
+  white-space: nowrap;
+}

@@ -1,0 +1,81 @@
+.review {
+  padding: 28px;
+  border-top: 1px solid #D9D9D9;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  position: relative;
+}
+
+.review:last-child {
+  border-bottom: 1px solid #D9D9D9;
+}
+
+.reviewHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.reviewerAvatar {
+  width: 31px;
+  height: 31px;
+  border-radius: 50%;
+  background: #D9D9D9;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.reviewerName {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: -0.025em;
+  color: #000000;
+}
+
+.reviewActions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.reportAction {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.actionButton, .reportButton {
+  background: none;
+  border: none;
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 26px;
+  letter-spacing: -0.025em;
+  color: #989898;
+  cursor: pointer;
+  padding: 0;
+}
+
+.actionButton:hover, .reportButton:hover {
+  opacity: 0.8;
+}
+
+.reviewText {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #434343;
+  margin: 0;
+}

@@ -1,9 +1,8 @@
-import { useState } from "react";
+import PropTypes from "prop-types";
 import styles from "./header.module.css";
 
-export default function Header() {
-  const menus = ["전시", "작품", "크리에이터", "상품", "AR체험"];
-  const [active, setActive] = useState("전시");
+export default function Header({ activeTab, onTabChange }) {
+  const menus = ["전시", "작품", "크리에이터"];
 
   return (
     <header className={styles.header}>
@@ -15,9 +14,9 @@ export default function Header() {
             key={item}
             type="button"
             className={`${styles.navItem} ${
-              item === active ? styles.active : ""
+              item === activeTab ? styles.active : ""
             }`}
-            onClick={() => setActive(item)}
+            onClick={() => onTabChange(item)}
           >
             {item}
           </button>
@@ -26,3 +25,8 @@ export default function Header() {
     </header>
   );
 }
+
+Header.propTypes = {
+  activeTab: PropTypes.string.isRequired,
+  onTabChange: PropTypes.func.isRequired,
+};

@@ -1,5 +1,6 @@
 .footer {
   position: sticky;
+  z-index: 1000;
   bottom: 0;
   background: var(--color-point);
   border-top: 1px solid #c3ccd4;

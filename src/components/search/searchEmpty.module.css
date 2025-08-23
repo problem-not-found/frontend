@@ -1,0 +1,53 @@
+.emptyContainer {
+  flex: 1;
+  padding: 52px 32px;
+  background: #F6F1EB;
+  overflow-y: auto;
+  padding-bottom: 100px; /* AppFooter 공간 확보 */
+}
+
+.sectionTitle {
+  margin-bottom: 13px;
+}
+
+.titleText {
+  font-family: 'Pretendard';
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  margin: 0;
+}
+
+.keywordsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.keywordButton {
+  background: #CFDDE3;
+  border: 1px solid #000000;
+  padding: 7px 12px;
+  height: 40px;
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  text-align: center;
+  cursor: pointer;
+  align-self: flex-start;
+  white-space: nowrap;
+}
+
+.keywordButton:hover {
+  opacity: 0.9;
+}
+
+.keywordButton:active {
+  transform: translateY(1px);
+}

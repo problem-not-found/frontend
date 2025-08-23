@@ -9,6 +9,7 @@ export default function HorizontalList({
   showVerticalLine = false,
   verticalLineHeight = 220,
   totalCount = 4,
+  isCreatorTab = false,
 }) {
   const [currentIndex, setCurrentIndex] = useState(1);
   const scrollerRef = useRef(null);
@@ -51,7 +52,10 @@ export default function HorizontalList({
           style={{ height: `${verticalLineHeight}px` }}
         />
       )}
-      <div className={styles.scroller} ref={scrollerRef}>
+      <div 
+        className={`${styles.scroller} ${isCreatorTab ? styles.scrollerWithHeight : ''}`} 
+        ref={scrollerRef}
+      >
         {content}
       </div>
     </div>

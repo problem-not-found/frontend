@@ -1,0 +1,17 @@
+.container {
+  max-width: 430px;
+  min-height: 100vh;
+  background: #F6F1EB;
+  position: relative;
+  margin: 0 auto;
+  overflow-x: hidden;
+  padding: 10px 32px 50px 32px;
+  box-sizing: border-box;
+}
+
+/* Responsive adjustments */
+@media (max-width: 430px) {
+  .container {
+    width: 100%;
+  }
+}

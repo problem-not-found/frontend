@@ -1,0 +1,17 @@
+.profileContainer {
+  padding: 48px 33px 0;
+}
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+}
+
+.profileText {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #434343;
+}

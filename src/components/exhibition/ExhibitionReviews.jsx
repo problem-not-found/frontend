@@ -1,4 +1,5 @@
 
+import { useNavigate } from 'react-router-dom';
 import styles from './exhibitionReviews.module.css';
 
 const ReviewItem = ({ reviewer, reviewText, avatarSrc }) => (
@@ -15,6 +16,7 @@ const ReviewItem = ({ reviewer, reviewText, avatarSrc }) => (
 );
 
 const ExhibitionReviews = ({
+  exhibitionId = "1",
   reviews = [
     {
       id: 1,
@@ -28,13 +30,18 @@ const ExhibitionReviews = ({
     }
   ]
 }) => {
+  const navigate = useNavigate();
+
+  const handleMoreReviews = () => {
+    navigate(`/reviews/${exhibitionId}`);
+  };
   return (
     <>
       {/* Clean Reviews Header */}
       <div className={styles.reviewsHeader}>
         <h3 className={styles.sectionTitle}>클린 감상평</h3>
         {reviews.length > 1 && (
-          <div className={styles.moreReviews}>
+          <div className={styles.moreReviews} onClick={handleMoreReviews}>
             <span className={styles.moreReviewsText}>리뷰 더 보기</span>
           </div>
         )}

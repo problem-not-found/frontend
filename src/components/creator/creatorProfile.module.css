@@ -1,0 +1,87 @@
+.profileSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 40px 0 16px;
+}
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profileAvatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #EEEEEE;
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.creatorNameContainer {
+  display: flex;
+  align-items: baseline;
+  height: 26px;
+}
+
+.creatorName {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 26px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  margin-right: 4px;
+}
+
+.creatorLabel {
+  color: #757575;
+  font-family: 'Pretendard';
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: -0.35px;
+}
+
+/* Action Buttons */
+.actionButtons {
+  display: flex;
+  gap: 10px;
+  height: 40px;
+}
+
+.heartButton, .shareButton {
+  width: 40px;
+  height: 40px;
+  background: #CFDDE3;
+  border: 1px solid #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.shareIconImg {
+  width: 24px;
+  height: 24px;
+}
+
+.heartIconImg {
+  width: 24px;
+  height: 24px;
+}
+
+.heartButton:hover, .shareButton:hover {
+  opacity: 0.8;
+}

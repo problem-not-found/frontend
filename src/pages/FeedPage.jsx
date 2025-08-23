@@ -11,20 +11,8 @@ import BackToTopButton from "@/components/common/BackToTopButton";
 import AppFooter from "@/components/footer/AppFooter";
 import styles from "@/components/feed/feed.module.css";
 import { useState } from "react";
-import FeedHeader from "../components/feed/Header";
-import FeedSearchBar from "../components/feed/SearchBar";
-import FeedHeroCard from "../components/feed/HeroCard";
-import SectionHeading from "../components/feed/SectionHeading";
-import FeedHorizontalList from "../components/feed/HorizontalList";
-import ExhibitionCardSmall from "../components/feed/CardSmall";
-import ExhibitionCardMedium from "../components/feed/CardMedium";
-import ExhibitionCardCompact from "../components/feed/CardCompact";
-import NearbyExhibitionCard from "../components/feed/NearbyCard";
-
 import CreatorContent from "../components/feed/CreatorContent";
-import BackToTopButton from "../components/common/BackToTopButton";
-import AppFooter from "../components/footer/AppFooter";
-import styles from "../components/feed/feed.module.css";
+
 
 export default function FeedPage() {
   const [activeTab, setActiveTab] = useState('전시'); // '전시', '작품', '크리에이터'

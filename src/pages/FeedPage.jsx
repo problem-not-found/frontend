@@ -37,7 +37,7 @@ export default function FeedPage() {
   const diffTaste = [
     { id: 21, title: "이몽규 네온 사진전", date: "24.11.26 - 24.11.30" },
     { id: 22, title: "SEOUL LIGHT DDP 2024 가을", date: "24.11.26 - 24.11.30" },
-    { id: 22, title: "SEOUL LIGHT DDP 2024 가을", date: "24.11.26 - 24.11.30" },
+    { id: 23, title: "SEOUL LIGHT DDP 2024 가을", date: "24.11.26 - 24.11.30" },
   ];
 
   const nearby = [

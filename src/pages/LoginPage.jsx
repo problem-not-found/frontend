@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { testLogin, redirectToKakaoLogin } from '../apis/auth';
 import logoImage from '../assets/login/logo.png';
 import styles from './loginPage.module.css';
 
@@ -6,17 +7,23 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleKakaoLogin = () => {
-    // 카카오 로그인 로직 구현
-    console.log('카카오 로그인');
-    // 임시로 메인 페이지로 이동
-    navigate('/');
+    try {
+      redirectToKakaoLogin();
+    } catch (error) {
+      console.error('카카오 로그인 오류:', error);
+      alert('카카오 로그인 중 오류가 발생했습니다.');
+    }
   };
 
-  const handleGuestLogin = () => {
-    // 체험용 로그인 로직 구현
-    console.log('체험용 로그인');
-    // 임시로 메인 페이지로 이동
-    navigate('/');
+  const handleGuestLogin = async () => {
+    try {
+ 
+      // 로그인 성공 시 메인 페이지로 이동
+      navigate('/');
+    } catch (error) {
+      console.error('테스트 로그인 오류:', error);
+      alert('테스트 로그인 중 오류가 발생했습니다.');
+    }
   };
 
   return (

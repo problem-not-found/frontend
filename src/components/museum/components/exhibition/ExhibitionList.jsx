@@ -99,7 +99,7 @@ export default function ExhibitionList({
 
   if (isCompletelyEmpty) {
     return (
-      <div className={styles.container}>
+      <div className={`${styles.container} ${styles.emptyContainer}`}>
         {/* 헤더 */}
         <div className={styles.header}>
           <div className={styles.headerLeft}>

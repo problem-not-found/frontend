@@ -9,7 +9,7 @@
 
 /* 헤더 */
 .header {
-  padding: 10px 0 20px;
+  padding: 10px 0 36px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,11 +19,6 @@
   display: flex;
   align-items: center;
   gap: 16px;
-}
-
-.headerRight {
-  display: flex;
-  align-items: center;
 }
 
 .backButton {
@@ -52,91 +47,104 @@
   margin: 0;
 }
 
+/* 검색창 */
 .searchContainer {
-  margin: 0 32px 32px 32px;
+  margin-bottom: 20px;
 }
 
-.searchInput {
-  width: 100%;
-  height: 48px;
+.searchBox {
+  display: flex;
+  align-items: center;
   background-color: #f6f1eb;
   border: 1px solid #f37021;
   border-radius: 0;
-  padding: 12px 20px;
+  height: 48px;
+  padding: 0 20px;
+  position: relative;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #f37021;
+  font-family: 'Pretendard', sans-serif;
   font-size: 16px;
   font-weight: 500;
-  font-style: normal;
   line-height: 19px;
   letter-spacing: -0.4px;
-  color: #f37021;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  outline: none;
 }
 
 .searchInput::placeholder {
   color: #f37021;
+  opacity: 1;
 }
 
 .searchIcon {
   width: 24px;
   height: 24px;
-  object-fit: contain;
-}
-
-.instructionText {
-  text-align: center;
-  font-size: 14px;
-  font-weight: 500;
-  font-style: normal;
-  line-height: 25px;
-  letter-spacing: -0.35px;
-  color: #434343;
-  margin: 0 32px 16px 32px;
-}
-
-.participantList {
-  margin: 0 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.participantCard {
-  width: 100%;
-  height: 63px;
-  background-color: #cfdde3;
-  border-radius: 0;
-  padding: 12px 20px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  justify-content: center;
 }
 
-.participantCard.selected {
+.searchIcon img {
+  width: 24px;
+  height: 24px;
+}
+
+/* 안내 메시지 */
+.infoText {
+  text-align: center;
+  color: #434343;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.35px;
+  margin: 16px 0 20px 0;
+}
+
+/* 사용자 목록 */
+.userList {
+  margin-bottom: 20px;
+}
+
+.userCard {
+  background-color: #cfdde3;
+  border: none;
+  border-radius: 0;
+  padding: 12px 20px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  height: 63px;
+  display: flex;
+  align-items: center;
+}
+
+.userCard:hover {
+  background-color: #b8c9d1;
+}
+
+.userCard.selected {
   background-color: #f37021;
 }
 
-.participantCard:hover {
-  background-color: #e0e8ed;
-}
-
-.participantCard.selected:hover {
-  background-color: #e65a1a;
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
 }
 
 .profileImage {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background-color: #eeeeee;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .profileImage img {
@@ -145,23 +153,74 @@
   object-fit: cover;
 }
 
-.participantInfo {
+.defaultProfile {
+  width: 100%;
+  height: 100%;
+  background-color: #eeeeee;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
   flex: 1;
 }
 
-.participantName {
+.displayName {
+  font-family: 'Pretendard', sans-serif;
   font-size: 20px;
   font-weight: 600;
-  font-style: normal;
   line-height: 26px;
   letter-spacing: -0.5px;
   color: #000;
-  margin: 0;
 }
 
-.bottomButton {
+.username {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 19px;
+  letter-spacing: -0.4px;
+  color: #666;
+}
+
+.userCard.selected .displayName,
+.userCard.selected .username {
+  color: #000;
+}
+
+/* 선택된 참여자 목록 */
+.selectedList {
+  margin-bottom: 20px;
+}
+
+.selectedTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #000;
+  margin: 0 0 12px 0;
+}
+
+.selectedList .userCard {
+  background-color: #f37021;
+}
+
+.selectedList .userCard:hover {
+  background-color: #e05a0a;
+}
+
+.selectedList .userCard .displayName,
+.selectedList .userCard .username {
+  color: #000;
+}
+
+/* 등록 완료 버튼 */
+.completeButton {
   position: fixed;
-  bottom: 32px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   width: 344px;
@@ -169,72 +228,60 @@
   background-color: #f37021;
   border: 1px solid #000;
   border-radius: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  color: #000;
+  font-family: 'Pretendard', sans-serif;
   font-size: 16px;
   font-weight: 500;
-  font-style: normal;
   line-height: 25px;
   letter-spacing: -0.4px;
-  color: #000;
+  cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.bottomButton:hover {
-  background-color: #e65a1a;
+.completeButton:hover:not(:disabled) {
+  background-color: #e05a0a;
 }
 
-.bottomButton:disabled {
-  background-color: #cccccc;
+.completeButton:disabled {
+  background-color: #f6f1eb;
   cursor: not-allowed;
+  color: #989898;
+  opacity: 0.6;
 }
 
-.notificationBanner {
+/* 성공 모달 */
+.successModal {
   position: fixed;
   bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
-  width: 312px;
-  height: 32px;
+  z-index: 1000;
+  animation: slideUp 0.3s ease-out;
+}
+
+.successMessage {
   background-color: #cfdde3;
   border: 1px solid #000;
+  padding: 8px 20px;
   border-radius: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-family: 'Pretendard', sans-serif;
   font-size: 12px;
   font-weight: 400;
-  font-style: normal;
   line-height: 16px;
   letter-spacing: -0.3px;
   color: #000;
   text-align: center;
-  padding: 0 20px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* 반응형 디자인 */
-@media (max-width: 480px) {
-  .header {
-    padding: 16px 24px;
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
   }
-  
-  .searchContainer {
-    margin: 0 24px 24px 24px;
-  }
-  
-  .participantList {
-    margin: 0 24px;
-  }
-  
-  .bottomButton {
-    width: calc(100% - 48px);
-    max-width: 344px;
-  }
-  
-  .notificationBanner {
-    width: calc(100% - 48px);
-    max-width: 312px;
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 }

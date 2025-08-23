@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import useUserStore from '@/stores/userStore';
 import chevronLeft from '@/assets/museum/chevron-left.png';
 import searchIcon from '@/assets/footer/search.svg';
 import styles from './exhibitionParticipantPage.module.css';
@@ -8,86 +7,77 @@ import styles from './exhibitionParticipantPage.module.css';
 export default function ExhibitionParticipantPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useUserStore();
   
   // 상태 관리
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedParticipants, setSelectedParticipants] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-  const [showNotification, setShowNotification] = useState(false);
+  const [selectedParticipants, setSelectedParticipants] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // URL state에서 전시 정보 받아오기
-  useEffect(() => {
-    if (location.state?.exhibitionData) {
-      console.log('전시 정보:', location.state.exhibitionData);
-    }
-  }, [location.state]);
+  const exhibitionData = location.state?.exhibitionData || {};
 
-  // 전시 정보가 없으면 전시 등록 페이지로 리다이렉트
+  // 더미 사용자 데이터 (실제로는 API에서 가져올 예정)
+  const dummyUsers = [
+    { id: 1, username: 'kimdangdeng', displayName: '김땡땡', profileImage: null },
+    { id: 2, username: 'simonkim', displayName: '정땡땡', profileImage: null },
+    { id: 3, username: 'kimchiman', displayName: 'kimman', profileImage: null },
+  ];
+
   useEffect(() => {
-    if (!location.state?.exhibitionData) {
-      navigate('/exhibition/upload');
+    // 검색어가 있을 때만 검색 결과 표시
+    if (searchQuery.trim()) {
+      const filtered = dummyUsers.filter(user => 
+        user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.displayName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchResults(filtered);
+      setIsSearching(true);
+    } else {
+      setSearchResults([]);
+      setIsSearching(false);
     }
-  }, [location.state, navigate]);
+  }, [searchQuery]);
 
   const handleBack = () => {
-    navigate('/exhibition/upload', {
-      state: {
-        exhibitionData: location.state?.exhibitionData
-      }
-    });
+    navigate('/museum');
   };
 
   const handleSearchChange = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
+    setSearchQuery(e.target.value);
+  };
+
+  const handleUserSelect = (user) => {
+    const isSelected = selectedParticipants.some(p => p.id === user.id);
     
-    // 검색어가 있을 때만 검색 결과 표시
-    if (query.trim()) {
-      // 실제로는 API 호출을 통해 사용자 검색
-      // 여기서는 더미 데이터 사용
-      const dummyResults = [
-        { id: 1, name: '김땡땡', username: 'kimdangdeng', profileImage: null },
-        { id: 2, name: '정땡땡', username: 'simonkim', profileImage: null },
-        { id: 3, name: 'kimman', username: 'kimchiman', profileImage: null }
-      ].filter(user => 
-        user.name.toLowerCase().includes(query.toLowerCase()) ||
-        user.username.toLowerCase().includes(query.toLowerCase())
-      );
-      setSearchResults(dummyResults);
+    if (isSelected) {
+      // 이미 선택된 사용자라면 제거
+      setSelectedParticipants(prev => prev.filter(p => p.id !== user.id));
     } else {
-      setSearchResults([]);
+      // 새로운 사용자라면 추가
+      setSelectedParticipants(prev => [...prev, user]);
     }
   };
 
-  const handleParticipantToggle = (participant) => {
-    setSelectedParticipants(prev => {
-      const isSelected = prev.find(p => p.id === participant.id);
-      if (isSelected) {
-        return prev.filter(p => p.id !== participant.id);
-      } else {
-        return [...prev, participant];
-      }
-    });
+  const handleComplete = () => {
+    // 성공 모달 표시
+    setShowSuccessModal(true);
+    
+    // 2초 후 화면 전환
+    setTimeout(() => {
+      // 전시 업로드 페이지로 돌아가면서 선택된 참여자 정보 전달
+      navigate('/exhibition/upload', {
+        state: {
+          participants: selectedParticipants,
+          exhibitionData
+        }
+      });
+    }, 2000);
   };
 
-  const handleCompleteRegistration = () => {
-    if (selectedParticipants.length === 0) {
-      alert('참여자를 선택해주세요.');
-      return;
-    }
-
-    // 전시 등록 페이지로 돌아가면서 참여자 정보 전달
-    navigate('/exhibition/upload', {
-      state: {
-        exhibitionData: location.state?.exhibitionData,
-        participants: selectedParticipants
-      }
-    });
-  };
-
-  const isParticipantSelected = (participantId) => {
-    return selectedParticipants.find(p => p.id === participantId);
+  const isUserSelected = (userId) => {
+    return selectedParticipants.some(p => p.id === userId);
   };
 
   return (
@@ -96,83 +86,110 @@ export default function ExhibitionParticipantPage() {
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <button className={styles.backButton} onClick={handleBack}>
-            <img src={chevronLeft} alt="back" className={styles.backIcon} />
+            <img src={chevronLeft} alt="뒤로가기" className={styles.backIcon} />
           </button>
-          <h1 className={styles.title}>전시 참여자 등록하기</h1>
+          <h1 className={styles.title}>
+            {selectedParticipants.length > 0 ? '전시 참여자 등록됨' : '전시 참여자 등록하기'}
+          </h1>
         </div>
       </div>
 
-      {/* 검색 입력창 */}
+      {/* 검색창 */}
       <div className={styles.searchContainer}>
-        <div className={styles.searchInput}>
+        <div className={styles.searchBox}>
           <input
             type="text"
-            placeholder="아이디로 사용자를 검색"
             value={searchQuery}
             onChange={handleSearchChange}
-            style={{
-              border: 'none',
-              background: 'transparent',
-              outline: 'none',
-              flex: 1,
-              fontSize: '16px',
-              fontWeight: 500,
-              color: '#f37021'
-            }}
+            placeholder="아이디로 사용자를 검색"
+            className={styles.searchInput}
           />
-          <img src={searchIcon} alt="search" className={styles.searchIcon} />
+          <div className={styles.searchIcon}>
+            <img src={searchIcon} alt="검색" />
+          </div>
         </div>
       </div>
 
-      {/* 검색 결과가 있을 때만 표시 */}
-      {searchResults.length > 0 && (
-        <>
-          <p className={styles.instructionText}>
-            {selectedParticipants.length > 0 
-              ? "프로필을 누르면 등록이 취소됩니다" 
-              : "프로필을 누르면 등록이 완료됩니다"
-            }
-          </p>
-
-          {/* 참여자 목록 */}
-          <div className={styles.participantList}>
-            {searchResults.map((participant) => (
-              <div
-                key={participant.id}
-                className={`${styles.participantCard} ${isParticipantSelected(participant.id) ? styles.selected : ''}`}
-                onClick={() => handleParticipantToggle(participant)}
-              >
-                <div className={styles.profileImage}>
-                  {participant.profileImage ? (
-                    <img src={participant.profileImage} alt={participant.name} />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', backgroundColor: '#eeeeee' }} />
-                  )}
-                </div>
-                <div className={styles.participantInfo}>
-                  <h3 className={styles.participantName}>
-                    {participant.name} @{participant.username}
-                  </h3>
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
+      {/* 안내 메시지 */}
+      {isSearching && searchResults.length > 0 && (
+        <p className={styles.infoText}>
+          {selectedParticipants.length === 0 
+            ? '프로필을 누르면 등록이 완료됩니다'
+            : `프로필을 누르면 등록이 취소됩니다 (${selectedParticipants.length})`
+          }
+        </p>
       )}
 
-      {/* 하단 버튼 */}
+      {/* 검색 결과 목록 */}
+      {isSearching && searchResults.length > 0 && (
+        <div className={styles.userList}>
+          {searchResults.map((user) => (
+            <div
+              key={user.id}
+              className={`${styles.userCard} ${isUserSelected(user.id) ? styles.selected : ''}`}
+              onClick={() => handleUserSelect(user)}
+            >
+              <div className={styles.userInfo}>
+                <div className={styles.profileImage}>
+                  {user.profileImage ? (
+                    <img src={user.profileImage} alt="프로필" />
+                  ) : (
+                    <div className={styles.defaultProfile} />
+                  )}
+                </div>
+                <div className={styles.userDetails}>
+                  <span className={styles.displayName}>{user.displayName}</span>
+                  <span className={styles.username}>@{user.username}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 선택된 참여자 목록 */}
+      {selectedParticipants.length > 0 && (
+        <div className={styles.selectedList}>
+          <h3 className={styles.selectedTitle}>선택된 참여자</h3>
+          {selectedParticipants.map((user) => (
+            <div
+              key={user.id}
+              className={`${styles.userCard} ${styles.selected}`}
+              onClick={() => handleUserSelect(user)}
+            >
+              <div className={styles.userInfo}>
+                <div className={styles.profileImage}>
+                  {user.profileImage ? (
+                    <img src={user.profileImage} alt="프로필" />
+                  ) : (
+                    <div className={styles.defaultProfile} />
+                  )}
+                </div>
+                <div className={styles.userDetails}>
+                  <span className={styles.displayName}>{user.displayName}</span>
+                  <span className={styles.username}>@{user.username}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 등록 완료 버튼 */}
       <button 
-        className={styles.bottomButton}
-        onClick={handleCompleteRegistration}
+        className={`${styles.completeButton} ${selectedParticipants.length === 0 ? styles.disabledButton : ''}`}
+        onClick={handleComplete}
         disabled={selectedParticipants.length === 0}
       >
         등록 완료하기
       </button>
 
-      {/* 알림 배너 */}
-      {showNotification && (
-        <div className={styles.notificationBanner}>
-          참여자가 등록 요청이 전송되었습니다
+      {/* 성공 모달 */}
+      {showSuccessModal && (
+        <div className={styles.successModal}>
+          <div className={styles.successMessage}>
+            참여자 등록 요청이 전송되었습니다
+          </div>
         </div>
       )}
     </div>

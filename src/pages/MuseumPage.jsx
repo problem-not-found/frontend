@@ -4,6 +4,7 @@ import MuseumProfile from "@museum/components/museum/MuseumProfile";
 import ArtworkSection from "@museum/components/museum/ArtworkSection";
 import ExhibitionSection from "@museum/components/museum/ExhibitionSection";
 import InsightSection from "@museum/components/museum/InsightSection";
+import InvitationSection from "@museum/components/museum/InvitationSection";
 import BackToTopButton from "@/components/common/BackToTopButton";
 import AppFooter from "@/components/footer/AppFooter";
 import useUserStore from "@/stores/userStore";
@@ -20,7 +21,7 @@ import exhibition2 from "@/assets/museum/큰사진2.png";
 
 export default function MuseumPage() {
   // Zustand에서 사용자 정보 가져오기
-  const { user, subscription } = useUserStore();
+  const { user, subscription, invitation } = useUserStore();
   
   // 스크롤 상태 관리
   const [isScrolled, setIsScrolled] = useState(false);
@@ -102,6 +103,15 @@ export default function MuseumPage() {
       
       <MuseumProfile user={user} />
       <PremiumBar />
+      
+      {/* 공동 전시 초대가 온 사용자에게만 보여주는 섹션 */}
+      {(invitation.hasInvitation || invitation.hasSharedLibraryRequest) && (
+        <InvitationSection 
+          hasInvitation={invitation.hasInvitation}
+          hasSharedLibraryRequest={invitation.hasSharedLibraryRequest}
+          invitationCount={invitation.invitationCount}
+        />
+      )}
       
       <main className={commonStyles.main}>
         <ArtworkSection artworks={artworks} />

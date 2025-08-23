@@ -35,6 +35,13 @@ const useUserStore = create(
         bankName: '국민은행',
       },
 
+      // 공동 전시 초대 관련 상태
+      invitation: {
+        hasInvitation: true, // 공동 전시 참여 요청 여부
+        hasSharedLibraryRequest: false, // 작품 공유 라이브러리 등록 필요 여부
+        invitationCount: 2, // 참여 요청 개수
+      },
+
       // 구독 상태 업데이트 (테스트용)
       updateSubscription: (subscriptionData) => {
         set(state => ({
@@ -54,6 +61,13 @@ const useUserStore = create(
         set(state => ({
           user: { ...state.user, ...userData }
         }))
+      },
+
+      // 공동 전시 초대 상태 업데이트
+      updateInvitation: (invitationData) => {
+        set(state => ({
+          invitation: { ...state.invitation, ...invitationData }
+        }))
       }
     }),
     {
@@ -62,7 +76,8 @@ const useUserStore = create(
         user: state.user,
         isLoggedIn: state.isLoggedIn,
         subscription: state.subscription,
-        contactInfo: state.contactInfo
+        contactInfo: state.contactInfo,
+        invitation: state.invitation
       })
     }
   )

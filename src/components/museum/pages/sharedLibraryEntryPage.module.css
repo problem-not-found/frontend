@@ -502,3 +502,30 @@
   text-align: center;
   box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.20);
 }
+
+/* 하단 고정 버튼 */
+.bottomButtonContainer {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.enterButton {
+  width: 366px;
+  height: 48px;
+  background: #f37021;
+  border: 1px solid #000;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.4px;
+  color: #000;
+  cursor: pointer;
+}
+
+.enterButton:hover {
+  background: #e55a00;
+}

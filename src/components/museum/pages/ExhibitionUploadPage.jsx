@@ -212,20 +212,21 @@ export default function ExhibitionUploadPage() {
     <div className={styles.container}>
       {/* 헤더 */}
       <div className={styles.header}>
-        <button className={styles.backButton} onClick={handleBack}>
-          <img src={chevronLeft} alt="back" className={styles.backIcon} />
-        </button>
-        <h1 className={styles.title}>전시 등록하기</h1>
+        <div className={styles.headerLeft}>
+          <button className={styles.backButton} onClick={handleBack}>
+            <img src={chevronLeft} alt="뒤로가기" className={styles.backIcon} />
+          </button>
+          <h1 className={styles.title}>전시 등록하기</h1>
+        </div>
       </div>
 
-      <div className={styles.content}>
-        <div className={styles.form}>
+      <div className={styles.form}>
           {/* 전시 썸네일 및 작품 등록 */}
           <div className={styles.artworkSection}>
             <h2 className={styles.sectionTitle}>전시 작품 등록</h2>
-            <div className={styles.artworkGrid}>
+            <div className={styles.artworkSlideContainer}>
               {/* 전시 썸네일 */}
-              <div className={styles.thumbnailSlide}>
+              <div className={styles.artworkSlide}>
                 <div className={styles.artworkImageContainer}>
                   {thumbnail ? (
                     <div className={styles.artworkImageWrapper}>
@@ -335,16 +336,10 @@ export default function ExhibitionUploadPage() {
                 }
               })}
             >
-              전시 참여자 등록하기
-              {location.state?.participants && (
-                <span className={styles.completedText}>
-                  ✓ {location.state.participants.length}명 등록됨
-                </span>
-              )}
+              {location.state?.participants ? '전시 참여자 등록됨' : '전시 참여자 등록하기'}
             </button>
           </div>
         </div>
-      </div>
 
       {/* 전시 작품 등록 모달 */}
       <ExhibitionArtworkModal

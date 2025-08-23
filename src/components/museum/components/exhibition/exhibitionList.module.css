@@ -1,10 +1,20 @@
 .container {
-  min-height: 100vh;
   background-color: #f6f1eb;
-  padding: 0 32px 100px;
+  padding: 0 32px;
   position: relative;
   max-width: 430px;
   margin: 0 auto;
+}
+
+/* 빈 상태가 아닐 때만 최소 높이 적용 */
+.container:not(.emptyContainer) {
+  min-height: 100vh;
+}
+
+/* 빈 상태일 때는 최소 높이 제거 */
+.emptyContainer {
+  min-height: auto;
+  height: auto;
 }
 
 /* 헤더 */

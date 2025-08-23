@@ -10,6 +10,9 @@ import DraftArtworkPage from "@/components/museum/pages/DraftArtworkPage";
 import ArtworkUploadPage from "@/components/museum/pages/ArtworkUploadPage";
 import ExhibitionUploadPage from "@/components/museum/pages/ExhibitionUploadPage";
 import ExhibitionParticipantPage from "@/components/museum/pages/ExhibitionParticipantPage";
+import ExhibitionInvitationPage from "@/components/museum/pages/ExhibitionInvitationPage";
+import SharedLibrarySelectionPage from "@/components/museum/pages/SharedLibrarySelectionPage";
+import SharedLibraryEntryPage from "@/components/museum/pages/SharedLibraryEntryPage";
 import OfflineLocationPage from "@/components/museum/pages/OfflineLocationPage";
 import MyExhibitionPage from "@/components/museum/pages/MyExhibitionPage";
 import ArtworkLibraryPage from "@/components/museum/pages/ArtworkLibraryPage";
@@ -39,6 +42,9 @@ const router = createBrowserRouter([
   { path: "/exhibition/my", element: <MyExhibitionPage /> },
   { path: "/exhibition/upload", element: <ExhibitionUploadPage /> },
   { path: "/exhibition/participants", element: <ExhibitionParticipantPage /> },
+  { path: "/exhibition/invitations", element: <ExhibitionInvitationPage /> },
+  { path: "/exhibition/shared-library-selection", element: <SharedLibrarySelectionPage /> },
+  { path: "/exhibition/shared-library-entry", element: <SharedLibraryEntryPage /> },
   { path: "/exhibition/offline-location", element: <OfflineLocationPage /> },
   { path: "/artwork/library", element: <ArtworkLibraryPage /> },
   { path: "/exhibition/date-picker", element: <ExhibitionDatePicker /> },

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { createReview } from '../apis/reviews';
 import BackToTopButton from '../components/common/BackToTopButton';
 import styles from './writeReviewPage.module.css';
 
@@ -12,17 +13,27 @@ const BackIcon = () => (
 
 const WriteReviewPage = () => {
   const navigate = useNavigate();
+  const { exhibitionId } = useParams();
   const [reviewText, setReviewText] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleBack = () => {
     navigate(-1);
   };
 
-  const handleSubmit = () => {
-    if (reviewText.trim()) {
-      console.log('리뷰 등록:', reviewText);
-      // API 호출 후 이전 페이지로 돌아가기
+  const handleSubmit = async () => {
+    if (!reviewText.trim() || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      await createReview(exhibitionId, reviewText.trim());
+      // 리뷰 등록 성공 시 이전 페이지로 돌아가기
       navigate(-1);
+    } catch (error) {
+      console.error('리뷰 등록 오류:', error);
+      alert('리뷰 등록 중 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -73,10 +84,10 @@ const WriteReviewPage = () => {
         <button 
           className={styles.submitButton} 
           onClick={handleSubmit}
-          disabled={!reviewText.trim()}
+          disabled={!reviewText.trim() || isSubmitting}
         >
-                  감상평 등록하기
-      </button>
+          {isSubmitting ? '등록 중...' : '감상평 등록하기'}
+        </button>
       </div>
       <BackToTopButton />
     </div>

@@ -17,6 +17,16 @@ const useUserStore = create(
         instagram: 'simonisnextdoor'
       },
       
+      // 사용자 선호도
+      preferences: {
+        exhibitions: [],
+        artworkMoods: [],
+        gender: '',
+        age: '',
+        nickname: '',
+        userId: '',
+      },
+      
       // 로그인 상태
       isLoggedIn: true,
       
@@ -60,6 +70,7 @@ const useUserStore = create(
       updateUser: (userData) => {
         set(state => ({
           user: { ...state.user, ...userData }
+
         }))
       },
 

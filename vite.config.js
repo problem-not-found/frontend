@@ -17,4 +17,18 @@ export default defineConfig({
       { find: '@museum', replacement: '/src/components/museum' },
     ],
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://api.artium.life',
+        changeOrigin: true,
+        secure: true,
+        configure: (proxy, options) => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            console.log('Proxying request:', req.method, req.url);
+          });
+        }
+      }
+    }
+  }
 });

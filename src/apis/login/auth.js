@@ -1,11 +1,11 @@
-import { APIService } from './axios.js';
+import { APIService } from '../axios.js';
 
 /**
  * 테스트 로그인 API
  */
 export const testLogin = async () => {
   try {
-    const response = await APIService.private.post('/api/auths/test-login');
+    const response = await APIService.public.post('/api/auths/test-login');
     return response;
   } catch (error) {
     console.error('테스트 로그인 실패:', error);

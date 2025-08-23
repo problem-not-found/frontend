@@ -237,10 +237,10 @@
 .emailInputContainer {
   display: flex;
   align-items: center;
-  gap: 4px;
   width: 100%;
   max-width: 100%;
-  overflow: hidden;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 
 .emailUsernameInput {
@@ -256,7 +256,8 @@
   line-height: 22px;
   box-sizing: border-box;
   flex: 1;
-  min-width: 80px;
+  min-width: 60px;
+  max-width: 110px;
   outline: none;
 }
 
@@ -272,6 +273,7 @@
   letter-spacing: -0.35px;
   line-height: 22px;
   padding: 0 4px;
+  flex-shrink: 0;
 }
 
 .emailDomainSelect {
@@ -288,6 +290,7 @@
   box-sizing: border-box;
   flex: 1;
   min-width: 90px;
+  max-width: 150px;
   cursor: pointer;
 }
 
@@ -305,6 +308,7 @@
   box-sizing: border-box;
   flex: 1;
   min-width: 90px;
+  max-width: 150px;
   outline: none;
 }
 

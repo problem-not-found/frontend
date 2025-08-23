@@ -6,7 +6,7 @@ export const artworks = [
     artist: "김민수",
     year: 2023,
     description: "현대 도시 풍경을 따뜻한 색조로 표현한 작품",
-    image: "https://picsum.photos/400/300?random=1",
+    image: "/artwork1.png",
     price: "150만원",
     position: [-8, 2.5, -7.8], // 뒷벽 왼쪽
   },
@@ -16,7 +16,7 @@ export const artworks = [
     artist: "이영희",
     year: 2023,
     description: "자연 속에서 찾은 평온함을 담은 추상화",
-    image: "https://picsum.photos/400/300?random=2",
+    image: "/artwork2.png",
     price: "200만원",
     position: [0, 2.5, -7.8], // 뒷벽 중앙
   },
@@ -26,7 +26,7 @@ export const artworks = [
     artist: "박철수",
     year: 2022,
     description: "과거와 현재를 잇는 시간의 흐름을 표현",
-    image: "https://picsum.photos/400/300?random=3",
+    image: "/artwork3.png",
     price: "180만원",
     position: [8, 2.5, -7.8], // 뒷벽 오른쪽
   },
@@ -36,7 +36,7 @@ export const artworks = [
     artist: "최수진",
     year: 2023,
     description: "푸른 바다의 무한함과 꿈을 그린 작품",
-    image: "https://picsum.photos/400/300?random=4",
+    image: "/artwork1.png",
     price: "220만원",
     position: [-17.3, 2.5, -4], // 왼쪽 벽 뒤쪽
   },
@@ -46,7 +46,7 @@ export const artworks = [
     artist: "정다은",
     year: 2023,
     description: "따스한 봄날의 감성을 담은 서정적 작품",
-    image: "https://picsum.photos/400/300?random=5",
+    image: "/artwork2.png",
     price: "160만원",
     position: [17.3, 2.5, -4], // 오른쪽 벽 뒤쪽
   },
@@ -56,7 +56,7 @@ export const artworks = [
     artist: "한지민",
     year: 2022,
     description: "현대인의 고독과 소통에 대한 성찰",
-    image: "https://picsum.photos/400/300?random=6",
+    image: "/artwork3.png",
     price: "190만원",
     position: [-17.3, 2.5, 4], // 왼쪽 벽 앞쪽
   },
@@ -66,7 +66,7 @@ export const artworks = [
     artist: "조영수",
     year: 2023,
     description: "세월이 남긴 흔적들의 아름다움을 포착한 작품",
-    image: "https://picsum.photos/400/300?random=7",
+    image: "/artwork1.png",
     price: "170만원",
     position: [17.3, 2.5, 4], // 오른쪽 벽 앞쪽
   },
@@ -76,7 +76,7 @@ export const artworks = [
     artist: "이서연",
     year: 2023,
     description: "희망찬 새벽을 맞이하는 마음을 그린 작품",
-    image: "https://picsum.photos/400/300?random=8",
+    image: "/artwork2.png",
     price: "210만원",
     position: [-6, 2.5, 7.8], // 앞쪽 벽 왼쪽
   },
@@ -86,7 +86,7 @@ export const artworks = [
     artist: "김태현",
     year: 2022,
     description: "바쁜 도시 생활 속에서 발견한 고유한 리듬감",
-    image: "https://picsum.photos/400/300?random=9",
+    image: "/artwork3.png",
     price: "185만원",
     position: [6, 2.5, 7.8], // 앞쪽 벽 오른쪽
   },

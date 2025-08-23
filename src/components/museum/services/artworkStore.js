@@ -10,7 +10,7 @@ const useArtworkStore = create((set, get) => ({
   applicated: true,
 
   pagination: {
-    pageNum: 0,
+    pageNum: 1,
     pageSize: 3,
     totalElements: 0,
     totalPages: 0,

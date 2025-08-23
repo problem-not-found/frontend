@@ -33,6 +33,7 @@ export default function ArtworkSection({ artworks = [] }) {
             style={{
               backgroundImage: artwork.image ? `url(${artwork.image})` : 'none'
             }}
+            title={artwork.title || `작품 ${index + 1}`}
           />
         ))}
         

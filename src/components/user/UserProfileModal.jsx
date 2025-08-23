@@ -43,11 +43,11 @@ export default function UserProfileModal({ isOpen, onClose, onEditClick }) {
 
         <div className={styles.contactSection}>
           <div className={styles.contactItem}>
-            <div className={styles.contactIcon}>📧</div>
+            <img src="/src/assets/user/mail2.png" alt="mail" className={styles.contactIcon} />
             <span className={styles.contactText}>이메일 {user.email}</span>
           </div>
           <div className={styles.contactItem}>
-            <div className={styles.contactIcon}>📷</div>
+            <img src="/src/assets/user/instagram.png" alt="instagram" className={styles.contactIcon} />
             <span className={styles.contactText}>인스타그램 @{user.instagram || user.nickname}</span>
           </div>
         </div>

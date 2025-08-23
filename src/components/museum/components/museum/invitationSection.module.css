@@ -1,16 +1,19 @@
 .invitationSection {
   margin-bottom: 20px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .invitationAlert {
   height: 48px;
-  width: 360px;
+  width: calc(100% - 70px);
+  max-width: 100%;
   border: 2px solid #F37021;
   background: #CEDDE4;
   border-right: none;
   display: flex;
   align-items: center;
-  padding: 0 40px;
+  padding: 0 20px;
   margin-top: 12px;
   margin-bottom: 12px;
   margin-left: 70px;
@@ -21,22 +24,31 @@
   line-height: 19px;
   letter-spacing: -0.4px;
   cursor: pointer;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sharedLibraryAlert {
   height: 48px;
-  width: 360px;
+  width: calc(100% - 70px);
+  max-width: 100%;
   border: 2px solid #F37021;
   background: #CEDDE4;
   border-right: none;
   margin: 12px 0 0 70px;
   display: flex;
   align-items: center;
-  padding: 0 40px;
+  padding: 0 20px;
   font-family: 'Pretendard', sans-serif;
   font-size: 16px;
   font-weight: 600;
   line-height: 19px;
   letter-spacing: -0.4px;
   cursor: pointer;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

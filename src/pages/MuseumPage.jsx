@@ -8,23 +8,43 @@ import InvitationSection from "@museum/components/museum/InvitationSection";
 import BackToTopButton from "@/components/common/BackToTopButton";
 import AppFooter from "@/components/footer/AppFooter";
 import useUserStore from "@/stores/userStore";
+import { fetchMyArtworks } from "@/apis/artwork";
 import styles from "@museum/components/museum/museum.module.css";
 import commonStyles from "@museum/components/museum/common.module.css";
 
 // 이미지 import
-import artwork1 from "@/assets/museum/큰사진3.png";
-import artwork2 from "@/assets/museum/큰사진4.png";
-import artwork3 from "@/assets/museum/큰사진5.png";
 import exhibition1 from "@/assets/museum/큰사진1.png";
 import exhibition2 from "@/assets/museum/큰사진2.png";
-
 
 export default function MuseumPage() {
   // Zustand에서 사용자 정보 가져오기
   const { user, subscription, invitation } = useUserStore();
   
+  // 작품 데이터 상태
+  const [artworks, setArtworks] = useState([]);
+  
   // 스크롤 상태 관리
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // 작품 데이터 로드
+  useEffect(() => {
+    const loadArtworks = async () => {
+      try {
+        console.log('작품 데이터 로드 시작...');
+        const response = await fetchMyArtworks(true, 0, 10); // 등록 완료된 작품 10개
+        console.log('API 응답:', response);
+        console.log('응답 데이터:', response.data);
+        console.log('작품 목록:', response.content);
+        
+        setArtworks(response.content || []);
+        console.log('설정된 작품 목록:', response.content || []);
+      } catch (error) {
+        console.error('작품 로드 오류:', error);
+      }
+    };
+
+    loadArtworks();
+  }, []);
 
   // 스크롤 이벤트 처리
   useEffect(() => {
@@ -36,26 +56,6 @@ export default function MuseumPage() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const artworks = [
-    { id: 1, image: artwork1, title: "정원에서의 오후" },
-    { id: 2, image: artwork2, title: "에트르타 절벽" },
-    { id: 3, image: artwork3, title: "바다 풍경" },
-    { id: 4, image: artwork1, title: "보르디게라의 정원" },
-    { id: 5, image: artwork2, title: "강가의 휴식" },
-    { id: 6, image: artwork3, title: "모네의 정원 시리즈 1" },
-    { id: 7, image: artwork1, title: "바위와 바다" },
-    { id: 8, image: artwork2, title: "푸른 바다" },
-    { id: 9, image: artwork3, title: "나무와 빛" },
-    { id: 10, image: artwork1, title: "물가의 평온" },
-    { id: 11, image: artwork2, title: "인상파 풍경 1" },
-    { id: 12, image: artwork3, title: "인상파 풍경 2" },
-    { id: 13, image: artwork1, title: "인상파 풍경 3" },
-    { id: 14, image: artwork2, title: "인상파 풍경 4" },
-    { id: 15, image: artwork3, title: "인상파 풍경 5" },
-    { id: 16, image: artwork1, title: "자연의 순간 1" },
-    { id: 17, image: artwork2, title: "자연의 순간 2" },
-  ];
 
   const exhibitions = [
     {

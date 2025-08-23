@@ -1,6 +1,4 @@
-import useUserStore from '@/stores/userStore'; // 네가 보여준 store 경로에 맞게 수정
-
-const API_BASE_URL = 'https://api.artium.life/api';
+import { fetchMyArtworks as fetchMyArtworksApi, deleteArtwork as deleteArtworkApi, updateArtworkStatus as updateArtworkStatusApi } from '@/apis/artwork';
 
 // 상태 텍스트 변환
 const getStatusText = (progressStatus) => ({
@@ -30,55 +28,46 @@ const transformArtworkData = (a) => ({
   userId: a.userId,
 });
 
-// 공통 fetch 헬퍼 (Bearer 붙이기)
-async function authFetch(url, options = {}) {
-  const token = useUserStore.getState().accessToken;
-  if (!token) throw new Error('401: 로그인 정보가 없습니다.');
-
-  const headers = {
-    Accept: 'application/json',
-    ...(options.headers || {}),
-    Authorization: `Bearer ${token}`, // Bearer 붙이기
-  };
-
-  const res = await fetch(url, { ...options, headers });
-  const text = await res.text();
-  let json = null;
-  try { json = JSON.parse(text); } catch { /* ignore */ }
-
-  if (!res.ok) {
-    const msg = json?.message || text || `HTTP ${res.status}`;
-    throw new Error(msg);
-  }
-  return json ?? {};
-}
-
 // 내 작품 목록 조회
 export async function fetchMyArtworks(applicated = true, pageNum = 0, pageSize = 3) {
-  const qs = new URLSearchParams({
-    applicated: String(applicated),
-    pageNum: String(pageNum),
-    pageSize: String(pageSize),
-  });
-  const data = await authFetch(`${API_BASE_URL}/pieces/my-page?${qs.toString()}`, { method: 'GET' });
-
-  if (data?.success === false) throw new Error(data.message || '작품 조회에 실패했습니다.');
-
-  const d = data.data || {};
-  return {
-    content: (d.content || []).map(transformArtworkData),
-    totalElements: d.totalElements,
-    totalPages: d.totalPages,
-    pageNum: d.pageNum,
-    pageSize: d.pageSize,
-    first: d.first,
-    last: d.last,
-  };
+  try {
+    const data = await fetchMyArtworksApi(applicated, pageNum, pageSize);
+    
+    // API 응답 구조에 따라 데이터 처리
+    const d = data.data || data;
+    return {
+      content: (d.content || []).map(transformArtworkData),
+      totalElements: d.totalElements,
+      totalPages: d.totalPages,
+      pageNum: d.pageNum,
+      pageSize: d.pageSize,
+      first: d.first,
+      last: d.last,
+    };
+  } catch (error) {
+    console.error('내 작품 조회 오류:', error);
+    throw error;
+  }
 }
 
 // 작품 삭제
 export async function deleteArtwork(pieceId) {
-  const data = await authFetch(`${API_BASE_URL}/pieces/${pieceId}`, { method: 'DELETE' });
-  if (data?.success === false) throw new Error(data.message || '작품 삭제에 실패했습니다.');
-  return data;
+  try {
+    const data = await deleteArtworkApi(pieceId);
+    return data;
+  } catch (error) {
+    console.error('작품 삭제 오류:', error);
+    throw error;
+  }
+}
+
+// 작품 상태 업데이트
+export async function updateArtworkStatus(pieceId, status) {
+  try {
+    const data = await updateArtworkStatusApi(pieceId, status);
+    return data;
+  } catch (error) {
+    console.error('작품 상태 업데이트 오류:', error);
+    throw error;
+  }
 }

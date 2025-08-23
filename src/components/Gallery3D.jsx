@@ -3,6 +3,8 @@ import { Environment } from "@react-three/drei";
 import { Suspense, useState } from "react";
 import Exhibition from "./Exhibition";
 import CameraController from "./CameraController";
+import ResetCameraButton from "./common/ResetCameraButton";
+import ControlsInfoModal from "./common/ControlsInfoModal";
 import "./Gallery3D.css";
 
 function LoadingFallback() {
@@ -31,6 +33,12 @@ function Gallery3D() {
         <h1>Artium Gallery</h1>
         <p>현대 미술의 새로운 시선</p>
       </div>
+
+      {/* 초기 위치로 돌아가기 버튼 */}
+      <ResetCameraButton />
+
+      {/* 조작법 정보 모달 */}
+      <ControlsInfoModal />
 
       <div className="canvas-container">
         <Suspense fallback={<LoadingFallback />}>
@@ -95,14 +103,6 @@ function Gallery3D() {
         </div>
       )}
 
-      <div className="gallery-footer">
-        <div className="controls-info">
-          <p>
-            🖱️ 클릭해서 시점 조작 활성화 | ⌨️ WASD로 이동 | 🔍 휠로 확대/축소 |
-            ✋ 작품 클릭으로 정보 보기
-          </p>
-        </div>
-      </div>
     </div>
   );
 }

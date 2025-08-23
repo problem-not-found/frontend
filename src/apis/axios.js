@@ -75,7 +75,7 @@ const deleteCookie = (name) => {
  * 토큰이 필요없는 일반 요청 (public API)
  */
 const publicApi = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_URL || 'https://api.artium.life',
+  baseURL: import.meta.env.VITE_APP_API_URL,
   timeout: 30000,
   withCredentials: true, //쿠키 자동 포함
 });
@@ -84,7 +84,7 @@ const publicApi = axios.create({
  * 토큰이 필요한 인증 요청 (private API)
  */
 const privateApi = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_URL || 'https://api.artium.life',
+  baseURL: import.meta.env.VITE_APP_API_URL,
   timeout: 30000,
   withCredentials: true, //쿠키 자동 포함
 });;

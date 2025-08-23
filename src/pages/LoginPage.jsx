@@ -17,7 +17,7 @@ const LoginPage = () => {
 
   const handleGuestLogin = async () => {
     try {
- 
+      await testLogin();
       // 로그인 성공 시 메인 페이지로 이동
       navigate('/');
     } catch (error) {

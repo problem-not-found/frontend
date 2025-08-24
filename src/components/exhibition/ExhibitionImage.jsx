@@ -1,10 +1,12 @@
 
 import { useState, useRef, useEffect } from 'react';
+import { ClipLoader } from 'react-spinners';
 import styles from './exhibitionImage.module.css';
 
 const ExhibitionImage = ({ 
   images = ["/artwork1.png"], 
-  alt = "전시 이미지" 
+  alt = "전시 이미지",
+  loading = false
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const startXRef = useRef(0);
@@ -45,38 +47,56 @@ const ExhibitionImage = ({
 
   return (
     <div className={styles.exhibitionImageContainer}>
-      <div 
-        className={styles.imageSlider}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-      >
-        <div 
-          className={styles.imageTrack}
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-        >
-          {images.map((src, index) => (
-            <img 
-              key={index}
-              src={src} 
-              alt={`${alt} ${index + 1}`} 
-              className={styles.exhibitionImage}
-            />
-          ))}
+      {loading ? (
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '300px',
+          backgroundColor: '#f5f5f5'
+        }}>
+          <ClipLoader color="var(--color-main)" size={30} />
         </div>
-      </div>
-      
-      {totalImages > 1 && (
-        <div className={styles.imageProgress}>
-          <div className={styles.progressBar}>
+      ) : (
+        <>
+          <div 
+            className={styles.imageSlider}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
             <div 
-              className={styles.progressFill}
-              style={{
-                width: `${progressWidth}%`,
-                left: `${progressPosition}%`
-              }}
-            ></div>
+              className={styles.imageTrack}
+              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            >
+              {images.map((src, index) => (
+                <img 
+                  key={index}
+                  src={src} 
+                  alt={`${alt} ${index + 1}`} 
+                  className={styles.exhibitionImage}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.src = "/artwork1.png"; // fallback image
+                  }}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+          
+          {totalImages > 1 && (
+            <div className={styles.imageProgress}>
+              <div className={styles.progressBar}>
+                <div 
+                  className={styles.progressFill}
+                  style={{
+                    width: `${progressWidth}%`,
+                    left: `${progressPosition}%`
+                  }}
+                ></div>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

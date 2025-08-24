@@ -9,11 +9,15 @@ export default function CardCompact({ item = {}, showBookmark = false }) {
   const [isLiked, setIsLiked] = useState(false);
   const navigate = useNavigate();
 
+  // API 응답 데이터 매핑
+  const isExhibition = item.exhibitionId !== undefined;
+  const isPiece = item.pieceId !== undefined;
+  
   const {
-    id = 1,
-    img = defaultImg,
-    title = "이몽규 네온 사진전",
-    date = "24.11.26 - 24.11.30",
+    id = isExhibition ? item.exhibitionId : isPiece ? item.pieceId : 1,
+    img = isExhibition ? item.thumbnailImageUrl : isPiece ? item.imageUrl : defaultImg,
+    title = item.title || "이몽규 네온 사진전",
+    date = isExhibition ? `${item.startDate} - ${item.endDate}` : "24.11.26 - 24.11.30",
   } = item;
 
   const handleLikeClick = (e) => {
@@ -22,7 +26,13 @@ export default function CardCompact({ item = {}, showBookmark = false }) {
   };
 
   const handleCardClick = () => {
-    navigate(`/exhibition/${id}`);
+    if (isExhibition) {
+      navigate(`/exhibition/${id}`);
+    } else if (isPiece) {
+      navigate(`/artwork/${id}`);
+    } else {
+      navigate(`/exhibition/${id}`); // fallback
+    }
   };
 
   return (
@@ -32,7 +42,15 @@ export default function CardCompact({ item = {}, showBookmark = false }) {
       onClick={handleCardClick}
     >
       <div className={styles.thumb}>
-        <img src={img} alt={title} className={styles.image} />
+        <img 
+          src={img} 
+          alt={title} 
+          className={styles.image}
+          loading="lazy"
+          onError={(e) => {
+            e.target.src = defaultImg;
+          }}
+        />
       </div>
       <div className={styles.bodyContainer}>
         <div className={styles.body}>

@@ -32,7 +32,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  height: 180px;
   box-sizing: border-box;
 }
 

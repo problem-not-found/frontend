@@ -1,7 +1,7 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.4165 13.9583V5.62488H17V13.9583M7.4165 13.9583H17M7.4165 13.9583L10.7499 10.625L17 13.9583M1.99976 21.8751H6.16649M17.8333 21.8751H22.0001" stroke="black" stroke-miterlimit="16"/>
-<path d="M4.08325 21.8752V16.0417C6.49599 18.5418 13.0405 22.0418 19.9168 16.0417V21.8752" stroke="black" stroke-linejoin="bevel"/>
-<circle cx="20.7839" cy="14.848" r="0.878392" fill="black"/>
-<circle cx="13.7568" cy="8.69925" r="0.878392" fill="black"/>
-<circle cx="3.21616" cy="14.848" r="0.878392" fill="black"/>
+<svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M5.41675 8.95846V0.625H15.0002V8.95846M5.41675 8.95846H15.0002M5.41675 8.95846L8.75013 5.62508L15.0002 8.95846M0 16.8752H4.16673M15.8336 16.8752H20.0003" stroke="#434343" stroke-miterlimit="16"/>
+<path d="M2.08398 16.8752V11.0417C4.49672 13.5418 11.0413 17.0418 17.9176 11.0417V16.8752" stroke="#434343" stroke-linejoin="bevel"/>
+<circle cx="18.7846" cy="9.84812" r="0.878392" fill="#434343"/>
+<circle cx="11.7573" cy="3.69944" r="0.878392" fill="#434343"/>
+<circle cx="1.21628" cy="9.84812" r="0.878392" fill="#434343"/>
 </svg>

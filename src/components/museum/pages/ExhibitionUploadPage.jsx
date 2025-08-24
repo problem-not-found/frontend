@@ -49,72 +49,37 @@ export default function ExhibitionUploadPage() {
   const isDateRangeSet = () => {
     const { startDate, endDate } = exhibitionData;
     
-    console.log('isDateRangeSet 호출됨:', {
-      startDate,
-      endDate,
-      startDateType: typeof startDate,
-      endDateType: typeof endDate,
-      startDateIsDate: startDate instanceof Date,
-      endDateIsDate: endDate instanceof Date
-    });
-    
     // Date 객체인 경우
     if (startDate instanceof Date && endDate instanceof Date) {
-      const result = !isNaN(startDate.getTime()) && !isNaN(endDate.getTime());
-      console.log('Date 객체 처리 결과:', result);
-      return result;
+      return !isNaN(startDate.getTime()) && !isNaN(endDate.getTime());
     }
     
     // 문자열인 경우 (YYYY-MM-DD 형식)
     if (typeof startDate === 'string' && typeof endDate === 'string') {
       const startPattern = /^\d{4}-\d{2}-\d{2}$/;
       const endPattern = /^\d{4}-\d{2}-\d{2}$/;
-      const startValid = startPattern.test(startDate);
-      const endValid = endPattern.test(endDate);
-      const result = startValid && endValid;
-      
-      console.log('문자열 처리 결과:', {
-        startValid,
-        endValid,
-        startPattern: startPattern.test(startDate),
-        endPattern: endPattern.test(endDate),
-        result
-      });
-      
-      return result;
+      return startPattern.test(startDate) && endPattern.test(endDate);
     }
     
-    console.log('조건에 맞지 않음, false 반환');
     return false;
   };
 
   // 오프라인 장소 등록 완료 상태 확인 함수
   const isOfflineLocationSet = () => {
-    const { address, addressName, offlineDescription } = offlineLocation;
-    
-    console.log('isOfflineLocationSet 호출됨:', {
-      address,
-      addressName,
-      offlineDescription,
-      addressType: typeof address,
-      addressNameType: typeof addressName,
-      offlineDescriptionType: typeof offlineDescription,
-      addressValid: address && address.trim().length > 0,
-      addressNameValid: addressName && addressName.trim().length > 0,
-      offlineDescriptionValid: offlineDescription && offlineDescription.trim().length > 0
-    });
-    
-    const result = address && address.trim().length > 0;
-    console.log('오프라인 장소 설정 결과:', result);
-    return result;
+    const { address, addressName } = offlineLocation;
+    return address && address.trim().length > 0 && addressName && addressName.trim().length > 0;
   };
 
   // 현재 입력 상태를 하나로 묶어 라우팅 state로 넘길 draft
   const buildDraft = () => {
+    // artworks에서 pieceId만 추출하여 리스트 구성
+    const pieceIds = artworks.map(artwork => artwork.pieceId || artwork.id).filter(Boolean);
+    
     const draft = {
       exhibitionData,
       thumbnail,
       artworks,
+      pieceIds, // pieceId 리스트 추가
       offlineLocation,
       participants,
       contactRegistered: contactInfo.isRegistered,
@@ -124,20 +89,14 @@ export default function ExhibitionUploadPage() {
       totalDays: exhibitionData.totalDays
     };
     
-    console.log('buildDraft 호출됨:', draft);
-    console.log('날짜 형식 확인 - startDate:', draft.startDate, 'endDate:', draft.endDate);
     return draft;
   };
 
     // 기간 설정 페이지에서 돌아왔을 때 데이터 복원 (통합)
   useEffect(() => {
-    console.log('useEffect 실행 - location.state:', location.state);
-    
     // location.state가 실제로 유효한 데이터를 가지고 있을 때만 처리
     if (location.state && (location.state.selectedDates || location.state.draft)) {
       const { selectedDates, draft } = location.state;
-      
-      console.log('데이터 복원 시작:', { selectedDates, draft });
       
       setExhibitionData(prev => {
         let newData = { ...prev };
@@ -175,12 +134,6 @@ export default function ExhibitionUploadPage() {
         if (!selectedDates && draft) {
           // draft에서 직접 날짜 데이터 복원
           if (draft.startDate && draft.endDate) {
-            console.log('draft에서 날짜 데이터 복원:', {
-              startDate: draft.startDate,
-              endDate: draft.endDate,
-              totalDays: draft.totalDays
-            });
-            
             newData = {
               ...newData,
               startDate: draft.startDate,
@@ -191,12 +144,6 @@ export default function ExhibitionUploadPage() {
           
           // draft.exhibitionData에서도 날짜 데이터 확인 및 복원
           if (draft.exhibitionData && draft.exhibitionData.startDate && draft.exhibitionData.endDate) {
-            console.log('draft.exhibitionData에서 날짜 데이터 복원:', {
-              startDate: draft.exhibitionData.startDate,
-              endDate: draft.exhibitionData.endDate,
-              totalDays: draft.exhibitionData.totalDays
-            });
-            
             newData = {
               ...newData,
               startDate: draft.exhibitionData.startDate,
@@ -214,10 +161,11 @@ export default function ExhibitionUploadPage() {
         if (draft.thumbnail) setThumbnail(draft.thumbnail);
         if (draft.artworks) setArtworks(draft.artworks);
         if (draft.offlineLocation) {
-          console.log('오프라인 장소 데이터 복원:', draft.offlineLocation);
           setOfflineLocation(draft.offlineLocation);
         }
-        if (draft.participants) setParticipants(draft.participants);
+        if (draft.participants && Array.isArray(draft.participants)) {
+          setParticipants(draft.participants);
+        }
         if (typeof draft.contactRegistered === 'boolean') {
           setContactInfo(prev => ({ ...prev, isRegistered: draft.contactRegistered }));
         }
@@ -276,7 +224,26 @@ export default function ExhibitionUploadPage() {
 
   // 연락 정보 등록 페이지에서 돌아왔을 때 전시 정보 복원
   useEffect(() => {
-    if (location.state?.contactUpdated && location.state?.exhibitionData) {
+    if (location.state?.contactUpdated && location.state?.draft) {
+      const { draft } = location.state;
+      
+      // draft에서 모든 상태 복원
+      if (draft.exhibitionData) {
+        setExhibitionData(prev => ({
+          ...prev,
+          ...draft.exhibitionData
+        }));
+      }
+      if (draft.thumbnail) setThumbnail(draft.thumbnail);
+      if (draft.artworks) setArtworks(draft.artworks);
+      if (draft.offlineLocation) setOfflineLocation(draft.offlineLocation);
+      if (draft.participants) setParticipants(draft.participants);
+      
+      setContactInfo(prev => ({
+        ...prev,
+        isRegistered: true
+      }));
+    } else if (location.state?.contactUpdated && location.state?.exhibitionData) {
       const { exhibitionData: savedExhibitionData, thumbnail: savedThumbnail, artworks: savedArtworks } = location.state;
       
       console.log('연락 정보 등록 후 복원 데이터:', {
@@ -322,10 +289,29 @@ export default function ExhibitionUploadPage() {
   // 작품 라이브러리에서 돌아왔을 때 선택된 작품들 처리
   useEffect(() => {
     if (location.state?.returnFromLibrary && location.state?.selectedArtworks) {
-      const { selectedArtworks, artworkIndex, isThumbnail } = location.state;
+      const { selectedArtworks, artworkIndex, isThumbnail, draft } = location.state;
       
       console.log('라이브러리에서 선택된 작품들:', selectedArtworks);
+      console.log('복원할 draft:', draft);
       
+      // 먼저 draft에서 상태 복원
+      if (draft) {
+        if (draft.exhibitionData) {
+          setExhibitionData(prev => ({
+            ...prev,
+            ...draft.exhibitionData
+          }));
+        }
+        if (draft.thumbnail) setThumbnail(draft.thumbnail);
+        if (draft.artworks) setArtworks(draft.artworks);
+        if (draft.offlineLocation) setOfflineLocation(draft.offlineLocation);
+        if (draft.participants) setParticipants(draft.participants);
+        if (typeof draft.contactRegistered === 'boolean') {
+          setContactInfo(prev => ({ ...prev, isRegistered: draft.contactRegistered }));
+        }
+      }
+      
+      // 그 다음 선택된 작품 처리
       if (isThumbnail) {
         // 썸네일로 선택된 경우
         if (selectedArtworks.length > 0) {
@@ -357,6 +343,64 @@ export default function ExhibitionUploadPage() {
     }
   }, [location.state]);
 
+  // 새 작품 등록 페이지에서 돌아왔을 때 처리
+  useEffect(() => {
+    if (location.state?.returnFromArtworkUpload && location.state?.draft) {
+      const { draft, newArtwork, isThumbnail } = location.state;
+      
+      console.log('새 작품 등록 후 복원 데이터:', { draft, newArtwork, isThumbnail });
+      
+      // draft에서 상태 복원
+      if (draft) {
+        if (draft.exhibitionData) {
+          setExhibitionData(prev => ({
+            ...prev,
+            ...draft.exhibitionData
+          }));
+        }
+        if (draft.thumbnail) setThumbnail(draft.thumbnail);
+        if (draft.artworks) setArtworks(draft.artworks);
+        if (draft.offlineLocation) setOfflineLocation(draft.offlineLocation);
+        if (draft.participants) setParticipants(draft.participants);
+        if (typeof draft.contactRegistered === 'boolean') {
+          setContactInfo(prev => ({ ...prev, isRegistered: draft.contactRegistered }));
+        }
+      }
+      
+      // 새로 등록된 작품 처리
+      if (newArtwork) {
+        if (isThumbnail) {
+          setThumbnail(newArtwork);
+        } else {
+          addArtwork(newArtwork);
+        }
+      }
+    }
+  }, [location.state]);
+
+  // Draft 초기화 함수
+  const resetDraft = () => {
+    setExhibitionData({
+      title: '',
+      description: '',
+      startDate: '', // YYYY-MM-DD 형식 문자열로 초기화
+      endDate: '',   // YYYY-MM-DD 형식 문자열로 초기화
+      totalDays: 0
+    });
+    setThumbnail(null);
+    setArtworks([]);
+    setOfflineLocation({
+      address: '',
+      addressName: '',
+      offlineDescription: ''
+    });
+    setParticipants([]);
+    setContactInfo({
+      isRegistered: false
+    });
+
+  };
+
   // 전시 등록 처리
   const handleSubmitExhibition = async () => {
     // 필수 입력 검증
@@ -383,13 +427,20 @@ export default function ExhibitionUploadPage() {
     
     setIsSubmitting(true);
     try {
-      // 실제 pieceIdList 사용
-      const pieceIdList = artworks.map(artwork => artwork.pieceId);
-      const participantIdList = participants.map(p => p.userId);
+      // buildDraft()에서 pieceIds 사용
+      const draft = buildDraft();
+      const pieceIdList = draft.pieceIds || [];
+      const participantIdList = participants.map(p => p.userId || p.id);
 
       // draft에서 날짜 데이터 사용 (이미 YYYY-MM-DD 형식)
-      const startDate = exhibitionData.startDate ? exhibitionData.startDate.toISOString().split('T')[0] : null;
-      const endDate = exhibitionData.endDate ? exhibitionData.endDate.toISOString().split('T')[0] : null;
+      const startDate = exhibitionData.startDate;
+      const endDate = exhibitionData.endDate;
+      
+      // thumbnailImageUrl 설정 (썸네일 작품의 이미지 URL)
+      let thumbnailImageUrl = null;
+      if (thumbnail) {
+        thumbnailImageUrl = thumbnail.imageUrl || thumbnail.url || thumbnail;
+      }
       
       const exhibitionPayload = {
         pieceIdList,
@@ -400,12 +451,14 @@ export default function ExhibitionUploadPage() {
         title: exhibitionData.title.trim(),
         offlineDescription: offlineLocation.offlineDescription || '오프라인 전시 설명 미입력',
         description: exhibitionData.description.trim(),
-        addressName: offlineLocation.addressName || '장소명 미입력'
+        addressName: offlineLocation.addressName || '장소명 미입력',
+        thumbnailImageUrl // 썸네일 이미지 URL 추가
       };
       
-      console.log('전시 등록 요청 데이터:', exhibitionPayload);
       const response = await createExhibition(exhibitionPayload);
-      console.log('전시 등록 성공:', response);
+      
+      // Draft 초기화
+      resetDraft();
       
       alert('전시가 성공적으로 등록되었습니다!');
       navigate('/museum');
@@ -461,17 +514,9 @@ export default function ExhibitionUploadPage() {
     }
   };
 
-  // 작품 라이브러리에서 가져오기 처리
-  const handleLoadFromLibrary = () => {
-    navigate('/artwork/library', {
-      state: {
-        fromExhibition: true,
-        currentArtworkIndex,
-        isChangeMode,
-        isThumbnail: currentArtworkIndex === -1
-      }
-    });
-  };
+
+
+
 
   // 작품 추가/수정/삭제 (객체 기반)
   const addArtwork = (artwork) => setArtworks(prev => [...prev, artwork]);
@@ -583,7 +628,7 @@ export default function ExhibitionUploadPage() {
                 {thumbnail ? (
                   <div className={styles.artworkImageWrapper}>
                     <img 
-                      src={URL.createObjectURL(thumbnail)} 
+                      src={thumbnail instanceof File ? URL.createObjectURL(thumbnail) : (thumbnail.imageUrl || thumbnail)} 
                       alt="전시 썸네일" 
                       className={styles.artworkImage}
                     />
@@ -655,15 +700,7 @@ export default function ExhibitionUploadPage() {
             className={`${styles.featureButton} ${contactInfo.isRegistered ? styles.contactRegistered : ''}`}
             onClick={() => navigate('/user/contact', {
               state: {
-                exhibitionData: {
-                  title: exhibitionData.title,
-                  description: exhibitionData.description,
-                  startDate: exhibitionData.startDate,
-                  endDate: exhibitionData.endDate,
-                  totalDays: exhibitionData.totalDays
-                },
-                thumbnail,
-                artworks
+                draft: buildDraft()
               }
             })}
           >
@@ -675,17 +712,7 @@ export default function ExhibitionUploadPage() {
             className={`${styles.featureButton} ${isOfflineLocationSet() ? styles.completed : ''}`}
             onClick={() => navigate('/exhibition/offline-location', {
               state: {
-                offlineLocation,
-                returnTo: 'exhibition-upload',
-                exhibitionData: {
-                  title: exhibitionData.title,
-                  description: exhibitionData.description,
-                  startDate: exhibitionData.startDate,
-                  endDate: exhibitionData.endDate,
-                  totalDays: exhibitionData.totalDays
-                },
-                thumbnail,
-                artworks
+                draft: buildDraft()
               }
             })}
           >
@@ -697,17 +724,7 @@ export default function ExhibitionUploadPage() {
             className={`${styles.featureButton} ${participants.length > 0 ? styles.completed : ''}`}
             onClick={() => navigate('/exhibition/participants', {
               state: {
-                participants,
-                returnTo: 'exhibition-upload',
-                exhibitionData: {
-                  title: exhibitionData.title,
-                  description: exhibitionData.description,
-                  startDate: exhibitionData.startDate,
-                  endDate: exhibitionData.endDate,
-                  totalDays: exhibitionData.totalDays
-                },
-                thumbnail,
-                artworks
+                draft: buildDraft()
               }
             })}
           >
@@ -732,10 +749,10 @@ export default function ExhibitionUploadPage() {
       <ExhibitionArtworkModal
         isOpen={isArtworkModalOpen}
         onClose={() => setIsArtworkModalOpen(false)}
-        onNewArtwork={handleNewArtwork}
-        onLoadFromLibrary={handleLoadFromLibrary}
         isThumbnail={currentArtworkIndex === -1}
         isChangeMode={isChangeMode}
+        currentDraft={buildDraft()} // 현재 상태를 모달에 전달
+        returnTo="exhibition-upload" // 돌아올 페이지 지정
       />
     </div>
   );

@@ -2,26 +2,32 @@ import { useState, useEffect, useCallback } from 'react';
 import APIService from '../axios';
 
 /**
- * 전시 등록 API
- * @param {Object} exhibitionData - 전시 등록 데이터
- * @param {number[]} exhibitionData.pieceIdList - 작품 ID 목록
- * @param {string} exhibitionData.endDate - 종료일 (YYYY-MM-DD)
- * @param {number[]} exhibitionData.participantIdList - 참여자 ID 목록
- * @param {string} exhibitionData.startDate - 시작일 (YYYY-MM-DD)
- * @param {string} exhibitionData.address - 주소
- * @param {string} exhibitionData.title - 전시 제목
- * @param {string} exhibitionData.offlineDescription - 오프라인 전시 설명
- * @param {string} exhibitionData.description - 전시 설명
- * @param {string} exhibitionData.addressName - 주소명
- * @returns {Promise} 전시 등록 결과
+ * 전시 등록 API (multipart/form-data)
+ * @param {Object} exhibitionData - DTO 그대로 JSON으로 보낼 데이터 (Swagger의 request object와 동일)
+ * @param {File=} imageFile - 썸네일 파일(선택). 없으면 생략 가능
+ * @returns {Promise}
  */
-export const createExhibition = async (exhibitionData) => {
+export const createExhibition = async (exhibitionData, imageFile) => {
   try {
-    const response = await APIService.private.post('/api/exhibitions', exhibitionData);
-    return response;
-  } catch (error) {
-    console.error('전시 등록 실패:', error);
-    throw error;
+    const formData = new FormData();
+
+    // ✅ 서버가 기대하는 "request" 파트에 JSON 통째로 담기
+    formData.append(
+      "request",
+      new Blob([JSON.stringify(exhibitionData)], { type: "application/json" })
+    );
+
+    // ✅ 이미지 파일 파트명은 Swagger의 "image"와 동일해야 함
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
+    // axios는 boundary 자동 설정
+    const res = await APIService.private.post("/api/exhibitions", formData);
+    return res;
+  } catch (err) {
+    console.error("전시 등록 실패:", err);
+    throw err;
   }
 };
 

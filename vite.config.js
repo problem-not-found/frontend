@@ -18,13 +18,12 @@ export default defineConfig({
     ],
   },
   server: {
-    host: '0.0.0.0',
-    port: 5173,
     proxy: {
+      // "/api"로 들어오는 요청을 백엔드로 프록시
       '/api': {
-        target: 'https://api.artium.life',
-        changeOrigin: true,
-      }
-    }
-  }
+        target: 'https://api.artium.life', // 백엔드 서버
+        changeOrigin: true,              // 호스트 헤더를 target으로 변경
+      },
+    },
+  },
 });

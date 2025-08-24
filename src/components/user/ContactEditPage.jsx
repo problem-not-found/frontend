@@ -12,6 +12,7 @@ export default function ContactEditPage() {
   
   // 전시 정보 상태 (전시 업로드 페이지에서 넘어온 경우)
   const [exhibitionData, setExhibitionData] = useState(null);
+  const [draft, setDraft] = useState(null);
   
   // 폼 상태 관리
   const [formData, setFormData] = useState({
@@ -26,7 +27,11 @@ export default function ContactEditPage() {
     const fetchData = async () => {
       try {
         // 전시 정보가 있는지 확인 (전시 업로드 페이지에서 넘어온 경우)
-        if (location.state?.exhibitionData) {
+        if (location.state?.draft) {
+          console.log('ContactEditPage에서 받은 draft 데이터:', location.state.draft);
+          setDraft(location.state.draft);
+          setExhibitionData(location.state.draft.exhibitionData);
+        } else if (location.state?.exhibitionData) {
           console.log('ContactEditPage에서 받은 전시 데이터:', location.state);
           setExhibitionData(location.state.exhibitionData);
         }
@@ -39,7 +44,6 @@ export default function ContactEditPage() {
           
           // 연락 정보 조회
           const contactResponse = await getUserContact(userId);
-          console.log('연락 정보 API 응답:', contactResponse);
           
           if (contactResponse && contactResponse.data) {
             const contactData = contactResponse.data;
@@ -79,21 +83,21 @@ export default function ContactEditPage() {
         ? `${formData.emailUsername}@${formData.customDomain}`
         : `${formData.emailUsername}@${formData.emailDomain}`;
 
-      console.log('저장할 연락정보:', {
-        email: finalEmail,
-        instagram: formData.instagram
-      });
-
       // API로 연락 정보 전송
       const response = await updateContact({
         email: finalEmail,
         instagram: formData.instagram
       });
 
-      console.log('연락 정보 등록 성공:', response);
-
       // 편집 완료 후 전시 정보가 있으면 전시 업로드 페이지로, 없으면 프로필 페이지로 이동
-      if (location.state?.exhibitionData) {
+      if (draft) {
+        navigate('/exhibition/upload', {
+          state: { 
+            draft: draft,
+            contactUpdated: true 
+          }
+        });
+      } else if (location.state?.exhibitionData) {
         navigate('/exhibition/upload', {
           state: { 
             exhibitionData: location.state.exhibitionData,
@@ -113,7 +117,14 @@ export default function ContactEditPage() {
 
   const handleBackClick = () => {
     // 전시 등록 페이지에서 이동한 경우 전시 업로드 페이지로, 아니면 프로필 페이지로 이동
-    if (location.state?.exhibitionData) {
+    if (draft) {
+      navigate('/exhibition/upload', {
+        state: { 
+          draft: draft,
+          contactUpdated: false // 뒤로가기이므로 contactUpdated는 false
+        }
+      });
+    } else if (location.state?.exhibitionData) {
       navigate('/exhibition/upload', {
         state: { 
           exhibitionData: location.state.exhibitionData,

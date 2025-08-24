@@ -10,7 +10,7 @@ export default function ArtworkLibraryPage() {
   const location = useLocation();
   
   // 전시 등록 페이지에서 전달받은 정보
-  const { fromExhibition, artworkIndex, isThumbnail, isChangeMode } = location.state || {};
+  const { fromExhibition, artworkIndex, isThumbnail, isChangeMode, draft, returnTo } = location.state || {};
   
   // API를 사용한 작품 목록 관리
   const {
@@ -52,8 +52,15 @@ export default function ArtworkLibraryPage() {
   }, [loading, hasMore, loadMorePieces]);
 
   const handleBack = () => {
-    if (fromExhibition) {
-      // 전시 등록 페이지로 돌아가기
+    if (fromExhibition && returnTo === 'exhibition-upload') {
+      // 전시 등록 페이지로 돌아가면서 draft 데이터 전달
+      navigate('/exhibition/upload', { 
+        state: { 
+          draft: draft
+        } 
+      });
+    } else if (fromExhibition) {
+      // 전시 등록 페이지로 돌아가기 (기존 방식)
       navigate('/exhibition/upload', { 
         state: { 
           returnFromLibrary: true,
@@ -100,15 +107,28 @@ export default function ArtworkLibraryPage() {
     );
     
     if (fromExhibition && selectedArtworkList.length > 0) {
-      // 전시 등록 페이지로 돌아가면서 선택된 작품 정보 전달
-      navigate('/exhibition/upload', { 
-        state: { 
-          returnFromLibrary: true,
-          selectedArtworks: selectedArtworkList, // 선택된 모든 작품 배열
-          artworkIndex: artworkIndex,
-          isThumbnail: isThumbnail
-        } 
-      });
+      if (returnTo === 'exhibition-upload') {
+        // draft 데이터와 함께 선택된 작품 정보 전달
+        navigate('/exhibition/upload', { 
+          state: { 
+            draft: draft,
+            returnFromLibrary: true,
+            selectedArtworks: selectedArtworkList, // 선택된 모든 작품 배열
+            artworkIndex: artworkIndex,
+            isThumbnail: isThumbnail
+          } 
+        });
+      } else {
+        // 기존 방식 (하위 호환성)
+        navigate('/exhibition/upload', { 
+          state: { 
+            returnFromLibrary: true,
+            selectedArtworks: selectedArtworkList, // 선택된 모든 작품 배열
+            artworkIndex: artworkIndex,
+            isThumbnail: isThumbnail
+          } 
+        });
+      }
     }
   };
 

@@ -301,3 +301,16 @@
   border: 1px solid #000;
   padding: 12px 20px;
 }
+
+.addressInput {
+  margin-bottom: 25px;
+}
+
+.inputLabel {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.4px;
+  color: #000;
+}

@@ -108,7 +108,7 @@ export const deleteUserAccount = async () => {
  */
 export const getUserProfilesByCode = async (userCode) => {
   try {
-    const response = await APIService.private.get(`/api/users/search?keyword=${userCode}`);
+    const response = await APIService.private.get(`/api/users/profile?code=${userCode}`);
     return response;
   } catch (error) {
     console.error('사용자 프로필 조회 실패:', error);

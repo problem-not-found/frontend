@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { createPiece } from '@apis/museum/artwork';
 import { getCurrentUser } from '@apis/user/user';
 import ArtworkModal from '@museum/components/artwork/ArtworkModal';
@@ -10,6 +10,14 @@ import styles from './artworkUploadPage.module.css';
 
 export default function ArtworkUploadPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // 전시 등록에서 넘어온 경우 draft 데이터 받기
+  const draft = location.state?.draft;
+  const fromExhibition = location.state?.fromExhibition;
+  const isThumbnail = location.state?.isThumbnail;
+  const isChangeMode = location.state?.isChangeMode;
+  const returnTo = location.state?.returnTo;
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -157,7 +165,14 @@ export default function ArtworkUploadPage() {
     if (formData.title || formData.description || formData.mainImage || formData.detailImages.length > 0) {
       setModal({ isOpen: true, type: 'cancel' });
     } else {
-      navigate('/artwork/my');
+      // 전시 등록에서 넘어온 경우 draft 데이터와 함께 돌아가기
+      if (fromExhibition && returnTo === 'exhibition-upload') {
+        navigate('/exhibition/upload', {
+          state: { draft: draft }
+        });
+      } else {
+        navigate('/artwork/my');
+      }
     }
   };
 
@@ -255,8 +270,15 @@ export default function ArtworkUploadPage() {
     // 등록 완료시 모달 닫고 페이지 이동
     setModal({ isOpen: false, type: null });
     
-    // 내 작품 페이지로 바로 이동
-    navigate('/artwork/my');
+    // 전시 등록에서 넘어온 경우 draft 데이터와 함께 돌아가기
+    if (fromExhibition && returnTo === 'exhibition-upload') {
+      navigate('/exhibition/upload', {
+        state: { draft: draft }
+      });
+    } else {
+      // 내 작품 페이지로 바로 이동
+      navigate('/artwork/my');
+    }
   };
 
   const handleCancelConfirm = () => {

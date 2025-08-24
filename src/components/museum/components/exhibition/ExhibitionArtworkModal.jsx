@@ -4,10 +4,10 @@ import styles from './exhibitionArtworkModal.module.css';
 export default function ExhibitionArtworkModal({ 
   isOpen, 
   onClose, 
-  onNewArtwork, 
-  onLoadFromLibrary,
   isThumbnail = false,
-  isChangeMode = false
+  isChangeMode = false,
+  currentDraft = null,
+  returnTo = 'exhibition-upload'
 }) {
   const navigate = useNavigate();
 
@@ -20,22 +20,30 @@ export default function ExhibitionArtworkModal({
   };
 
   const handleNewArtwork = () => {
-    // 새 작품 등록 페이지로 이동
+    // 새 작품 등록 페이지로 이동하면서 draft 데이터 전달
     navigate('/artwork/upload', {
       state: {
         fromExhibition: true,
-        currentArtworkIndex: isThumbnail ? -1 : 0,
+        isThumbnail,
         isChangeMode,
-        returnTo: 'exhibition-upload'
+        returnTo,
+        draft: currentDraft
       }
     });
     onClose();
   };
 
   const handleLoadFromLibrary = () => {
-    if (onLoadFromLibrary) {
-      onLoadFromLibrary();
-    }
+    // 작품 라이브러리 페이지로 이동하면서 draft 데이터 전달
+    navigate('/artwork/library', {
+      state: {
+        fromExhibition: true,
+        isThumbnail,
+        isChangeMode,
+        returnTo,
+        draft: currentDraft
+      }
+    });
     onClose();
   };
 

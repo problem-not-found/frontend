@@ -177,8 +177,7 @@ export default function ExhibitionDatePicker() {
         totalDays: getTotalDays()
       };
       
-      console.log('ExhibitionDatePicker - 날짜 데이터가 포함된 draft:', updatedDraft);
-      console.log('변환된 날짜:', { startDate: startDateString, endDate: endDateString });
+
       
       // 업로드 페이지로 돌아가면서 선택된 날짜 + draft 같이 전달
       // 업로드 페이지에서 location.state.selectedDates & .draft를 사용해 복원

@@ -16,8 +16,9 @@ export default function ExhibitionParticipantPage() {
   const [isSearching, setIsSearching] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // URL state에서 전시 정보 받아오기
-  const exhibitionData = location.state?.exhibitionData || {};
+  // URL state에서 draft 정보 받아오기
+  const draft = location.state?.draft || {};
+  const exhibitionData = draft.exhibitionData || {};
 
   // 사용자 검색 함수
   const searchUsers = async (query) => {
@@ -29,12 +30,10 @@ export default function ExhibitionParticipantPage() {
 
     setIsSearching(true);
     try {
-      // @를 앞에 붙여서 API 요청
-      const userCode = `@${query.trim()}`;
-      console.log('사용자 검색 요청:', userCode);
+      // 검색어를 그대로 사용
+      const keyword = query.trim();
       
-      const response = await getUserProfilesByCode(userCode);
-      console.log('사용자 검색 응답:', response);
+      const response = await getUserProfilesByCode(keyword);
       
       if (response && response.data && Array.isArray(response.data)) {
         setSearchResults(response.data);
@@ -90,11 +89,13 @@ export default function ExhibitionParticipantPage() {
     
     // 2초 후 화면 전환
     setTimeout(() => {
-      // 전시 업로드 페이지로 돌아가면서 선택된 참여자 정보 전달
+      // 전시 업로드 페이지로 돌아가면서 전체 draft 정보 전달
       navigate('/exhibition/upload', {
         state: {
-          participants: selectedParticipants,
-          exhibitionData
+          draft: {
+            ...draft,  // 기존 draft 데이터 모두 포함
+            participants: selectedParticipants  // 참여자 정보 추가/업데이트
+          }
         }
       });
     }, 2000);
@@ -135,7 +136,7 @@ export default function ExhibitionParticipantPage() {
       </div>
 
       {/* 안내 메시지 */}
-      {isSearching && searchResults.length > 0 && (
+      {searchResults.length > 0 && (
         <p className={styles.infoText}>
           {selectedParticipants.length === 0 
             ? '프로필을 누르면 등록이 완료됩니다'
@@ -145,7 +146,8 @@ export default function ExhibitionParticipantPage() {
       )}
 
       {/* 검색 결과 목록 */}
-      {isSearching && searchResults.length > 0 && (
+      {console.log('렌더링 조건 확인:', { isSearching, searchResultsLength: searchResults.length, searchResults })}
+      {searchResults.length > 0 && (
         <div className={styles.userList}>
           {searchResults.map((user) => (
             <div

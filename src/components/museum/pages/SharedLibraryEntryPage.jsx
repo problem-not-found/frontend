@@ -27,6 +27,10 @@ export default function SharedLibraryEntryPage() {
   const [isArtworkModalOpen, setIsArtworkModalOpen] = useState(false);
   const [currentArtworkIndex, setCurrentArtworkIndex] = useState(0);
   const [isChangeMode, setIsChangeMode] = useState(false);
+  
+  // 썸네일 및 작품 상태
+  const [thumbnail, setThumbnail] = useState(null);
+  const [artworks, setArtworks] = useState([]); // 작품 객체 배열
 
   const handleBack = () => {
     navigate('/exhibition/shared-library-selection');
@@ -39,6 +43,105 @@ export default function SharedLibraryEntryPage() {
       [name]: value
     }));
   };
+
+  // 작품 라이브러리에서 돌아왔을 때 선택된 작품들 처리
+  useEffect(() => {
+    if (location.state?.returnFromLibrary && location.state?.selectedArtworks) {
+      const { selectedArtworks, artworkIndex, isThumbnail, draft } = location.state;
+      
+      console.log('라이브러리에서 선택된 작품들:', selectedArtworks);
+      console.log('복원할 draft:', draft);
+      
+      // 먼저 draft에서 상태 복원
+      if (draft) {
+        if (draft.sharedLibraryData) {
+          setSharedLibraryData(prev => ({
+            ...prev,
+            ...draft.sharedLibraryData
+          }));
+        }
+        if (draft.thumbnail) setThumbnail(draft.thumbnail);
+        if (draft.artworks) setArtworks(draft.artworks);
+      }
+      
+      // 그 다음 선택된 작품 처리
+      if (isThumbnail) {
+        // 썸네일로 선택된 경우
+        if (selectedArtworks.length > 0) {
+          setThumbnail(selectedArtworks[0]);
+        }
+      } else {
+        // 공유 라이브러리 작품으로 선택된 경우
+        if (artworkIndex !== undefined) {
+          // 특정 인덱스에 작품 추가/교체
+          if (artworkIndex >= 0) {
+            if (artworkIndex < artworks.length) {
+              // 기존 작품 교체
+              updateArtwork(artworkIndex, selectedArtworks[0]);
+            } else {
+              // 새 작품 추가
+              addArtwork(selectedArtworks[0]);
+            }
+          } else {
+            // 새 작품 추가
+            addArtwork(selectedArtworks[0]);
+          }
+        } else {
+          // 여러 작품 추가
+          selectedArtworks.forEach(artwork => {
+            addArtwork(artwork);
+          });
+        }
+      }
+    }
+  }, [location.state]);
+
+  // draft에서 상태 복원
+  useEffect(() => {
+    if (location.state?.draft) {
+      const draft = location.state.draft;
+      
+      if (draft.sharedLibraryData) {
+        setSharedLibraryData(prev => ({
+          ...prev,
+          ...draft.sharedLibraryData
+        }));
+      }
+      
+      if (draft.thumbnail) setThumbnail(draft.thumbnail);
+      if (draft.artworks) setArtworks(draft.artworks);
+    }
+  }, [location.state]);
+
+  // 새 작품 등록 페이지에서 돌아왔을 때 처리
+  useEffect(() => {
+    if (location.state?.returnFromArtworkUpload && location.state?.draft) {
+      const { draft, newArtwork, isThumbnail } = location.state;
+      
+      console.log('새 작품 등록 후 복원 데이터:', { draft, newArtwork, isThumbnail });
+      
+      // draft에서 상태 복원
+      if (draft) {
+        if (draft.sharedLibraryData) {
+          setSharedLibraryData(prev => ({
+            ...prev,
+            ...draft.sharedLibraryData
+          }));
+        }
+        if (draft.thumbnail) setThumbnail(draft.thumbnail);
+        if (draft.artworks) setArtworks(draft.artworks);
+      }
+      
+      // 새로 등록된 작품 처리
+      if (newArtwork) {
+        if (isThumbnail) {
+          setThumbnail(newArtwork);
+        } else {
+          addArtwork(newArtwork);
+        }
+      }
+    }
+  }, [location.state]);
 
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
@@ -78,6 +181,34 @@ export default function SharedLibraryEntryPage() {
     }
   };
 
+  // 새 작품 등록 페이지로 이동
+  const handleNewArtworkPage = () => {
+    navigate('/artwork/upload', {
+      state: {
+        fromSharedLibrary: true,
+        currentArtworkIndex: currentArtworkIndex,
+        isChangeMode,
+        returnTo: 'shared-library-entry',
+        draft: buildDraft() // 현재 상태를 draft로 전달
+      }
+    });
+  };
+
+  // 현재 입력 상태를 하나로 묶어 라우팅 state로 넘길 draft
+  const buildDraft = () => {
+    const draft = {
+      sharedLibraryData,
+      thumbnail,
+      artworks,
+      startDate: sharedLibraryData.startDate || null,
+      endDate: sharedLibraryData.endDate || null,
+      totalDays: sharedLibraryData.totalDays
+    };
+    
+    console.log('buildDraft 호출됨:', draft);
+    return draft;
+  };
+
   // 작품 라이브러리에서 가져오기 처리
   const handleLoadFromLibrary = () => {
     // 작품 라이브러리 페이지로 이동
@@ -85,14 +216,25 @@ export default function SharedLibraryEntryPage() {
       state: {
         fromSharedLibrary: true,
         currentArtworkIndex,
-        isChangeMode
+        isChangeMode,
+        draft: buildDraft() // 현재 상태를 draft로 전달
       }
     });
   };
 
+  // 작품 추가/수정/삭제
+  const addArtwork = (artwork) => setArtworks(prev => [...prev, artwork]);
+  const updateArtwork = (index, artwork) => {
+    setArtworks(prev => {
+      const next = [...prev];
+      next[index] = artwork;
+      return next;
+    });
+  };
+  
   // 작품 제거 처리
   const removeArtwork = (index) => {
-    removeArtworkFromStore(index);
+    setArtworks(prev => prev.filter((_, i) => i !== index));
   };
 
   // 공유 라이브러리 작품 슬라이드 렌더링
@@ -107,7 +249,7 @@ export default function SharedLibraryEntryPage() {
             {artwork ? (
               <div className={styles.artworkImageWrapper}>
                 <img 
-                  src={URL.createObjectURL(artwork)} 
+                  src={artwork.imageUrl || artwork} 
                   alt={`작품 ${index + 1}`} 
                   className={styles.artworkImage}
                 />
@@ -189,7 +331,7 @@ export default function SharedLibraryEntryPage() {
                 {thumbnail ? (
                   <div className={styles.artworkImageWrapper}>
                     <img 
-                      src={URL.createObjectURL(thumbnail)} 
+                      src={thumbnail instanceof File ? URL.createObjectURL(thumbnail) : (thumbnail.imageUrl || thumbnail)} 
                       alt="공유 라이브러리 썸네일" 
                       className={styles.artworkImage}
                     />
@@ -261,10 +403,12 @@ export default function SharedLibraryEntryPage() {
       <ExhibitionArtworkModal
         isOpen={isArtworkModalOpen}
         onClose={() => setIsArtworkModalOpen(false)}
-        onNewArtwork={handleNewArtwork}
+        onNewArtwork={handleNewArtworkPage}
         onLoadFromLibrary={handleLoadFromLibrary}
         isThumbnail={currentArtworkIndex === -1}
         isChangeMode={isChangeMode}
+        currentDraft={buildDraft()} // 현재 상태를 모달에 전달
+        returnTo="shared-library-entry" // 돌아올 페이지 지정
       />
     </div>
   );

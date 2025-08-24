@@ -236,7 +236,10 @@ privateApi.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      (error.response?.status === 401 || error.response?.status === 403) &&
+      !originalRequest._retry
+    ) {
       if (isRefreshing) {
         // 이미 토큰 갱신 중이면 대기열에 추가
         return new Promise((resolve, reject) => {
@@ -292,9 +295,10 @@ privateApi.interceptors.response.use(
         });
         debugCookies(); // 실패 시에도 쿠키 상태 확인
 
-        // 401이면 토큰이 완전히 만료된 것이므로 로그인 페이지로
+        // 401, 403이면 토큰이 완전히 만료된 것이므로 로그인 페이지로
         if (
           refreshError.response?.status === 401 ||
+          refreshError.response?.status === 403 ||
           refreshError.message === "REFRESH_TOKEN이 없습니다."
         ) {
           forceLogout("세션이 만료되었습니다. 다시 로그인해주세요.");

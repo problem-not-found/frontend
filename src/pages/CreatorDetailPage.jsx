@@ -1,57 +1,123 @@
-import CreatorHeader from '../components/creator/CreatorHeader';
-import CreatorProfile from '../components/creator/CreatorProfile';
-import CreatorDescription from '../components/creator/CreatorDescription';
-import CreatorContact from '../components/creator/CreatorContact';
-import CreatorExhibitions from '../components/creator/CreatorExhibitions';
-import CreatorArtworks from '../components/creator/CreatorArtworks';
-import BackToTopButton from '../components/common/BackToTopButton';
-import styles from './creatorDetailPage.module.css';
+import { useParams } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
+import CreatorHeader from "../components/creator/CreatorHeader";
+import CreatorProfile from "../components/creator/CreatorProfile";
+import CreatorDescription from "../components/creator/CreatorDescription";
+import CreatorContact from "../components/creator/CreatorContact";
+import CreatorExhibitions from "../components/creator/CreatorExhibitions";
+import CreatorArtworks from "../components/creator/CreatorArtworks";
+import BackToTopButton from "../components/common/BackToTopButton";
+import {
+  useExhibitionAuthor,
+  useUserContact,
+  useUserPieces,
+  useUserExhibitions,
+} from "../apis/exhibition/exhibition";
+import styles from "./creatorDetailPage.module.css";
 
 const CreatorDetailPage = () => {
+  const { id } = useParams(); // URL에서 크리에이터 ID 가져오기
+  const creatorId = id ? parseInt(id, 10) : null;
+
+  // 크리에이터 기본 정보 가져오기
+  const {
+    author: creator,
+    loading: creatorLoading,
+    error: creatorError,
+  } = useExhibitionAuthor(creatorId);
+
+  // 크리에이터 연락처 정보 가져오기
+  const { contact, loading: contactLoading } = useUserContact(creatorId);
+
+  // 크리에이터 작품 목록 가져오기
+  const { pieces, loading: piecesLoading } = useUserPieces(creatorId, 1, 5);
+
+  // 크리에이터 전시 목록 가져오기
+  const { exhibitions, loading: exhibitionsLoading } = useUserExhibitions(
+    creatorId,
+    1,
+    5
+  );
+
+  // 로딩 상태
+  if (creatorLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <ClipLoader color="var(--color-main)" size={40} />
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (creatorError || !creator) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          flexDirection: "column",
+          gap: "20px",
+        }}
+      >
+        <h2>크리에이터 정보를 불러올 수 없습니다.</h2>
+        <p>잠시 후 다시 시도해주세요.</p>
+      </div>
+    );
+  }
+
+  // 작품 데이터 변환
+  const artworksForComponent = pieces.map((piece) => ({
+    id: piece.pieceId,
+    image: piece.imageUrl || "/artwork1.png",
+  }));
+
+  // 전시 데이터 변환
+  const exhibitionsForComponent = exhibitions.map((exhibition) => ({
+    id: exhibition.exhibitionId,
+    title: exhibition.title,
+    date: `${exhibition.startDate} - ${exhibition.endDate}`,
+    image: exhibition.thumbnailImageUrl || "/example1.png",
+  }));
+
   return (
     <div className={styles.container}>
       <CreatorHeader />
-      
-      <CreatorProfile 
-        creatorName="김땡땡 크리에이터"
-        creatorImage="/creator-profile.png"
+
+      <CreatorProfile
+        creatorName={creator.nickname || "크리에이터"}
+        creatorImage={creator.profileImageUrl || "/creator-profile.png"}
+        loading={creatorLoading}
+        creator={creator}
       />
-      
-      <CreatorDescription 
-        description="안녕하세요. 아름다운 바다 그림을 통해 많은 사람들에게 행복을 주고 싶은 크리에이터 김땡땡입니다."
+
+      <CreatorDescription
+        description={creator.introduction || "소개 정보가 없습니다."}
       />
-      
-      <CreatorContact 
-        email="asd123@naver.com"
-        instagram="@simonisnextdoor"
+
+      <CreatorContact
+        email={contact?.email || ""}
+        instagram={contact?.instagram || ""}
+        loading={contactLoading}
       />
-      
-      <CreatorArtworks 
-        artworkCount={17}
-        artworks={[
-          { id: 1, image: "/artwork1.png" },
-          { id: 2, image: "/artwork2.png" },
-          { id: 3, image: "/artwork3.png" },
-          { id: 4, image: "/creator-hero-image.png" },
-          { id: 5, image: "/example1.png" }
-        ]}
-        exhibitionCount={2}
-        exhibitions={[
-          {
-            id: 1,
-            title: "김땡땡 개인전 : 두 번째 여름",
-            date: "24.12.5 - 25.2.19",
-            image: "/creator-hero-image.png"
-          },
-          {
-            id: 2,
-            title: "김땡땡 개인전",
-            date: "24.12.5 - 25.2.19",
-            image: "/example1.png"
-          }
-        ]}
+
+      <CreatorArtworks
+        artworkCount={pieces.length}
+        artworks={artworksForComponent}
+        exhibitionCount={exhibitions.length}
+        exhibitions={exhibitionsForComponent}
+        artworksLoading={piecesLoading}
+        exhibitionsLoading={exhibitionsLoading}
       />
-      
+
       <BackToTopButton />
     </div>
   );

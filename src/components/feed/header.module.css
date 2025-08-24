@@ -5,12 +5,14 @@
   padding: 16px 16px 8px;
 }
 .brand {
-  font-family: "Times New Roman", serif;
-  font-size: 60px;
-  letter-spacing: 1px;
-  color: #000;
   text-align: center;
-  padding: 40px;
+  padding: 40px 40px 0px;
+}
+
+.logo {
+  width: 187px;
+  height: auto;
+  object-fit: contain;
 }
 .nav {
   display: flex;

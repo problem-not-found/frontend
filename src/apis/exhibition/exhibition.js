@@ -1,5 +1,27 @@
-import { useState, useEffect, useCallback } from 'react';
-import APIService from '../axios';
+import { useState, useEffect, useCallback } from "react";
+import APIService from "../axios";
+
+/**
+ * 전시 검색 API
+ * @param {string} keyword - 검색 키워드
+ * @param {string} sortBy - 정렬 방식 (HOTTEST, LATEST)
+ * @returns {Promise} 검색 결과
+ */
+export const searchExhibitions = async (keyword, sortBy = "HOTTEST") => {
+  try {
+    const response = await APIService.private.get("/api/exhibitions/search", {
+      params: {
+        keyword,
+        sortBy,
+      },
+    });
+    console.log("전시 검색 결과:", response.data);
+    return response.data.data;
+  } catch (error) {
+    console.error("전시 검색 실패:", error);
+    throw error;
+  }
+};
 
 /**
  * 전시 상세 정보 조회 API
@@ -8,10 +30,12 @@ import APIService from '../axios';
  */
 export const getExhibitionDetail = async (exhibitionId) => {
   try {
-    const response = await APIService.public.get(`/api/exhibitions/${exhibitionId}`);
+    const response = await APIService.public.get(
+      `/api/exhibitions/${exhibitionId}`
+    );
     return response;
   } catch (error) {
-    console.error('전시 상세 정보 조회 실패:', error);
+    console.error("전시 상세 정보 조회 실패:", error);
     throw error;
   }
 };
@@ -26,17 +50,17 @@ export const getPieceDetail = async (pieceId) => {
     const response = await APIService.public.get(`/api/pieces/${pieceId}`);
     return response;
   } catch (error) {
-    console.error('작품 조회 실패:', error.response?.status, error.message);
+    console.error("작품 조회 실패:", error.response?.status, error.message);
     // 404 에러인 경우 기본값 반환
     if (error.response?.status === 404) {
       return {
         data: {
           data: {
             pieceId: pieceId,
-            imageUrl: '/artwork1.png', // fallback 이미지
-            title: `작품 ${pieceId}`
-          }
-        }
+            imageUrl: "/artwork1.png", // fallback 이미지
+            title: `작품 ${pieceId}`,
+          },
+        },
       };
     }
     throw error;
@@ -50,10 +74,16 @@ export const getPieceDetail = async (pieceId) => {
  */
 export const getUserDetail = async (userId) => {
   try {
-    const response = await APIService.public.get(`/api/users/${userId}/creator`);
+    const response = await APIService.public.get(
+      `/api/users/${userId}/creator`
+    );
     return response;
   } catch (error) {
-    console.error('크리에이터 조회 실패:', error.response?.status, error.message);
+    console.error(
+      "크리에이터 조회 실패:",
+      error.response?.status,
+      error.message
+    );
     // 404 에러인 경우 기본값 반환
     if (error.response?.status === 404) {
       return {
@@ -61,11 +91,289 @@ export const getUserDetail = async (userId) => {
           data: {
             userId: userId,
             nickname: `크리에이터 ${userId}`,
-            profileImageUrl: '/creator-profile.png' // fallback 이미지
-          }
-        }
+            profileImageUrl: "/creator-profile.png", // fallback 이미지
+          },
+        },
       };
     }
+    throw error;
+  }
+};
+
+/**
+ * 사용자 연락처 정보 조회 API
+ * @param {number} userId - 사용자 ID
+ * @returns {Promise} 사용자 연락처 정보
+ */
+export const getUserContact = async (userId) => {
+  try {
+    const response = await APIService.public.get(
+      `/api/users/${userId}/contact`
+    );
+    return response;
+  } catch (error) {
+    console.error(
+      "사용자 연락처 정보 조회 실패:",
+      error.response?.status,
+      error.message
+    );
+    // 404 에러인 경우 기본값 반환
+    if (error.response?.status === 404) {
+      return {
+        data: {
+          data: {
+            userId: userId,
+            email: "",
+            instagram: "",
+          },
+        },
+      };
+    }
+    throw error;
+  }
+};
+
+/**
+ * 크리에이터의 작품 목록 조회 API
+ * @param {number} userId - 사용자 ID
+ * @param {number} pageNum - 페이지 번호
+ * @param {number} pageSize - 페이지 크기
+ * @returns {Promise} 작품 목록
+ */
+export const getUserPieces = async (userId, pageNum = 1, pageSize = 5) => {
+  try {
+    const response = await APIService.public.get("/api/pieces/users", {
+      params: {
+        userId,
+        pageNum,
+        pageSize,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error(
+      "크리에이터 작품 목록 조회 실패:",
+      error.response?.status,
+      error.message
+    );
+    throw error;
+  }
+};
+
+/**
+ * 크리에이터의 전시 목록 조회 API
+ * @param {number} userId - 사용자 ID
+ * @param {number} pageNum - 페이지 번호
+ * @param {number} pageSize - 페이지 크기
+ * @returns {Promise} 전시 목록
+ */
+export const getUserExhibitions = async (userId, pageNum = 1, pageSize = 5) => {
+  try {
+    const response = await APIService.public.get("/api/exhibitions/users", {
+      params: {
+        userId,
+        pageNum,
+        pageSize,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error(
+      "크리에이터 전시 목록 조회 실패:",
+      error.response?.status,
+      error.message
+    );
+    throw error;
+  }
+};
+
+/**
+ * 크리에이터 좋아요 API
+ * @param {number} userId - 사용자 ID
+ * @returns {Promise} 좋아요 결과
+ */
+export const likeCreator = async (userId) => {
+  try {
+    const response = await APIService.public.post(`/api/users/${userId}/like`);
+    return response;
+  } catch (error) {
+    console.error(
+      "크리에이터 좋아요 실패:",
+      error.response?.status,
+      error.message
+    );
+    throw error;
+  }
+};
+
+/**
+ * 크리에이터 좋아요 취소 API
+ * @param {number} userId - 사용자 ID
+ * @returns {Promise} 좋아요 취소 결과
+ */
+export const unlikeCreator = async (userId) => {
+  try {
+    const response = await APIService.public.delete(
+      `/api/users/${userId}/like`
+    );
+    return response;
+  } catch (error) {
+    console.error(
+      "크리에이터 좋아요 취소 실패:",
+      error.response?.status,
+      error.message
+    );
+    throw error;
+  }
+};
+
+/**
+ * 전시 좋아요 API
+ * @param {number} exhibitionId - 전시 ID
+ * @returns {Promise} 좋아요 결과
+ */
+export const likeExhibition = async (exhibitionId) => {
+  try {
+    const response = await APIService.public.post(
+      `/api/exhibitions/${exhibitionId}/like`
+    );
+    return response;
+  } catch (error) {
+    console.error("전시 좋아요 실패:", error.response?.status, error.message);
+    throw error;
+  }
+};
+
+/**
+ * 전시 좋아요 취소 API
+ * @param {number} exhibitionId - 전시 ID
+ * @returns {Promise} 좋아요 취소 결과
+ */
+export const unlikeExhibition = async (exhibitionId) => {
+  try {
+    const response = await APIService.public.delete(
+      `/api/exhibitions/${exhibitionId}/like`
+    );
+    return response;
+  } catch (error) {
+    console.error(
+      "전시 좋아요 취소 실패:",
+      error.response?.status,
+      error.message
+    );
+    throw error;
+  }
+};
+
+/**
+ * 작품 좋아요 API
+ * @param {number} pieceId - 작품 ID
+ * @returns {Promise} 좋아요 결과
+ */
+export const likePiece = async (pieceId) => {
+  try {
+    const response = await APIService.public.post(
+      `/api/pieces/${pieceId}/likes`
+    );
+    return response;
+  } catch (error) {
+    console.error("작품 좋아요 실패:", error.response?.status, error.message);
+    throw error;
+  }
+};
+
+/**
+ * 작품 좋아요 취소 API
+ * @param {number} pieceId - 작품 ID
+ * @returns {Promise} 좋아요 취소 결과
+ */
+export const unlikePiece = async (pieceId) => {
+  try {
+    const response = await APIService.public.delete(
+      `/api/pieces/${pieceId}/likes`
+    );
+    return response;
+  } catch (error) {
+    console.error(
+      "작품 좋아요 취소 실패:",
+      error.response?.status,
+      error.message
+    );
+    throw error;
+  }
+};
+
+/**
+ * 좋아요한 전시 목록 조회 API
+ * @param {number} pageNum - 페이지 번호 (1부터 시작)
+ * @param {number} pageSize - 페이지 사이즈 (기본 10)
+ * @returns {Promise} 좋아요한 전시 목록
+ */
+export const getLikedExhibitions = async (pageNum = 1, pageSize = 10) => {
+  try {
+    const response = await APIService.public.get("/api/exhibitions/like", {
+      params: {
+        pageNum,
+        pageSize,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error(
+      "좋아요한 전시 목록 조회 실패:",
+      error.response?.status,
+      error.message
+    );
+    throw error;
+  }
+};
+
+/**
+ * 좋아요한 작품 목록 조회 API
+ * @param {number} pageNum - 페이지 번호 (1부터 시작)
+ * @param {number} pageSize - 페이지 사이즈 (기본 10)
+ * @returns {Promise} 좋아요한 작품 목록
+ */
+export const getLikedPieces = async (pageNum = 1, pageSize = 10) => {
+  try {
+    const response = await APIService.public.get("/api/pieces/likes", {
+      params: {
+        pageNum,
+        pageSize,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error(
+      "좋아요한 작품 목록 조회 실패:",
+      error.response?.status,
+      error.message
+    );
+    throw error;
+  }
+};
+
+/**
+ * 좋아요한 크리에이터 목록 조회 API
+ * @param {number} pageNum - 페이지 번호 (1부터 시작)
+ * @param {number} pageSize - 페이지 사이즈 (기본 10)
+ * @returns {Promise} 좋아요한 크리에이터 목록
+ */
+export const getLikedCreators = async (pageNum = 1, pageSize = 10) => {
+  try {
+    const response = await APIService.public.get("/api/users/likes", {
+      params: {
+        pageNum,
+        pageSize,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error(
+      "좋아요한 크리에이터 목록 조회 실패:",
+      error.response?.status,
+      error.message
+    );
     throw error;
   }
 };
@@ -77,17 +385,66 @@ export const getUserDetail = async (userId) => {
  */
 export const getExhibitionReviewsPreview = async (exhibitionId) => {
   try {
-    const response = await APIService.public.get(`/api/exhibitions/${exhibitionId}/reviews`, {
-      params: {
-        pageNum: 1,
-        pageSize: 3
+    const response = await APIService.public.get(
+      `/api/exhibitions/${exhibitionId}/reviews`,
+      {
+        params: {
+          pageNum: 1,
+          pageSize: 3,
+        },
       }
-    });
+    );
     return response;
   } catch (error) {
-    console.error('전시 감상평 미리보기 조회 실패:', error);
+    console.error("전시 감상평 미리보기 조회 실패:", error);
     throw error;
   }
+};
+
+/**
+ * 작품 상세 정보를 위한 커스텀 훅
+ * @param {number} pieceId - 작품 ID
+ * @returns {object} 작품 데이터와 상태 관리
+ */
+export const usePieceDetail = (pieceId) => {
+  const [piece, setPiece] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchPieceDetail = useCallback(async () => {
+    if (!pieceId || isNaN(pieceId)) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await getPieceDetail(pieceId);
+      console.log("작품 상세 정보 API 응답:", response);
+      // API 응답 구조: {data: {success: true, data: {실제데이터}}}
+      const apiResponse = response.data?.data || response.data || response;
+      console.log("파싱된 작품 데이터:", apiResponse);
+
+      setPiece(apiResponse);
+    } catch (err) {
+      setError(err);
+      console.error("작품 상세 정보 로드 실패:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [pieceId]);
+
+  useEffect(() => {
+    fetchPieceDetail();
+  }, [fetchPieceDetail]);
+
+  return {
+    piece,
+    loading,
+    error,
+    refetch: fetchPieceDetail,
+  };
 };
 
 /**
@@ -104,19 +461,19 @@ export const useExhibitionDetail = (exhibitionId) => {
     if (!exhibitionId || isNaN(exhibitionId)) {
       return;
     }
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getExhibitionDetail(exhibitionId);
       // API 응답 구조: {data: {success: true, data: {실제데이터}}}
       const apiResponse = response.data?.data || response.data || response;
-      
+
       setExhibition(apiResponse);
     } catch (err) {
       setError(err);
-      console.error('전시 상세 정보 로드 실패:', err);
+      console.error("전시 상세 정보 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -130,7 +487,7 @@ export const useExhibitionDetail = (exhibitionId) => {
     exhibition,
     loading,
     error,
-    refetch: fetchExhibitionDetail
+    refetch: fetchExhibitionDetail,
   };
 };
 
@@ -149,29 +506,29 @@ export const usePieceImages = (pieceIdList) => {
       setPieceImages([]);
       return;
     }
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       // 모든 작품을 병렬로 조회
-      const promises = pieceIdList.map(pieceId => getPieceDetail(pieceId));
+      const promises = pieceIdList.map((pieceId) => getPieceDetail(pieceId));
       const responses = await Promise.all(promises);
-      
-      const images = responses.map(response => {
+
+      const images = responses.map((response) => {
         // API 응답 구조: {data: {success: true, data: {실제데이터}}}
         const pieceData = response.data?.data || response.data || response;
         return {
           pieceId: pieceData.pieceId,
           imageUrl: pieceData.imageUrl,
-          title: pieceData.title
+          title: pieceData.title,
         };
       });
-      
+
       setPieceImages(images);
     } catch (err) {
       setError(err);
-      console.error('작품 이미지 로드 실패:', err);
+      console.error("작품 이미지 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -185,7 +542,7 @@ export const usePieceImages = (pieceIdList) => {
     pieceImages,
     loading,
     error,
-    refetch: fetchPieceImages
+    refetch: fetchPieceImages,
   };
 };
 
@@ -204,25 +561,25 @@ export const useParticipantCreators = (participantIdList) => {
       setParticipants([]);
       return;
     }
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       // 모든 참여자를 병렬로 조회
-      const promises = participantIdList.map(userId => getUserDetail(userId));
+      const promises = participantIdList.map((userId) => getUserDetail(userId));
       const responses = await Promise.all(promises);
-      
-      const creators = responses.map(response => {
+
+      const creators = responses.map((response) => {
         // API 응답 구조: {data: {success: true, data: {실제데이터}}}
         const userData = response.data?.data || response.data || response;
         return userData;
       });
-      
+
       setParticipants(creators);
     } catch (err) {
       setError(err);
-      console.error('참여 크리에이터 로드 실패:', err);
+      console.error("참여 크리에이터 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -236,7 +593,197 @@ export const useParticipantCreators = (participantIdList) => {
     participants,
     loading,
     error,
-    refetch: fetchParticipants
+    refetch: fetchParticipants,
+  };
+};
+
+/**
+ * 사용자 연락처 정보를 가져오는 커스텀 훅
+ * @param {number} userId - 사용자 ID
+ * @returns {object} 연락처 정보와 상태 관리
+ */
+export const useUserContact = (userId) => {
+  const [contact, setContact] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchContact = useCallback(async () => {
+    if (!userId || isNaN(userId)) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await getUserContact(userId);
+      console.log("연락처 정보 API 응답:", response);
+      // API 응답 구조: {data: {success: true, data: {실제데이터}}}
+      const contactData = response.data?.data || response.data || response;
+      console.log("파싱된 연락처 데이터:", contactData);
+
+      setContact(contactData);
+    } catch (err) {
+      setError(err);
+      console.error("연락처 정보 로드 실패:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    fetchContact();
+  }, [fetchContact]);
+
+  return {
+    contact,
+    loading,
+    error,
+    refetch: fetchContact,
+  };
+};
+
+/**
+ * 전시 주최자 정보를 가져오는 커스텀 훅
+ * @param {number} userId - 주최자 사용자 ID
+ * @returns {object} 주최자 정보와 상태 관리
+ */
+export const useExhibitionAuthor = (userId) => {
+  const [author, setAuthor] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchAuthor = useCallback(async () => {
+    if (!userId || isNaN(userId)) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await getUserDetail(userId);
+      console.log("작가 정보 API 응답:", response);
+      // API 응답 구조: {data: {success: true, data: {실제데이터}}}
+      const userData = response.data?.data || response.data || response;
+      console.log("파싱된 작가 데이터:", userData);
+
+      setAuthor(userData);
+    } catch (err) {
+      setError(err);
+      console.error("전시 주최자 정보 로드 실패:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    fetchAuthor();
+  }, [fetchAuthor]);
+
+  return {
+    author,
+    loading,
+    error,
+    refetch: fetchAuthor,
+  };
+};
+
+/**
+ * 크리에이터 작품 목록을 위한 커스텀 훅
+ * @param {number} userId - 사용자 ID
+ * @param {number} pageNum - 페이지 번호
+ * @param {number} pageSize - 페이지 크기
+ * @returns {object} 작품 목록과 상태 관리
+ */
+export const useUserPieces = (userId, pageNum = 1, pageSize = 5) => {
+  const [pieces, setPieces] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchPieces = useCallback(async () => {
+    if (!userId || isNaN(userId)) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await getUserPieces(userId, pageNum, pageSize);
+      console.log("크리에이터 작품 목록 API 응답:", response);
+      // API 응답 구조: {data: {success: true, data: {content: [...]}}}
+      const apiResponse = response.data?.data || response.data || response;
+      const piecesList = apiResponse.content || [];
+      console.log("파싱된 작품 목록:", piecesList);
+
+      setPieces(piecesList);
+    } catch (err) {
+      setError(err);
+      console.error("크리에이터 작품 목록 로드 실패:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [userId, pageNum, pageSize]);
+
+  useEffect(() => {
+    fetchPieces();
+  }, [fetchPieces]);
+
+  return {
+    pieces,
+    loading,
+    error,
+    refetch: fetchPieces,
+  };
+};
+
+/**
+ * 크리에이터 전시 목록을 위한 커스텀 훅
+ * @param {number} userId - 사용자 ID
+ * @param {number} pageNum - 페이지 번호
+ * @param {number} pageSize - 페이지 크기
+ * @returns {object} 전시 목록과 상태 관리
+ */
+export const useUserExhibitions = (userId, pageNum = 1, pageSize = 5) => {
+  const [exhibitions, setExhibitions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchExhibitions = useCallback(async () => {
+    if (!userId || isNaN(userId)) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await getUserExhibitions(userId, pageNum, pageSize);
+      console.log("크리에이터 전시 목록 API 응답:", response);
+      // API 응답 구조: {data: {success: true, data: {content: [...]}}}
+      const apiResponse = response.data?.data || response.data || response;
+      const exhibitionsList = apiResponse.content || [];
+      console.log("파싱된 전시 목록:", exhibitionsList);
+
+      setExhibitions(exhibitionsList);
+    } catch (err) {
+      setError(err);
+      console.error("크리에이터 전시 목록 로드 실패:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [userId, pageNum, pageSize]);
+
+  useEffect(() => {
+    fetchExhibitions();
+  }, [fetchExhibitions]);
+
+  return {
+    exhibitions,
+    loading,
+    error,
+    refetch: fetchExhibitions,
   };
 };
 
@@ -255,22 +802,22 @@ export const useExhibitionReviewsPreview = (exhibitionId) => {
     if (!exhibitionId || isNaN(exhibitionId)) {
       return;
     }
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getExhibitionReviewsPreview(exhibitionId);
       // API 응답 구조: {data: {success: true, data: {content: [...]}}}
       const apiResponse = response.data?.data || response.data || response;
       const reviewsList = apiResponse.content || [];
       const total = apiResponse.totalElements || 0;
-      
+
       setReviews(reviewsList);
       setTotalElements(total);
     } catch (err) {
       setError(err);
-      console.error('전시 감상평 미리보기 로드 실패:', err);
+      console.error("전시 감상평 미리보기 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -285,6 +832,21 @@ export const useExhibitionReviewsPreview = (exhibitionId) => {
     totalElements,
     loading,
     error,
-    refetch: fetchReviewsPreview
+    refetch: fetchReviewsPreview,
   };
+};
+
+/**
+ * 사용자 관심사 정보 조회 API
+ * @returns {Promise} 사용자의 나이, 성별, 선호도 정보
+ */
+export const getUserPreferences = async () => {
+  try {
+    const response = await APIService.private.get("/api/users/preferences");
+    console.log("사용자 관심사 조회 성공:", response.data);
+    return response;
+  } catch (error) {
+    console.error("사용자 관심사 조회 실패:", error);
+    throw error;
+  }
 };

@@ -1,10 +1,11 @@
-import styles from './creatorContact.module.css';
-import mailIcon from '../../assets/artwork/mail.svg';
-import instagramIcon from '../../assets/artwork/instagram.svg';
+import styles from "./creatorContact.module.css";
+import mailIcon from "../../assets/artwork/mail.svg";
+import instagramIcon from "../../assets/artwork/instagram.svg";
 
-const CreatorContact = ({ 
+const CreatorContact = ({
   email = "asd123@naver.com",
-  instagram = "@simonisnextdoor"
+  instagram = "@simonisnextdoor",
+  loading = false,
 }) => {
   return (
     <div className={styles.contactSection}>
@@ -14,16 +15,61 @@ const CreatorContact = ({
             <img src={mailIcon} alt="메일" className={styles.contactIcon} />
           </div>
           <div className={styles.iconContainer}>
-            <img src={instagramIcon} alt="인스타그램" className={styles.contactIcon} />
+            <img
+              src={instagramIcon}
+              alt="인스타그램"
+              className={styles.contactIcon}
+            />
           </div>
         </div>
         <div className={styles.textSection}>
-          <p className={styles.contactText}>
-            이메일 <span className={styles.contactValue}>{email}</span>
-          </p>
-          <p className={styles.contactText}>
-            인스타그램 <span className={styles.contactValue}>{instagram}</span>
-          </p>
+          {loading ? (
+            <>
+              <p className={styles.contactText}>
+                이메일 <span className={styles.contactValue}>로딩 중...</span>
+              </p>
+              <p className={styles.contactText}>
+                인스타그램{" "}
+                <span className={styles.contactValue}>로딩 중...</span>
+              </p>
+            </>
+          ) : (
+            <>
+              <p className={styles.contactText}>
+                이메일{" "}
+                {email ? (
+                  <span
+                    className={`${styles.contactValue} ${styles.clickable}`}
+                    onClick={() => window.open(`mailto:${email}`, "_blank")}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {email}
+                  </span>
+                ) : (
+                  <span className={styles.contactValue}>정보 없음</span>
+                )}
+              </p>
+              <p className={styles.contactText}>
+                인스타그램{" "}
+                {instagram ? (
+                  <span
+                    className={`${styles.contactValue} ${styles.clickable}`}
+                    onClick={() =>
+                      window.open(
+                        `https://instagram.com/${instagram.replace("@", "")}`,
+                        "_blank"
+                      )
+                    }
+                    style={{ cursor: "pointer" }}
+                  >
+                    @{instagram.replace("@", "")}
+                  </span>
+                ) : (
+                  <span className={styles.contactValue}>정보 없음</span>
+                )}
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>

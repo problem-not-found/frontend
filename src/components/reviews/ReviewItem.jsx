@@ -8,12 +8,7 @@ const ReviewItem = ({ reviewer, reviewText, avatarSrc, isOwnReview = false }) =>
         style={avatarSrc ? { backgroundImage: `url(${avatarSrc})` } : {}}
       ></div>
       <span className={styles.reviewerName}>{reviewer}</span>
-      {isOwnReview ? (
-        <div className={styles.reviewActions}>
-          <button className={styles.actionButton}>수정하기</button>
-          <button className={styles.actionButton}>삭제하기</button>
-        </div>
-      ) : (
+      {!isOwnReview && (
         <div className={styles.reportAction}>
           <button className={styles.reportButton}>신고</button>
         </div>

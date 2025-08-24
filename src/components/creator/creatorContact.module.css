@@ -1,6 +1,6 @@
 .contactSection {
   margin-top: 8px;
-  background: #CFDDE3;
+  background: #cfdde3;
   padding: 22px 21px;
 }
 
@@ -37,7 +37,7 @@
 }
 
 .contactText {
-  font-family: 'Pretendard';
+  font-family: "Pretendard";
   font-weight: 500;
   font-size: 14px;
   line-height: 22px;
@@ -47,11 +47,20 @@
 }
 
 .contactValue {
-  color: var(--color-main-color, #F37021);
-  font-family: 'Pretendard';
+  color: var(--color-main-color, #f37021);
+  font-family: "Pretendard";
   font-size: 14px;
   font-style: normal;
   font-weight: 700;
   line-height: 22px;
   letter-spacing: -0.35px;
+}
+
+.clickable {
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+.clickable:hover {
+  opacity: 0.8;
 }

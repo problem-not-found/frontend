@@ -1,31 +1,33 @@
-import { useState } from 'react';
-import styles from './searchHeader.module.css';
+import { useState } from "react";
+import styles from "./searchHeader.module.css";
 
 const SearchIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <path d="M17 17L21 21" stroke="black" strokeWidth="1"/>
-    <circle cx="11" cy="11" r="8" stroke="black" strokeWidth="1" fill="none"/>
+    <path d="M17 17L21 21" stroke="black" strokeWidth="1" />
+    <circle cx="11" cy="11" r="8" stroke="black" strokeWidth="1" fill="none" />
   </svg>
 );
 
-const SearchHeader = ({ onSearchChange, hasSearchQuery = false }) => {
-  const [searchQuery, setSearchQuery] = useState(hasSearchQuery ? '졸업 전시' : '');
-
+const SearchHeader = ({
+  onSearchChange,
+  onSearchClick,
+  searchQuery,
+  hasSearchQuery = false,
+}) => {
   const handleSearch = () => {
-    if (onSearchChange) {
-      onSearchChange(searchQuery);
+    if (onSearchClick) {
+      onSearchClick(searchQuery);
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
 
   const handleInputChange = (e) => {
     const newQuery = e.target.value;
-    setSearchQuery(newQuery);
     if (onSearchChange) {
       onSearchChange(newQuery);
     }
@@ -41,7 +43,11 @@ const SearchHeader = ({ onSearchChange, hasSearchQuery = false }) => {
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
             className={styles.searchInput}
-            placeholder={hasSearchQuery ? "키워드로 검색하기" : "전시, 작품, 크리에이터 등을 검색해보세요"}
+            placeholder={
+              hasSearchQuery
+                ? "키워드로 검색하기"
+                : "전시, 작품, 크리에이터 등을 검색해보세요"
+            }
           />
           <button className={styles.searchButton} onClick={handleSearch}>
             <SearchIcon />

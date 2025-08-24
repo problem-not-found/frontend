@@ -1,22 +1,44 @@
-import styles from './artworkCreator.module.css';
-import arrowIcon from '../../assets/exhibition/화살표.svg';
+import { useNavigate } from "react-router-dom";
+import styles from "./artworkCreator.module.css";
+import arrowIcon from "../../assets/exhibition/화살표.svg";
 
-const ArtworkCreator = ({ 
+const ArtworkCreator = ({
   creatorName = "김땡땡 크리에이터",
-  creatorImage = "/creator-profile.png" 
+  creatorImage = "/creator-profile.png",
+  loading = false,
+  creatorId = null,
 }) => {
+  const navigate = useNavigate();
+
+  const handleCreatorClick = () => {
+    if (creatorId) {
+      navigate(`/creator/${creatorId}`);
+    }
+  };
   return (
-    <div className={styles.creatorSection}>
+    <div
+      className={styles.creatorSection}
+      onClick={handleCreatorClick}
+      style={{ cursor: creatorId ? "pointer" : "default" }}
+    >
       <div className={styles.creatorInfo}>
-        <img 
-          src={creatorImage} 
-          alt="크리에이터 프로필" 
+        <img
+          src={creatorImage}
+          alt="크리에이터 프로필"
           className={styles.creatorAvatar}
         />
         <div className={styles.creatorDetails}>
           <div className={styles.creatorNameContainer}>
-            <span className={styles.creatorName}>{creatorName.replace(' 크리에이터', '')}</span>
-            <span className={styles.creatorLabel}> 크리에이터</span>
+            {loading ? (
+              <span className={styles.creatorName}>로딩 중...</span>
+            ) : (
+              <>
+                <span className={styles.creatorName}>
+                  {creatorName.replace(" 크리에이터", "")}
+                </span>
+                <span className={styles.creatorLabel}> 크리에이터</span>
+              </>
+            )}
           </div>
         </div>
       </div>

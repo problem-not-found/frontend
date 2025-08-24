@@ -1,11 +1,11 @@
-import { useNavigate } from 'react-router-dom';
-import styles from './searchItem.module.css';
+import { useNavigate } from "react-router-dom";
+import styles from "./searchItem.module.css";
 
 const ArrowIcon = () => (
   <svg width="22" height="20" viewBox="0 0 22 20" fill="none">
-    <line x1="21" y1="0" x2="21" y2="17" stroke="white" strokeWidth="2"/>
-    <line x1="4" y1="17" x2="21" y2="17" stroke="white" strokeWidth="2"/>
-    <line x1="6.02" y1="3" x2="19.02" y2="16" stroke="white" strokeWidth="2"/>
+    <line x1="21" y1="0" x2="21" y2="17" stroke="white" strokeWidth="2" />
+    <line x1="4" y1="17" x2="21" y2="17" stroke="white" strokeWidth="2" />
+    <line x1="6.02" y1="3" x2="19.02" y2="16" stroke="white" strokeWidth="2" />
   </svg>
 );
 
@@ -13,11 +13,11 @@ const SearchItem = ({ item }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    if (item.type === 'exhibition') {
+    if (item.type === "exhibition") {
       navigate(`/exhibition/${item.id}`);
-    } else if (item.type === 'artwork') {
+    } else if (item.type === "artwork") {
       navigate(`/artwork/${item.id}`);
-    } else if (item.type === 'creator') {
+    } else if (item.type === "creator") {
       navigate(`/creator/${item.id}`);
     }
   };

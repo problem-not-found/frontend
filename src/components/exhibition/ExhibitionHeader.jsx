@@ -1,19 +1,27 @@
-
-import { useNavigate } from 'react-router-dom';
-import styles from './exhibitionHeader.module.css';
+import { useNavigate, useLocation } from "react-router-dom";
+import styles from "./exhibitionHeader.module.css";
 
 const BackIcon = () => (
   <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-    <path d="M28.5 18H7.5" stroke="black" strokeWidth="1"/>
-    <path d="M18 7.5L7.5 18L18 28.5" stroke="black" strokeWidth="1"/>
+    <path d="M28.5 18H7.5" stroke="black" strokeWidth="1" />
+    <path d="M18 7.5L7.5 18L18 28.5" stroke="black" strokeWidth="1" />
   </svg>
 );
 
 const ExhibitionHeader = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleBack = () => {
-    navigate(-1);
+    const { fromFeed, previousTab } = location.state || {};
+
+    if (fromFeed && previousTab) {
+      // 피드에서 온 경우 해당 탭으로 돌아가기
+      navigate(`/?tab=${previousTab}`);
+    } else {
+      // 일반적인 뒤로가기
+      navigate(-1);
+    }
   };
 
   return (

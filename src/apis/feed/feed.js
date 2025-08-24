@@ -1,5 +1,5 @@
-import { APIService } from '../axios.js';
-import { useState, useEffect, useCallback } from 'react';
+import { APIService } from "../axios.js";
+import { useState, useEffect, useCallback } from "react";
 
 /**
  * 핫한 전시 목록 조회 API (피드 상단 슬라이드용)
@@ -7,16 +7,16 @@ import { useState, useEffect, useCallback } from 'react';
  */
 export const getHottestExhibitions = async () => {
   try {
-    const response = await APIService.public.get('/api/exhibitions', {
+    const response = await APIService.public.get("/api/exhibitions", {
       params: {
-        sortBy: 'HOTTEST',
+        sortBy: "HOTTEST",
         pageNum: 1,
-        pageSize: 5
-      }
+        pageSize: 5,
+      },
     });
     return response;
   } catch (error) {
-    console.error('핫한 전시 조회 실패:', error);
+    console.error("핫한 전시 조회 실패:", error);
     throw error;
   }
 };
@@ -27,16 +27,16 @@ export const getHottestExhibitions = async () => {
  */
 export const getHottestPieces = async () => {
   try {
-    const response = await APIService.public.get('/api/pieces', {
+    const response = await APIService.public.get("/api/pieces", {
       params: {
-        sortBy: 'HOTTEST',
+        sortBy: "HOTTEST",
         pageNum: 1,
-        pageSize: 5
-      }
+        pageSize: 5,
+      },
     });
     return response;
   } catch (error) {
-    console.error('핫한 작품 조회 실패:', error);
+    console.error("핫한 작품 조회 실패:", error);
     throw error;
   }
 };
@@ -47,16 +47,16 @@ export const getHottestPieces = async () => {
  */
 export const getLatestExhibitions = async () => {
   try {
-    const response = await APIService.public.get('/api/exhibitions', {
+    const response = await APIService.public.get("/api/exhibitions", {
       params: {
-        sortBy: 'LATEST',
+        sortBy: "LATEST",
         pageNum: 1,
-        pageSize: 5
-      }
+        pageSize: 5,
+      },
     });
     return response;
   } catch (error) {
-    console.error('최신 전시 조회 실패:', error);
+    console.error("최신 전시 조회 실패:", error);
     throw error;
   }
 };
@@ -67,16 +67,16 @@ export const getLatestExhibitions = async () => {
  */
 export const getLatestPieces = async () => {
   try {
-    const response = await APIService.public.get('/api/pieces', {
+    const response = await APIService.public.get("/api/pieces", {
       params: {
-        sortBy: 'LATEST',
+        sortBy: "LATEST",
         pageNum: 1,
-        pageSize: 5
-      }
+        pageSize: 5,
+      },
     });
     return response;
   } catch (error) {
-    console.error('최신 작품 조회 실패:', error);
+    console.error("최신 작품 조회 실패:", error);
     throw error;
   }
 };
@@ -87,16 +87,16 @@ export const getLatestPieces = async () => {
  */
 export const getLatestOpenCreators = async () => {
   try {
-    const response = await APIService.public.get('/api/users/recommendations', {
+    const response = await APIService.public.get("/api/users/recommendations", {
       params: {
-        sortBy: 'LATEST_OPEN',
+        sortBy: "LATEST_OPEN",
         pageNum: 1,
-        pageSize: 5
-      }
+        pageSize: 5,
+      },
     });
     return response;
   } catch (error) {
-    console.error('최근 전시 오픈 크리에이터 조회 실패:', error);
+    console.error("최근 전시 오픈 크리에이터 조회 실패:", error);
     throw error;
   }
 };
@@ -107,16 +107,16 @@ export const getLatestOpenCreators = async () => {
  */
 export const getPeerGroupCreators = async () => {
   try {
-    const response = await APIService.public.get('/api/users/recommendations', {
+    const response = await APIService.public.get("/api/users/recommendations", {
       params: {
-        sortBy: 'PEER_GROUP',
+        sortBy: "PEER_GROUP",
         pageNum: 1,
-        pageSize: 5
-      }
+        pageSize: 5,
+      },
     });
     return response;
   } catch (error) {
-    console.error('비슷한 연령대 크리에이터 조회 실패:', error);
+    console.error("비슷한 연령대 크리에이터 조회 실패:", error);
     throw error;
   }
 };
@@ -127,16 +127,16 @@ export const getPeerGroupCreators = async () => {
  */
 export const getHottestCreator = async () => {
   try {
-    const response = await APIService.public.get('/api/users/recommendations', {
+    const response = await APIService.public.get("/api/users/recommendations", {
       params: {
-        sortBy: 'HOTTEST',
+        sortBy: "HOTTEST",
         pageNum: 1,
-        pageSize: 1
-      }
+        pageSize: 1,
+      },
     });
     return response;
   } catch (error) {
-    console.error('지금 뜨는 크리에이터 조회 실패:', error);
+    console.error("지금 뜨는 크리에이터 조회 실패:", error);
     throw error;
   }
 };
@@ -147,16 +147,19 @@ export const getHottestCreator = async () => {
  */
 export const getMyTasteExhibitions = async () => {
   try {
-    const response = await APIService.public.get('/api/exhibitions/recommendations', {
-      params: {
-        opposite: true,
-        pageNum: 1,
-        pageSize: 5
+    const response = await APIService.public.get(
+      "/api/exhibitions/recommendations",
+      {
+        params: {
+          opposite: false,
+          pageNum: 1,
+          pageSize: 5,
+        },
       }
-    });
+    );
     return response;
   } catch (error) {
-    console.error('내 취향 저격 전시 조회 실패:', error);
+    console.error("내 취향 저격 전시 조회 실패:", error);
     throw error;
   }
 };
@@ -167,16 +170,19 @@ export const getMyTasteExhibitions = async () => {
  */
 export const getDifferentTasteExhibitions = async () => {
   try {
-    const response = await APIService.public.get('/api/exhibitions/recommendations', {
-      params: {
-        opposite: false,
-        pageNum: 1,
-        pageSize: 5
+    const response = await APIService.public.get(
+      "/api/exhibitions/recommendations",
+      {
+        params: {
+          opposite: true,
+          pageNum: 1,
+          pageSize: 5,
+        },
       }
-    });
+    );
     return response;
   } catch (error) {
-    console.error('색다른 도전 전시 조회 실패:', error);
+    console.error("색다른 도전 전시 조회 실패:", error);
     throw error;
   }
 };
@@ -187,16 +193,19 @@ export const getDifferentTasteExhibitions = async () => {
  */
 export const getMyTastePieces = async () => {
   try {
-    const response = await APIService.public.get('/api/pieces/recommendations', {
-      params: {
-        sortBy: 'FAVORITE',
-        pageNum: 1,
-        pageSize: 5
+    const response = await APIService.public.get(
+      "/api/pieces/recommendations",
+      {
+        params: {
+          sortBy: "FAVORITE",
+          pageNum: 1,
+          pageSize: 5,
+        },
       }
-    });
+    );
     return response;
   } catch (error) {
-    console.error('내 취향 저격 작품 조회 실패:', error);
+    console.error("내 취향 저격 작품 조회 실패:", error);
     throw error;
   }
 };
@@ -207,16 +216,19 @@ export const getMyTastePieces = async () => {
  */
 export const getDifferentTastePieces = async () => {
   try {
-    const response = await APIService.public.get('/api/pieces/recommendations', {
-      params: {
-        sortBy: 'NEW_STYLE',
-        pageNum: 1,
-        pageSize: 5
+    const response = await APIService.public.get(
+      "/api/pieces/recommendations",
+      {
+        params: {
+          sortBy: "NEW_STYLE",
+          pageNum: 1,
+          pageSize: 5,
+        },
       }
-    });
+    );
     return response;
   } catch (error) {
-    console.error('색다른 도전 작품 조회 실패:', error);
+    console.error("색다른 도전 작품 조회 실패:", error);
     throw error;
   }
 };
@@ -228,18 +240,22 @@ export const getDifferentTastePieces = async () => {
  * @param {number} pageSize - 페이지 크기
  * @returns {Promise} 전시 목록과 페이지 정보
  */
-export const getExhibitions = async (sortBy = 'HOTTEST', pageNum = 1, pageSize = 10) => {
+export const getExhibitions = async (
+  sortBy = "HOTTEST",
+  pageNum = 1,
+  pageSize = 10
+) => {
   try {
-    const response = await APIService.public.get('/api/exhibitions', {
+    const response = await APIService.public.get("/api/exhibitions", {
       params: {
         sortBy,
         pageNum,
-        pageSize
-      }
+        pageSize,
+      },
     });
     return response;
   } catch (error) {
-    console.error('전시 목록 조회 실패:', error);
+    console.error("전시 목록 조회 실패:", error);
     throw error;
   }
 };
@@ -251,18 +267,22 @@ export const getExhibitions = async (sortBy = 'HOTTEST', pageNum = 1, pageSize =
  * @param {number} pageSize - 페이지 크기
  * @returns {Promise} 작품 목록과 페이지 정보
  */
-export const getPieces = async (sortBy = 'HOTTEST', pageNum = 1, pageSize = 10) => {
+export const getPieces = async (
+  sortBy = "HOTTEST",
+  pageNum = 1,
+  pageSize = 10
+) => {
   try {
-    const response = await APIService.public.get('/api/pieces', {
+    const response = await APIService.public.get("/api/pieces", {
       params: {
         sortBy,
         pageNum,
-        pageSize
-      }
+        pageSize,
+      },
     });
     return response;
   } catch (error) {
-    console.error('작품 목록 조회 실패:', error);
+    console.error("작품 목록 조회 실패:", error);
     throw error;
   }
 };
@@ -279,16 +299,16 @@ export const useHottestExhibitions = () => {
   const fetchHottestExhibitions = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getHottestExhibitions();
       const apiResponse = response.data || response;
       const exhibitionList = apiResponse.content || [];
-      
+
       setExhibitions(exhibitionList);
     } catch (err) {
       setError(err);
-      console.error('핫한 전시 로드 실패:', err);
+      console.error("핫한 전시 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -302,7 +322,7 @@ export const useHottestExhibitions = () => {
     exhibitions,
     loading,
     error,
-    refetch: fetchHottestExhibitions
+    refetch: fetchHottestExhibitions,
   };
 };
 
@@ -318,16 +338,16 @@ export const useHottestPieces = () => {
   const fetchHottestPieces = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getHottestPieces();
       const apiResponse = response.data || response;
       const piecesList = apiResponse.content || [];
-      
+
       setPieces(piecesList);
     } catch (err) {
       setError(err);
-      console.error('핫한 작품 로드 실패:', err);
+      console.error("핫한 작품 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -341,7 +361,7 @@ export const useHottestPieces = () => {
     pieces,
     loading,
     error,
-    refetch: fetchHottestPieces
+    refetch: fetchHottestPieces,
   };
 };
 
@@ -357,16 +377,16 @@ export const useLatestExhibitions = () => {
   const fetchLatestExhibitions = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getLatestExhibitions();
       const apiResponse = response.data || response;
       const exhibitionList = apiResponse.content || [];
-      
+
       setExhibitions(exhibitionList);
     } catch (err) {
       setError(err);
-      console.error('최신 전시 로드 실패:', err);
+      console.error("최신 전시 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -380,7 +400,7 @@ export const useLatestExhibitions = () => {
     exhibitions,
     loading,
     error,
-    refetch: fetchLatestExhibitions
+    refetch: fetchLatestExhibitions,
   };
 };
 
@@ -396,16 +416,16 @@ export const useLatestPieces = () => {
   const fetchLatestPieces = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getLatestPieces();
       const apiResponse = response.data || response;
       const piecesList = apiResponse.content || [];
-      
+
       setPieces(piecesList);
     } catch (err) {
       setError(err);
-      console.error('최신 작품 로드 실패:', err);
+      console.error("최신 작품 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -419,7 +439,7 @@ export const useLatestPieces = () => {
     pieces,
     loading,
     error,
-    refetch: fetchLatestPieces
+    refetch: fetchLatestPieces,
   };
 };
 
@@ -435,16 +455,16 @@ export const useLatestOpenCreators = () => {
   const fetchLatestOpenCreators = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getLatestOpenCreators();
       const apiResponse = response.data || response;
       const creatorsList = apiResponse.content || [];
-      
+
       setCreators(creatorsList);
     } catch (err) {
       setError(err);
-      console.error('최근 전시 오픈 크리에이터 로드 실패:', err);
+      console.error("최근 전시 오픈 크리에이터 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -458,7 +478,7 @@ export const useLatestOpenCreators = () => {
     creators,
     loading,
     error,
-    refetch: fetchLatestOpenCreators
+    refetch: fetchLatestOpenCreators,
   };
 };
 
@@ -474,16 +494,16 @@ export const usePeerGroupCreators = () => {
   const fetchPeerGroupCreators = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getPeerGroupCreators();
       const apiResponse = response.data || response;
       const creatorsList = apiResponse.content || [];
-      
+
       setCreators(creatorsList);
     } catch (err) {
       setError(err);
-      console.error('비슷한 연령대 크리에이터 로드 실패:', err);
+      console.error("비슷한 연령대 크리에이터 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -497,7 +517,7 @@ export const usePeerGroupCreators = () => {
     creators,
     loading,
     error,
-    refetch: fetchPeerGroupCreators
+    refetch: fetchPeerGroupCreators,
   };
 };
 
@@ -513,17 +533,17 @@ export const useHottestCreator = () => {
   const fetchHottestCreator = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getHottestCreator();
       const apiResponse = response.data || response;
       const creatorsList = apiResponse.content || [];
-      
+
       // 첫 번째 크리에이터만 가져오기
       setCreator(creatorsList.length > 0 ? creatorsList[0] : null);
     } catch (err) {
       setError(err);
-      console.error('지금 뜨는 크리에이터 로드 실패:', err);
+      console.error("지금 뜨는 크리에이터 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -537,7 +557,7 @@ export const useHottestCreator = () => {
     creator,
     loading,
     error,
-    refetch: fetchHottestCreator
+    refetch: fetchHottestCreator,
   };
 };
 
@@ -553,16 +573,16 @@ export const useMyTasteExhibitions = () => {
   const fetchMyTasteExhibitions = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getMyTasteExhibitions();
       const apiResponse = response.data || response;
       const exhibitionsList = apiResponse.content || [];
-      
+
       setExhibitions(exhibitionsList);
     } catch (err) {
       setError(err);
-      console.error('내 취향 저격 전시 로드 실패:', err);
+      console.error("내 취향 저격 전시 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -576,7 +596,7 @@ export const useMyTasteExhibitions = () => {
     exhibitions,
     loading,
     error,
-    refetch: fetchMyTasteExhibitions
+    refetch: fetchMyTasteExhibitions,
   };
 };
 
@@ -592,16 +612,16 @@ export const useDifferentTasteExhibitions = () => {
   const fetchDifferentTasteExhibitions = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getDifferentTasteExhibitions();
       const apiResponse = response.data || response;
       const exhibitionsList = apiResponse.content || [];
-      
+
       setExhibitions(exhibitionsList);
     } catch (err) {
       setError(err);
-      console.error('색다른 도전 전시 로드 실패:', err);
+      console.error("색다른 도전 전시 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -615,7 +635,7 @@ export const useDifferentTasteExhibitions = () => {
     exhibitions,
     loading,
     error,
-    refetch: fetchDifferentTasteExhibitions
+    refetch: fetchDifferentTasteExhibitions,
   };
 };
 
@@ -631,16 +651,16 @@ export const useMyTastePieces = () => {
   const fetchMyTastePieces = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getMyTastePieces();
       const apiResponse = response.data || response;
       const piecesList = apiResponse.content || [];
-      
+
       setPieces(piecesList);
     } catch (err) {
       setError(err);
-      console.error('내 취향 저격 작품 로드 실패:', err);
+      console.error("내 취향 저격 작품 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -654,7 +674,7 @@ export const useMyTastePieces = () => {
     pieces,
     loading,
     error,
-    refetch: fetchMyTastePieces
+    refetch: fetchMyTastePieces,
   };
 };
 
@@ -670,16 +690,16 @@ export const useDifferentTastePieces = () => {
   const fetchDifferentTastePieces = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await getDifferentTastePieces();
       const apiResponse = response.data || response;
       const piecesList = apiResponse.content || [];
-      
+
       setPieces(piecesList);
     } catch (err) {
       setError(err);
-      console.error('색다른 도전 작품 로드 실패:', err);
+      console.error("색다른 도전 작품 로드 실패:", err);
     } finally {
       setLoading(false);
     }
@@ -693,6 +713,6 @@ export const useDifferentTastePieces = () => {
     pieces,
     loading,
     error,
-    refetch: fetchDifferentTastePieces
+    refetch: fetchDifferentTastePieces,
   };
 };

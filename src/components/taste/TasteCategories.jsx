@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import styles from './tasteCategories.module.css';
+import styles from "./tasteCategories.module.css";
 
-const TasteCategories = ({ onCategoryChange }) => {
-  const [activeCategory, setActiveCategory] = useState('전시');
-  
-  const categories = ['내 관심사', '전시', '작품', '크리에이터'];
+const TasteCategories = ({ activeCategory, onCategoryChange }) => {
+  const categories = ["내 관심사", "전시", "작품", "크리에이터"];
 
   const handleCategoryClick = (category) => {
-    setActiveCategory(category);
     if (onCategoryChange) {
-      onCategoryChange(category === '내 관심사' ? '관심사' : category);
+      onCategoryChange(category === "내 관심사" ? "관심사" : category);
     }
   };
+
+  // 현재 활성 탭을 UI 표시용으로 변환 (관심사 -> 내 관심사)
+  const displayActiveCategory =
+    activeCategory === "관심사" ? "내 관심사" : activeCategory;
 
   return (
     <div className={styles.categoriesContainer}>
@@ -20,7 +20,11 @@ const TasteCategories = ({ onCategoryChange }) => {
           {categories.map((category) => (
             <button
               key={category}
-              className={`${styles.categoryTab} ${activeCategory === category ? styles.activeTab : styles.inactiveTab}`}
+              className={`${styles.categoryTab} ${
+                displayActiveCategory === category
+                  ? styles.activeTab
+                  : styles.inactiveTab
+              }`}
               onClick={() => handleCategoryClick(category)}
             >
               {category}

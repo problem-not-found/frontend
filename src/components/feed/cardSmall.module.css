@@ -22,6 +22,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
 }
 
 .body {
@@ -29,6 +30,8 @@
   padding: 8px 0 0 0;
   position: relative;
   flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 .title {
@@ -39,6 +42,8 @@
   font-weight: 600;
   line-height: 19px; /* 118.75% */
   letter-spacing: -0.4px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .meta {
@@ -64,6 +69,7 @@
   color: #000;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .liked {

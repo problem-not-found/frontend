@@ -165,26 +165,28 @@ export const forceLogout = (
  * 토큰이 필요없는 일반 요청 (public API)
  */
 const publicApi = axios.create({
-  baseURL: import.meta.env.DEV ? "" : import.meta.env.VITE_APP_API_URL,
+  baseURL: import.meta.env.VITE_APP_API_URL,
   timeout: 30000,
+  withCredentials: true, // 쿠키 자동 전송
 });
 
 /**
  * 토큰이 필요한 인증 요청 (private API)
  */
 const privateApi = axios.create({
-  baseURL: import.meta.env.DEV ? "" : import.meta.env.VITE_APP_API_URL,
+  baseURL: import.meta.env.VITE_APP_API_URL,
   timeout: 30000,
+  withCredentials: true, // 쿠키 자동 전송
 });
 
 /**
- * 요청 인터셉터 - 쿠키와 Authorization 헤더 둘 다 지원
+ * 요청 인터셉터 - 쿠키 자동 전송 및 Authorization 헤더 추가
  */
 privateApi.interceptors.request.use(
   (config) => {
     console.log("Private API request with credentials:", config.url);
 
-    // 1. withCredentials: true로 쿠키 자동 전송 (기본)
+    // 1. withCredentials: true로 쿠키 자동 전송 (배포 환경에서 주요 인증 방식)
 
     // 2. Authorization 헤더도 추가 (백엔드가 헤더 방식을 사용할 경우를 대비)
     const accessToken = getCookie("ACCESS_TOKEN");
@@ -261,7 +263,13 @@ privateApi.interceptors.response.use(
           throw new Error("REFRESH_TOKEN이 없습니다.");
         }
 
-        const refreshResponse = await publicApi.post("/api/auths/refresh");
+        const refreshResponse = await publicApi.post(
+          "/api/auths/refresh",
+          {},
+          {
+            withCredentials: true, // 토큰 갱신 시에도 쿠키 전송 보장
+          }
+        );
         console.log("Refresh response:", refreshResponse);
 
         // 토큰 갱신 성공

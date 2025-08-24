@@ -1,0 +1,141 @@
+.hero {
+  position: relative;
+  margin-top: -24px;
+}
+.slider {
+  position: relative;
+  overflow: hidden;
+}
+
+.slides {
+  display: flex;
+  width: 100%;
+  transition: transform 300ms ease;
+}
+
+.slide {
+  min-width: 100%;
+  position: relative;
+}
+
+.slide::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.1) 20%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.7) 80%, rgba(0, 0, 0, 0.85) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.slideImage {
+  display: block;
+  width: 100%;
+  height: 395px;
+  object-fit: cover;
+}
+
+.slideOverlay {
+  position: absolute;
+  left: 16px;
+  bottom: 50px;
+  color: #fff;
+  z-index: 2;
+}
+
+.exhibitionInfo .subtitle {
+  font-size: 12px;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  margin: 0 0 4px 0;
+}
+
+.exhibitionInfo .title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  line-height: 1.2;
+  margin: 0 0 8px 0;
+}
+
+.exhibitionInfo .date {
+  font-size: 14px;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  margin: 0 0 4px 0;
+}
+
+.exhibitionInfo .address {
+  font-size: 12px;
+  opacity: 0.8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  margin: 0;
+}
+
+.exhibitionInfo .artist {
+  font-size: 14px;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  margin: 0 0 4px 0;
+  font-weight: 500;
+}
+
+.exhibitionInfo .medium {
+  font-size: 12px;
+  opacity: 0.8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  margin: 0;
+}
+.textBox {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  color: #fff;
+  padding: 0;
+}
+.subtitle {
+  font-size: 12px;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  margin-bottom: 4px;
+}
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  line-height: 1.2;
+}
+
+/* 상단 진행 바(사진처럼 이미지 위에 겹쳐 표시) */
+.pagerWrap {
+  position: absolute;
+  bottom: 20px;
+  left: 16px;
+  height: 6px;
+  display: flex;
+  align-items: center;
+  z-index: 3;
+}
+
+.pagerTrack {
+  width: 193px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+  display: flex;
+}
+
+.pagerSeg {
+  display: block;
+  height: 100%;
+  background: transparent;
+  flex: 1 1 0;
+}
+
+.pagerSeg.active {
+  background: #fff;
+}

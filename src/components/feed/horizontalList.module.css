@@ -1,0 +1,69 @@
+.wrapper {
+  overflow: visible;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 82px;
+  padding-bottom: 30px;
+}
+
+.indexInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 160px;
+  writing-mode: sideways-lr;
+  text-orientation: mixed;
+  flex-shrink: 0;
+}
+
+.indexNumber {
+  color: var(--color-grayscale2, #989898);
+  font-family: SUIT;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 26px; /* 216.667% */
+  letter-spacing: -0.3px;
+  margin-bottom: 12px;
+  writing-mode: sideways-lr;
+  text-orientation: mixed;
+}
+
+.indexText {
+  color: #989898;
+  font-family: Pretendard;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.verticalLine {
+  width: 1px;
+  height: 220px;
+  background: #989898;
+  flex-shrink: 0;
+  margin-left: 17px;
+  margin-right: 7px;
+}
+
+.scroller {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  overflow-y: visible !important;
+  scroll-behavior: smooth;
+}
+
+.scrollerWithHeight {
+  height: 270px;
+}
+
+.scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.scroller {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

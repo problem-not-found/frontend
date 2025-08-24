@@ -1,0 +1,10 @@
+.container {
+  max-width: 430px;
+  height: 100vh;
+  background: #F6F1EB;
+  position: relative;
+  margin: 0 auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}

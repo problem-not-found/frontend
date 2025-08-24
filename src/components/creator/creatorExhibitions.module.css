@@ -1,0 +1,101 @@
+.exhibitionsSection {
+  margin: 64px 0 0;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  margin: 0;
+}
+
+.countText {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: -0.025em;
+  color: #434343;
+}
+
+.exhibitionList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.exhibitionItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.exhibitionTitle {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: -0.025em;
+  color: #434343;
+  margin: 0;
+}
+
+.exhibitionDate {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 26px;
+  letter-spacing: -0.025em;
+  color: #989898;
+  margin: 0;
+}
+
+.showMoreContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.showMoreButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: -8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 60px;
+  height: 10px;
+}
+
+.showMoreText {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 24px;
+  letter-spacing: -0.025em;
+  color: #989898;
+  text-align: center;
+}
+
+.showMoreLines {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.line {
+  width: 60px;
+  height: 0;
+  border: 1px solid #989898;
+}

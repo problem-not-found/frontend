@@ -1,0 +1,292 @@
+.page {
+  min-height: 100vh;
+  background-color: #f6f1eb;
+  padding: 0 32px 100px;
+  position: relative;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+/* 헤더 */
+.header {
+  padding: 10px 0 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.backIcon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.title {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 25px;
+  letter-spacing: -0.5px;
+  color: #000;
+  margin: 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 검색 섹션 */
+.searchSection {
+  margin-bottom: 20px;
+}
+
+.searchInput {
+  display: flex;
+  align-items: center;
+  background: #f6f1eb;
+  border: 1px solid #f37021;
+  border-radius: 0;
+  height: 48px;
+  padding: 12px 20px;
+}
+
+.searchField {
+  flex: 1;
+  background: none;
+  border: none;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #f37021;
+  outline: none;
+}
+
+.searchField::placeholder {
+  color: #f37021;
+}
+
+.searchButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 16px;
+}
+
+.searchButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.searchButton img {
+  width: 24px;
+  height: 24px;
+}
+
+.loadingText {
+  text-align: center;
+  color: #434343;
+  font-size: 14px;
+  margin-top: 12px;
+  font-family: 'Pretendard', sans-serif;
+}
+
+/* 예시 섹션 */
+.exampleSection {
+  margin-bottom: 20px;
+}
+
+.exampleTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #434343;
+  margin: 0 0 32px 0;
+  letter-spacing: -0.5px;
+}
+
+.exampleText {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.4px;
+}
+
+.exampleText p {
+  margin: 0;
+}
+
+.exampleText .label {
+  color: #989898;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.4px;
+}
+
+.exampleText .value {
+  color: #f37021;
+}
+
+/* 결과 섹션 */
+.resultSection {
+  margin-bottom: 20px;
+}
+
+.locationResults {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.locationItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.locationItem:hover {
+  border-color: #f37021;
+  background: #fefefe;
+}
+
+.locationItem .locationLabel {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #434343;
+  letter-spacing: -0.35px;
+}
+
+.locationItem .locationValue {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f37021;
+  letter-spacing: -0.4px;
+}
+
+.noResults {
+  text-align: center;
+  color: #989898;
+  font-size: 16px;
+  padding: 40px 20px;
+  font-family: 'Pretendard', sans-serif;
+}
+
+/* 설명 입력 섹션 */
+.descriptionSection {
+  margin-bottom: 20px;
+}
+
+.selectedLocation {
+  background: #cfdde3;
+  border: 1px solid #000;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.selectedLocation .locationLabel {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #434343;
+  letter-spacing: -0.35px;
+  margin-bottom: 4px;
+}
+
+.selectedLocation .locationValue {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f37021;
+  letter-spacing: -0.4px;
+  margin-bottom: 12px;
+}
+
+.selectedLocation .locationValue:last-child {
+  margin-bottom: 0;
+}
+
+.descriptionInput {
+  border: 1px solid #000;
+  background: #f6f1eb;
+}
+
+.descriptionField {
+  width: 100%;
+  height: 308px;
+  padding: 18px;
+  border: none;
+  background: none;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.4px;
+  color: #000;
+  resize: none;
+  outline: none;
+}
+
+.descriptionField::placeholder {
+  color: #434343;
+}
+
+/* 하단 버튼 */
+.bottomButton {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.completeButton {
+  width: 344px;
+  height: 48px;
+  background: #f37021;
+  border: 1px solid #000;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.4px;
+  color: #000;
+  cursor: pointer;
+}
+
+.completeButton:disabled {
+  background: #cedde4;
+  color: #989898;
+  cursor: not-allowed;
+}
+
+.completeButton:hover:not(:disabled) {
+  background: #e55a00;
+}

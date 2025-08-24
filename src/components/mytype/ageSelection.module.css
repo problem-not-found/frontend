@@ -1,0 +1,61 @@
+.container {
+  margin-bottom: 60px;
+}
+
+.title {
+  color: var(--color-main-color, #F37021);
+  font-family: Pretendard;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+  margin: 0 0 16px 0;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.buttonGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.buttonGroup .ageButton:nth-child(4),
+.buttonGroup .ageButton:nth-child(5) {
+  grid-column: span 1;
+}
+
+.buttonGroup .ageButton:nth-child(4) {
+  grid-column: 1;
+}
+
+.buttonGroup .ageButton:nth-child(5) {
+  grid-column: 2;
+}
+
+.ageButton {
+  padding: 11px;
+  border: 1px solid #ff6b35;
+  background-color: transparent;
+  color: var(--color-grayscale1, #434343);
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 25px;
+  letter-spacing: -0.4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ageButton:hover {
+  background-color: rgba(255, 107, 53, 0.1);
+}
+
+.ageButton.selected {
+  border: 1px solid #000;
+  background-color: var(--color-main);
+  color: #000;
+}

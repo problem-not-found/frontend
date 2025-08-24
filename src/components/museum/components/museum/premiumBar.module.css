@@ -1,0 +1,42 @@
+.premiumBar {
+  height: 48px;
+  width: 360px;
+  background-color: #f37021;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  border: 1px solid #000000;
+  margin-left: -1px;
+  margin-top: 20px;
+}
+
+.premiumText {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #000000;
+  letter-spacing: -0.4px;
+  line-height: 19px;
+}
+
+.subscriptionPrompt {
+  height: 48px;
+  width: 360px;
+  background-color: #cfdde3;
+  border: 1px solid #000000;
+  border-left: none;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  margin-left: -1px;
+  margin-top: 20px;
+}
+
+.promptText {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #000000;
+  letter-spacing: -0.4px;
+  line-height: 19px;
+}

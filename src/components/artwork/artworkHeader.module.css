@@ -1,0 +1,36 @@
+.header {
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.backButton {
+  width: 44px;
+  height: 44px;
+  background: var(--color-main);
+  border: 1px solid #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.backButton:hover {
+  opacity: 0.8;
+}
+
+.headerTitle {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  margin: 0;
+}

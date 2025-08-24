@@ -1,0 +1,191 @@
+.artworksSection {
+  margin: 64px 0 0;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  font-family: "Pretendard";
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 25px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  margin: 0;
+}
+
+.countText {
+  font-family: "Pretendard";
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: -0.025em;
+  color: #000000;
+}
+
+.artworkContainer {
+  margin-bottom: 16px;
+  width: calc(100% + 64px);
+  margin-left: -32px;
+  margin-right: -32px;
+}
+
+.smallArtworkScroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 32px;
+  /* 스크롤바 숨기기 */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.smallArtworkScroll::-webkit-scrollbar {
+  display: none;
+}
+
+.smallArtwork {
+  width: 140px;
+  height: 140px;
+  border: 1px solid #000000;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* 참여한 전시 섹션 */
+.exhibitionsSection {
+  margin-top: 64px;
+}
+
+.exhibitionContainer {
+  margin-bottom: 16px;
+  width: calc(100% + 64px);
+  margin-left: -32px;
+  margin-right: -32px;
+}
+
+.largeExhibitionScroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 32px;
+  /* 스크롤바 숨기기 */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.largeExhibitionScroll::-webkit-scrollbar {
+  display: none;
+}
+
+.largeExhibition {
+  width: 224px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.largeExhibition img {
+  width: 224px;
+  height: 224px;
+  border: 1px solid #000000;
+  object-fit: cover;
+}
+
+.exhibitionInfo {
+  margin-top: 8px;
+  width: 224px;
+}
+
+.exhibitionTitle {
+  font-family: "Pretendard";
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: -0.025em;
+  color: #434343;
+  margin: 0 0 0 0;
+}
+
+.exhibitionDate {
+  font-family: "Pretendard";
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 26px;
+  letter-spacing: -0.025em;
+  color: #989898;
+  margin: 0;
+}
+
+.artworkImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.showMoreContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-right: 35px;
+}
+
+.showMoreButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: -8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 60px;
+  height: 10px;
+}
+
+.showMoreText {
+  font-family: "Pretendard";
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 24px;
+  letter-spacing: -0.025em;
+  color: #989898;
+  text-align: center;
+}
+
+.showMoreLines {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.line {
+  width: 60px;
+  height: 0;
+  border: 1px solid #989898;
+}
+
+.emptyState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 32px;
+  min-height: 140px;
+}
+
+.emptyText {
+  font-family: "Pretendard";
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.025em;
+  color: #989898;
+  margin: 0;
+  text-align: center;
+}

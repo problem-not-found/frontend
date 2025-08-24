@@ -1,0 +1,57 @@
+.itemContainer {
+  display: flex;
+  align-items: center;
+  padding: 11px 20px 11px 20px;
+  width: 100%;
+  background: #cfdde3;
+  border: 1px solid #000000;
+  margin-bottom: 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+  justify-content: space-between;
+}
+
+.itemContainer:hover {
+  opacity: 0.9;
+}
+
+.itemContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.textContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 266px;
+}
+
+.itemTitle {
+  font-family: "Pretendard";
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 26px;
+  letter-spacing: -0.025em;
+  color: #000000;
+  margin: 0;
+}
+
+.arrowContainer {
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrowFrame {
+  width: 22px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

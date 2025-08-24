@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import ArtworkCard from './ArtworkCard';
 import ArtworkFilter from './ArtworkFilter';
-import useArtworkStore from '@museum/services/artworkStore';
+import { deletePieces, getArtworkTitle, getArtworkDescription } from '@apis/museum/artwork';
 import useUserStore from '@/stores/userStore';
 import BackToTopButton from '@/components/common/BackToTopButton';
 import chevronLeft from '@/assets/museum/chevron-left.png';
@@ -18,33 +18,32 @@ export default function ArtworkList({
   showDraftButton = false,
   onDraftClick,
   isLibraryMode = false,
-  libraryTitle = "작품 목록"
+  libraryTitle = "작품 목록",
+  title, // 커스텀 제목 prop 추가
+  artworks = [],
+  loading = false,
+  hasMore = false,
+  onLoadMore,
+  onArtworkDeleted // 새로운 prop 추가
 }) {
-  // Zustand 스토어에서 상태 가져오기
-  const {
-    artworks,
-    layoutMode,
-    searchKeyword,
-    isLoadingMore,
-    applicated,
-    setLayoutMode,
-    setSearchKeyword,
-    loadMoreArtworks,
-    hasMore,
-    getFilteredArtworks,
-    deleteArtwork,
-    toggleApplicated
-  } = useArtworkStore();
-
+  // 로컬 상태로 관리
+  const [layoutMode, setLayoutMode] = useState('grid');
+  const [searchKeyword, setSearchKeyword] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
   const [showScrollHeader, setShowScrollHeader] = useState(false);
   const [selectedArtworks, setSelectedArtworks] = useState(new Set());
+  const [isDeleting, setIsDeleting] = useState(false);
+  
   const observerRef = useRef();
   const loadingRef = useRef();
   const headerRef = useRef();
 
-  // 필터된 작품 목록
-  const filteredArtworks = getFilteredArtworks();
+  // 검색어로 필터링된 작품 목록
+  const filteredArtworks = artworks.filter(artwork => 
+    !searchKeyword || 
+    artwork.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+    artwork.description?.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
 
   // 스크롤 감지 로직
   useEffect(() => {
@@ -61,17 +60,17 @@ export default function ArtworkList({
 
   // 무한 스크롤 구현
   const lastArtworkElementRef = useCallback((node) => {
-    if (isLoadingMore) return;
+    if (loading || !hasMore) return;
     if (observerRef.current) observerRef.current.disconnect();
     
     observerRef.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore()) {
-        loadMoreArtworks();
+      if (entries[0].isIntersecting && hasMore && onLoadMore) {
+        onLoadMore();
       }
     });
     
     if (node) observerRef.current.observe(node);
-  }, [isLoadingMore, hasMore, loadMoreArtworks]);
+  }, [loading, hasMore, onLoadMore]);
 
   const handleEditModeToggle = () => {
     setIsEditMode(!isEditMode);
@@ -95,53 +94,65 @@ export default function ArtworkList({
     setSearchKeyword(keyword);
   };
 
-  const handleApplicatedChange = async () => {
-    await toggleApplicated();
-  };
-
   const handleArtworkSelection = (artwork) => {
+    console.log('작품 선택 시도:', artwork.pieceId, artwork.title);
+    console.log('현재 선택된 작품들:', Array.from(selectedArtworks));
+    
     const newSelected = new Set(selectedArtworks);
-    if (newSelected.has(artwork.id)) {
-      newSelected.delete(artwork.id);
+    if (newSelected.has(artwork.pieceId)) {
+      newSelected.delete(artwork.pieceId);
+      console.log('작품 선택 해제:', artwork.pieceId);
     } else {
-      newSelected.add(artwork.id);
+      newSelected.add(artwork.pieceId);
+      console.log('작품 선택 추가:', artwork.pieceId);
     }
+    
+    console.log('새로운 선택된 작품들:', Array.from(newSelected));
     setSelectedArtworks(newSelected);
   };
 
   const handleDeleteSelected = async () => {
-    if (selectedArtworks.size === 0) return;
+    if (selectedArtworks.size === 0 || isDeleting) return;
     
     const count = selectedArtworks.size;
     if (confirm(`선택한 ${count}개 작품을 정말 삭제하시겠습니까?`)) {
-      // 선택된 작품들을 실제로 삭제
-      const deletePromises = Array.from(selectedArtworks).map(artworkId => 
-        deleteArtwork(artworkId)
-      );
+      setIsDeleting(true);
       
       try {
-        const results = await Promise.all(deletePromises);
-        const successCount = results.filter(result => result === true).length;
+        // 선택된 작품들을 한 번에 삭제
+        const pieceIds = Array.from(selectedArtworks);
+        const response = await deletePieces(pieceIds);
         
-        if (successCount === selectedArtworks.size) {
-          console.log('선택된 작품들 삭제 완료:', Array.from(selectedArtworks));
+        if (response?.status === 200) {
+          console.log('선택된 작품들 삭제 완료:', pieceIds);
+          // 부모 컴포넌트에 삭제 완료 알림
+          if (onArtworkDeleted) {
+            onArtworkDeleted(pieceIds);
+          }
         } else {
-          console.warn('일부 작품 삭제에 실패했습니다.');
+          console.warn('작품들 삭제에 실패했습니다.');
         }
         
         setSelectedArtworks(new Set());
       } catch (error) {
         console.error('작품 삭제 중 오류 발생:', error);
+      } finally {
+        setIsDeleting(false);
       }
     }
   };
 
   const handleDeleteArtwork = async (artwork) => {
-    if (confirm(`"${artwork.title}" 작품을 정말 삭제하시겠습니까?`)) {
+    const safeTitle = getArtworkTitle(artwork.title, '이 작품');
+    if (confirm(`"${safeTitle}" 작품을 정말 삭제하시겠습니까?`)) {
       try {
-        const success = await deleteArtwork(artwork.id);
-        if (success) {
+        const response = await deletePieces([artwork.pieceId]);
+        if (response?.status === 200 || response?.status === 204) {
           console.log('작품 삭제 완료:', artwork);
+          // 부모 컴포넌트에 삭제 완료 알림
+          if (onArtworkDeleted) {
+            onArtworkDeleted([artwork.pieceId]);
+          }
         } else {
           console.error('작품 삭제 실패:', artwork);
         }
@@ -205,7 +216,7 @@ export default function ArtworkList({
               <img src={chevronLeft} alt="back" className={styles.backIcon} />
             </button>
           )}
-          <h1 className={styles.title}>{isLibraryMode ? libraryTitle : '내 작품'}</h1>
+          <h1 className={styles.title}>{title || (isLibraryMode ? libraryTitle : '내 작품')}</h1>
         </div>
         <div className={styles.headerRight}>
           {showDraftButton && (
@@ -234,7 +245,7 @@ export default function ArtworkList({
                 <img src={arrowDown} alt="back" className={styles.scrollBackIcon} />
               </button>
             )}
-            <h1 className={styles.scrollTitle}>{isLibraryMode ? libraryTitle : '내 작품'}</h1>
+            <h1 className={styles.scrollTitle}>{title || (isLibraryMode ? libraryTitle : '내 작품')}</h1>
           </div>
         </div>
       )}
@@ -245,8 +256,6 @@ export default function ArtworkList({
         onLayoutChange={handleLayoutChange}
         searchKeyword={searchKeyword}
         onSearchChange={handleSearchChange}
-        applicated={applicated}
-        onApplicatedChange={handleApplicatedChange}
       />
 
       {/* 작품 목록 */}
@@ -269,7 +278,7 @@ export default function ArtworkList({
             const isLast = index === filteredArtworks.length - 1;
             return (
               <div
-                key={artwork.id}
+                key={artwork.pieceId}
                 ref={isLast ? lastArtworkElementRef : null}
               >
                 <ArtworkCard
@@ -281,7 +290,7 @@ export default function ArtworkList({
                   showDescription={true}
                   isEditMode={isEditMode}
                   onDelete={handleDeleteArtwork}
-                  isSelected={selectedArtworks.has(artwork.id)}
+                  isSelected={selectedArtworks.has(artwork.pieceId)}
                   onSelect={handleArtworkSelection}
                 />
               </div>
@@ -291,7 +300,7 @@ export default function ArtworkList({
       )}
 
       {/* 더 로딩 중 표시 */}
-      {isLoadingMore && (
+      {loading && (
         <div className={styles.loadingMore}>
           <div className={styles.spinner}></div>
           <p>더 많은 작품을 불러오는 중...</p>
@@ -305,9 +314,9 @@ export default function ArtworkList({
             <button 
               className={`${styles.addButton} ${selectedArtworks.size === 0 ? styles.disabledButton : ''}`}
               onClick={handleDeleteSelected}
-              disabled={selectedArtworks.size === 0}
+              disabled={selectedArtworks.size === 0 || isDeleting}
             >
-              {selectedArtworks.size > 0 ? `${selectedArtworks.size}개 삭제하기` : '삭제하기'}
+              {isDeleting ? '삭제 중...' : selectedArtworks.size > 0 ? `${selectedArtworks.size}개 삭제하기` : '삭제하기'}
             </button>
           ) : (
             <button className={styles.addButton} onClick={handleAddClick}>

@@ -7,7 +7,7 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: '@', replacement: '/src' },
-      { find: '@api', replacement: '/src/api' },
+      { find: '@apis', replacement: '/src/apis' },
       { find: '@components', replacement: '/src/components' },
       { find: '@commons', replacement: '/src/components/commons' },
       { find: '@pages', replacement: '/src/pages' },
@@ -18,6 +18,8 @@ export default defineConfig({
     ],
   },
   server: {
+    host: '0.0.0.0',
+    port: 5173,
     proxy: {
       '/api': {
         target: 'https://api.artium.life',

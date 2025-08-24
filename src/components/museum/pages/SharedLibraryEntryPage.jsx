@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import useUserStore from '@/stores/userStore';
-import useExhibitionPhotoStore from '@museum/services/exhibitionPhotoStore';
 import chevronLeft from '@/assets/museum/chevron-left.png';
 import cameraIcon from '@/assets/user/camera.png';
 import plusCircleIcon from '@/assets/museum/plus-circle.png';
@@ -11,20 +9,10 @@ import styles from './sharedLibraryEntryPage.module.css';
 export default function SharedLibraryEntryPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useUserStore();
   
   // 선택된 공유 라이브러리 정보
   const { selectedLibrary } = location.state || {};
   
-  // Zustand store 사용
-  const { 
-    thumbnail, 
-    artworks, 
-    setThumbnail, 
-    addArtwork, 
-    updateArtwork, 
-    removeArtwork: removeArtworkFromStore 
-  } = useExhibitionPhotoStore();
   
   // 로컬 상태로 관리 (공유 라이브러리 작품 정보)
   const [sharedLibraryData, setSharedLibraryData] = useState({

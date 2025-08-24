@@ -2,6 +2,30 @@ import { useState, useEffect, useCallback } from 'react';
 import APIService from '../axios';
 
 /**
+ * 전시 등록 API
+ * @param {Object} exhibitionData - 전시 등록 데이터
+ * @param {number[]} exhibitionData.pieceIdList - 작품 ID 목록
+ * @param {string} exhibitionData.endDate - 종료일 (YYYY-MM-DD)
+ * @param {number[]} exhibitionData.participantIdList - 참여자 ID 목록
+ * @param {string} exhibitionData.startDate - 시작일 (YYYY-MM-DD)
+ * @param {string} exhibitionData.address - 주소
+ * @param {string} exhibitionData.title - 전시 제목
+ * @param {string} exhibitionData.offlineDescription - 오프라인 전시 설명
+ * @param {string} exhibitionData.description - 전시 설명
+ * @param {string} exhibitionData.addressName - 주소명
+ * @returns {Promise} 전시 등록 결과
+ */
+export const createExhibition = async (exhibitionData) => {
+  try {
+    const response = await APIService.private.post('/api/exhibitions', exhibitionData);
+    return response;
+  } catch (error) {
+    console.error('전시 등록 실패:', error);
+    throw error;
+  }
+};
+
+/**
  * 전시 상세 정보 조회 API
  * @param {number} exhibitionId - 전시 ID
  * @returns {Promise} 전시 상세 정보
@@ -86,6 +110,24 @@ export const getExhibitionReviewsPreview = async (exhibitionId) => {
     return response;
   } catch (error) {
     console.error('전시 감상평 미리보기 조회 실패:', error);
+    throw error;
+  }
+};
+
+/**
+ * 내 전시 목록 조회 API
+ * @param {Object} params - 페이지네이션 파라미터
+ * @param {number} params.pageNum - 페이지 번호
+ * @param {number} params.pageSize - 페이지 크기
+ * @param {boolean} params.fillAll - 모든 정보 채우기 여부
+ * @returns {Promise} 내 전시 목록
+ */
+export const getMyExhibitions = async (params = { pageNum: 1, pageSize: 3, fillAll: true }) => {
+  try {
+    const response = await APIService.private.get('/api/exhibitions/my-page', { params });
+    return response;
+  } catch (error) {
+    console.error('내 전시 목록 조회 실패:', error);
     throw error;
   }
 };

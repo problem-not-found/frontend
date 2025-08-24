@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import chevronLeft from '@/assets/museum/chevron-left.png';
 import searchIcon from '@/assets/footer/search.svg';
+import { getUserProfilesByCode } from '@/apis/user/user.js';
 import styles from './exhibitionParticipantPage.module.css';
 
 export default function ExhibitionParticipantPage() {
@@ -18,26 +19,48 @@ export default function ExhibitionParticipantPage() {
   // URL state에서 전시 정보 받아오기
   const exhibitionData = location.state?.exhibitionData || {};
 
-  // 더미 사용자 데이터 (실제로는 API에서 가져올 예정)
-  const dummyUsers = [
-    { id: 1, username: 'kimdangdeng', displayName: '김땡땡', profileImage: null },
-    { id: 2, username: 'simonkim', displayName: '정땡땡', profileImage: null },
-    { id: 3, username: 'kimchiman', displayName: 'kimman', profileImage: null },
-  ];
-
-  useEffect(() => {
-    // 검색어가 있을 때만 검색 결과 표시
-    if (searchQuery.trim()) {
-      const filtered = dummyUsers.filter(user => 
-        user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.displayName.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setSearchResults(filtered);
-      setIsSearching(true);
-    } else {
+  // 사용자 검색 함수
+  const searchUsers = async (query) => {
+    if (!query.trim()) {
       setSearchResults([]);
       setIsSearching(false);
+      return;
     }
+
+    setIsSearching(true);
+    try {
+      // @를 앞에 붙여서 API 요청
+      const userCode = `@${query.trim()}`;
+      console.log('사용자 검색 요청:', userCode);
+      
+      const response = await getUserProfilesByCode(userCode);
+      console.log('사용자 검색 응답:', response);
+      
+      if (response && response.data && Array.isArray(response.data)) {
+        setSearchResults(response.data);
+      } else {
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error('사용자 검색 실패:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // 검색어 변경 시 디바운스 처리
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery.trim()) {
+        searchUsers(searchQuery);
+      } else {
+        setSearchResults([]);
+        setIsSearching(false);
+      }
+    }, 500); // 500ms 디바운스
+
+    return () => clearTimeout(timer);
   }, [searchQuery]);
 
   const handleBack = () => {
@@ -49,11 +72,12 @@ export default function ExhibitionParticipantPage() {
   };
 
   const handleUserSelect = (user) => {
-    const isSelected = selectedParticipants.some(p => p.id === user.id);
+    const userId = user.userId || user.id;
+    const isSelected = selectedParticipants.some(p => (p.userId || p.id) === userId);
     
     if (isSelected) {
       // 이미 선택된 사용자라면 제거
-      setSelectedParticipants(prev => prev.filter(p => p.id !== user.id));
+      setSelectedParticipants(prev => prev.filter(p => (p.userId || p.id) !== userId));
     } else {
       // 새로운 사용자라면 추가
       setSelectedParticipants(prev => [...prev, user]);
@@ -77,7 +101,7 @@ export default function ExhibitionParticipantPage() {
   };
 
   const isUserSelected = (userId) => {
-    return selectedParticipants.some(p => p.id === userId);
+    return selectedParticipants.some(p => (p.userId || p.id) === userId);
   };
 
   return (
@@ -125,21 +149,21 @@ export default function ExhibitionParticipantPage() {
         <div className={styles.userList}>
           {searchResults.map((user) => (
             <div
-              key={user.id}
-              className={`${styles.userCard} ${isUserSelected(user.id) ? styles.selected : ''}`}
+              key={user.userId || user.id}
+              className={`${styles.userCard} ${isUserSelected(user.userId || user.id) ? styles.selected : ''}`}
               onClick={() => handleUserSelect(user)}
             >
               <div className={styles.userInfo}>
                 <div className={styles.profileImage}>
-                  {user.profileImage ? (
-                    <img src={user.profileImage} alt="프로필" />
+                  {user.profileImageUrl ? (
+                    <img src={user.profileImageUrl} alt="프로필" />
                   ) : (
                     <div className={styles.defaultProfile} />
                   )}
                 </div>
                 <div className={styles.userDetails}>
-                  <span className={styles.displayName}>{user.displayName}</span>
-                  <span className={styles.username}>@{user.username}</span>
+                  <span className={styles.displayName}>{user.nickname || user.displayName}</span>
+                  <span className={styles.username}>@{user.code || user.username}</span>
                 </div>
               </div>
             </div>
@@ -153,21 +177,21 @@ export default function ExhibitionParticipantPage() {
           <h3 className={styles.selectedTitle}>선택된 참여자</h3>
           {selectedParticipants.map((user) => (
             <div
-              key={user.id}
+              key={user.userId || user.id}
               className={`${styles.userCard} ${styles.selected}`}
               onClick={() => handleUserSelect(user)}
             >
               <div className={styles.userInfo}>
                 <div className={styles.profileImage}>
-                  {user.profileImage ? (
-                    <img src={user.profileImage} alt="프로필" />
+                  {user.profileImageUrl ? (
+                    <img src={user.profileImageUrl} alt="프로필" />
                   ) : (
                     <div className={styles.defaultProfile} />
                   )}
                 </div>
                 <div className={styles.userDetails}>
-                  <span className={styles.displayName}>{user.displayName}</span>
-                  <span className={styles.username}>@{user.username}</span>
+                  <span className={styles.displayName}>{user.nickname || user.displayName}</span>
+                  <span className={styles.username}>@{user.code || user.username}</span>
                 </div>
               </div>
             </div>

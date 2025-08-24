@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useArtworkDraftStore from '@museum/services/artworkDraftStore';
-import useArtworkStore from '@museum/services/artworkStore';
-import useUserStore from '@/stores/userStore';
+import { createPiece } from '@apis/museum/artwork';
+import { getCurrentUser } from '@apis/user/user';
 import ArtworkModal from '@museum/components/artwork/ArtworkModal';
 import chevronLeft from '@/assets/museum/chevron-left.png';
 import cameraIcon from '@/assets/user/camera.png';
@@ -11,10 +10,7 @@ import styles from './artworkUploadPage.module.css';
 
 export default function ArtworkUploadPage() {
   const navigate = useNavigate();
-  const { saveDraft } = useArtworkDraftStore();
-  const { addArtwork } = useArtworkStore();
-  const { user } = useUserStore();
-  
+  const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -29,6 +25,132 @@ export default function ArtworkUploadPage() {
 
   const [errorMessage, setErrorMessage] = useState('');
   const [showErrors, setShowErrors] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationTimeout, setValidationTimeout] = useState(null);
+  const [mainImageUrl, setMainImageUrl] = useState('');
+  const [detailImageUrls, setDetailImageUrls] = useState([]);
+
+  // 유저 정보 가져오기
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await getCurrentUser();
+        setUser(response.data);
+      } catch (error) {
+        console.error('유저 정보 조회 실패:', error);
+        // 에러가 발생해도 페이지는 계속 사용할 수 있도록 함
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  // 메인 이미지 URL 생성 및 정리
+  useEffect(() => {
+    if (formData.mainImage) {
+      const url = URL.createObjectURL(formData.mainImage);
+      setMainImageUrl(url);
+      
+      // 컴포넌트 언마운트 시 URL 정리
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setMainImageUrl('');
+    }
+  }, [formData.mainImage]);
+
+  // 디테일 이미지 URL 생성 및 정리
+  useEffect(() => {
+    const urls = [];
+    formData.detailImages.forEach((image, index) => {
+      if (image) {
+        const url = URL.createObjectURL(image);
+        urls[index] = url;
+      }
+    });
+    
+    setDetailImageUrls(urls);
+    
+    // 컴포넌트 언마운트 시 모든 URL 정리
+    return () => {
+      urls.forEach(url => {
+        if (url) URL.revokeObjectURL(url);
+      });
+    };
+  }, [formData.detailImages]);
+
+  // 입력 완료 후 1초 뒤에 에러 메시지만 숨기기
+  useEffect(() => {
+    if (validationTimeout) {
+      clearTimeout(validationTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      // 입력이 완료되면 에러 메시지 숨기기
+      if (showErrors) {
+        setShowErrors(false);
+        setErrorMessage('');
+      }
+    }, 1000);
+
+    setValidationTimeout(timeout);
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [formData.title, formData.description, showErrors]);
+
+  // 폼 검증 함수
+  const validateForm = () => {
+    let hasError = false;
+    let errorMsg = '';
+    
+    // 1순위: 메인 이미지 없음
+    if (!formData.mainImage) {
+      errorMsg = '메인 이미지를 등록해주세요';
+      hasError = true;
+    }
+    // 2순위: 작품 소개 500자 이상
+    else if (formData.description && formData.description.length > 500) {
+      errorMsg = '작품 소개는 최대 500자까지만 가능해요';
+      hasError = true;
+    }
+    // 3순위: 작품명 없음
+    else if (!formData.title || !formData.title.trim()) {
+      errorMsg = '작품명을 작성해주세요';
+      hasError = true;
+    }
+    // 4순위: 작품 소개 없음
+    else if (!formData.description || !formData.description.trim()) {
+      errorMsg = '작품 소개를 작성해주세요';
+      hasError = true;
+    }
+    
+    // 에러가 있을 때만 상태 업데이트
+    if (hasError) {
+      setErrorMessage(errorMsg);
+      setShowErrors(true);
+      
+      // 에러 메시지를 3초 후에 자동으로 숨기기
+      setTimeout(() => {
+        setShowErrors(false);
+        setErrorMessage('');
+      }, 3000);
+    }
+    
+    return hasError; // 에러 여부 반환
+  };
+
+  // 로컬 draft 저장소 (localStorage 사용)
+  const saveDraft = (data) => {
+    try {
+      localStorage.setItem('artworkDraft', JSON.stringify(data));
+      console.log('임시저장 완료:', data);
+    } catch (error) {
+      console.error('임시저장 실패:', error);
+    }
+  };
 
   const handleBack = () => {
     // 작성 중인 내용이 있으면 취소 모달 표시
@@ -85,38 +207,11 @@ export default function ArtworkUploadPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    let hasError = false;
+    // 즉시 검증 실행하고 에러 여부 확인
+    const hasError = validateForm();
     
-    // 1순위: 메인 이미지 없음
-    if (!formData.mainImage) {
-      setErrorMessage('메인 이미지를 등록해주세요');
-      hasError = true;
-    }
-    // 2순위: 작품 소개 500자 이상
-    else if (formData.description && formData.description.length > 500) {
-      setErrorMessage('작품 소개는 최대 500자까지만 가능해요');
-      hasError = true;
-    }
-    // 3순위: 작품명 없음
-    else if (!formData.title || !formData.title.trim()) {
-      setErrorMessage('작품명을 작성해주세요');
-      hasError = true;
-    }
-    // 4순위: 작품 소개 없음
-    else if (!formData.description || !formData.description.trim()) {
-      setErrorMessage('작품 소개를 작성해주세요');
-      hasError = true;
-    }
-    
-    setShowErrors(hasError);
-    
-    // 에러가 있으면 에러 메시지 표시
+    // 에러가 있으면 제출 중단
     if (hasError) {
-      // 에러 메시지를 3초 후에 자동으로 숨기기
-      setTimeout(() => {
-        setShowErrors(false);
-        setErrorMessage('');
-      }, 3000);
       return;
     }
     
@@ -124,26 +219,36 @@ export default function ArtworkUploadPage() {
     setModal({ isOpen: true, type: 'register' });
   };
 
-  const handleRegisterConfirm = () => {
-    // 실제 작품 등록 로직
-    const newArtwork = {
-      title: formData.title,
-      description: formData.description,
-      image: formData.mainImage ? URL.createObjectURL(formData.mainImage) : null,
-      // 추가 정보들
-      artistName: user.name,
-      artistNickname: user.nickname,
-      // 이미지 파일들 (실제 구현에서는 서버에 업로드 후 URL 사용)
-      mainImage: formData.mainImage,
-      detailImages: formData.detailImages.filter(img => img !== null)
-    };
+  const handleRegisterConfirm = async () => {
+    if (isSubmitting) return;
     
-    // store에 작품 등록
-    const registeredArtwork = addArtwork(newArtwork);
-    console.log('작품 등록 완료:', registeredArtwork);
+    setIsSubmitting(true);
     
-    // 등록 완료 모달 표시
-    setModal({ isOpen: true, type: 'complete' });
+    try {
+      // API를 사용하여 작품 등록
+      const response = await createPiece(formData, 'APPLICATION');
+      
+      if (response?.success === true && (response?.code === 200 || response?.code === 201)) {
+        console.log('작품 등록 완료:', response.data);
+        
+        // 등록 완료 모달 표시
+        setModal({ isOpen: true, type: 'complete' });
+      } else {
+        throw new Error('작품 등록에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('작품 등록 실패:', error);
+      setErrorMessage('작품 등록에 실패했습니다. 다시 시도해주세요.');
+      setShowErrors(true);
+      
+      // 에러 메시지를 3초 후에 자동으로 숨기기
+      setTimeout(() => {
+        setShowErrors(false);
+        setErrorMessage('');
+      }, 3000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCompleteConfirm = () => {
@@ -169,19 +274,47 @@ export default function ArtworkUploadPage() {
     setModal({ isOpen: false, type: null });
   };
 
-  const handleSave = () => {
-    // 수동 임시 저장
-    saveDraft(formData);
+  const handleSave = async () => {
+    // 임시저장 중이면 중단
+    if (isSubmitting) return;
     
-    // 임시저장 완료 메시지 표시
-    setErrorMessage('임시 저장이 완료되었어요');
-    setShowErrors(true);
+    setIsSubmitting(true);
     
-    // 메시지를 3초 후에 자동으로 숨기기
-    setTimeout(() => {
-      setShowErrors(false);
-      setErrorMessage('');
-    }, 3000);
+    try {
+      // API를 사용하여 임시저장 (DRAFT)
+      const response = await createPiece(formData, 'DRAFT');
+      
+      if (response?.success === true && (response?.code === 200 || response?.code === 201)) {
+        console.log('임시저장 완료:', response.data);
+        
+        // 로컬 draft도 업데이트
+        saveDraft(formData);
+        
+        // 임시저장 완료 메시지 표시
+        setErrorMessage('임시 저장이 완료되었어요');
+        setShowErrors(true);
+        
+        // 메시지를 3초 후에 자동으로 숨기기
+        setTimeout(() => {
+          setShowErrors(false);
+          setErrorMessage('');
+        }, 3000);
+      } else {
+        throw new Error('임시저장에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('임시저장 실패:', error);
+      setErrorMessage('임시저장에 실패했습니다. 다시 시도해주세요.');
+      setShowErrors(true);
+      
+      // 에러 메시지를 3초 후에 자동으로 숨기기
+      setTimeout(() => {
+        setShowErrors(false);
+        setErrorMessage('');
+      }, 3000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -214,23 +347,23 @@ export default function ArtworkUploadPage() {
               <div className={styles.imageSlide}>
                 <div className={styles.imageUploadBox}>
                   <div className={styles.imageTag}>메인 이미지</div>
-                  <label htmlFor="mainImage" className={styles.imageLabel}>
-                    {formData.mainImage ? (
-                      <img 
-                        src={URL.createObjectURL(formData.mainImage)} 
-                        alt="메인 이미지" 
-                        className={styles.previewImage}
-                      />
-                    ) : (
-                      <div className={styles.imagePlaceholder}>
-                        <img src={cameraIcon} alt="camera" className={styles.cameraIcon} />
-                        <p className={styles.placeholderText}>
-                          작품 사진을 등록해주세요<br />
-                          (필수)
-                        </p>
-                      </div>
-                    )}
-                  </label>
+                                     <label htmlFor="mainImage" className={styles.imageLabel}>
+                     {mainImageUrl ? (
+                       <img 
+                         src={mainImageUrl} 
+                         alt="메인 이미지" 
+                         className={styles.previewImage}
+                       />
+                     ) : (
+                       <div className={styles.imagePlaceholder}>
+                         <img src={cameraIcon} alt="camera" className={styles.cameraIcon} />
+                         <p className={styles.placeholderText}>
+                           작품 사진을 등록해주세요<br />
+                           (필수)
+                         </p>
+                       </div>
+                     )}
+                   </label>
                   <input
                     type="file"
                     id="mainImage"
@@ -247,35 +380,35 @@ export default function ArtworkUploadPage() {
                   <div className={styles.imageUploadBox}>
                     <div className={styles.detailTag}>디테일 컷{index + 1}</div>
                     
-                    <label htmlFor={`detailImage${index}`} className={styles.imageLabel}>
-                      {formData.detailImages[index] ? (
-                        <div className={styles.detailImagePreview}>
-                          <img 
-                            src={URL.createObjectURL(formData.detailImages[index])} 
-                            alt={`디테일 이미지 ${index + 1}`} 
-                            className={styles.previewImage}
-                          />
-                          <button 
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              removeDetailImage(index);
-                            }}
-                            className={styles.removeImageButton}
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ) : (
-                        <div className={styles.imagePlaceholder}>
-                          <img src={plusCircleIcon} alt="plus" className={styles.plusCircleIcon} />
-                          <p className={styles.placeholderText}>
-                            디테일 컷을 추가해보세요<br />
-                            (최대 5장)
-                          </p>
-                        </div>
-                      )}
-                    </label>
+                                         <label htmlFor={`detailImage${index}`} className={styles.imageLabel}>
+                       {detailImageUrls[index] ? (
+                         <div className={styles.detailImagePreview}>
+                           <img 
+                             src={detailImageUrls[index]} 
+                             alt={`디테일 이미지 ${index + 1}`} 
+                             className={styles.previewImage}
+                           />
+                           <button 
+                             type="button"
+                             onClick={(e) => {
+                               e.preventDefault();
+                               removeDetailImage(index);
+                             }}
+                             className={styles.removeImageButton}
+                           >
+                             ×
+                           </button>
+                         </div>
+                       ) : (
+                         <div className={styles.imagePlaceholder}>
+                           <img src={plusCircleIcon} alt="plus" className={styles.plusCircleIcon} />
+                           <p className={styles.placeholderText}>
+                             디테일 컷을 추가해보세요<br />
+                             (최대 5장)
+                           </p>
+                         </div>
+                       )}
+                     </label>
                     
                     <input
                       type="file"
@@ -317,13 +450,10 @@ export default function ArtworkUploadPage() {
 
           {/* 추가 기능 버튼들 */}
           <div className={styles.additionalFeatures}>
-            <button type="button" className={styles.featureButton}>
-              VR 등록하기
-            </button>
             <button 
               type="button" 
               className={`${styles.featureButton} ${
-                user.email || user.nickname ? styles.contactRegistered : ''
+                user?.email || user?.nickname ? styles.contactRegistered : ''
               }`}
             >
               연락 정보 등록하기

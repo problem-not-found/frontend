@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ExhibitionList from '@museum/components/exhibition/ExhibitionList';
-import styles from './myExhibitionPage.module.css';
+import styles from './myArtworkPage.module.css';
 
 export default function MyExhibitionPage() {
   const navigate = useNavigate();

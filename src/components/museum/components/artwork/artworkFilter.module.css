@@ -2,39 +2,6 @@
   margin-bottom: 24px;
 }
 
-/* 등록 상태 토글 */
-.applicatedToggle {
-  margin-bottom: 16px;
-  display: flex;
-  justify-content: center;
-}
-
-.toggleButton {
-  padding: 8px 16px;
-  border: 1px solid #f37021;
-  background-color: white;
-  color: #f37021;
-  border-radius: 20px;
-  font-family: 'Pretendard', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.toggleButton:hover {
-  background-color: #fef7f3;
-}
-
-.toggleButtonActive {
-  background-color: #f37021;
-  color: white;
-}
-
-.toggleButtonActive:hover {
-  background-color: #e05a1a;
-}
-
 .searchContainer {
   margin-bottom: 16px;
 }

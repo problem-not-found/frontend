@@ -10,7 +10,7 @@ import ExhibitionVenue from '../components/exhibition/ExhibitionVenue';
 import ExhibitionReviews from '../components/exhibition/ExhibitionReviews';
 import ExhibitionParticipants from '../components/exhibition/ExhibitionParticipants';
 import BackToTopButton from '../components/common/BackToTopButton';
-import { useExhibitionDetail, usePieceImages, useParticipantCreators, useExhibitionReviewsPreview } from '../apis/exhibition/exhibition';
+import { useExhibitionDetail, usePieceImages, useParticipantCreators, useExhibitionReviewsPreview } from '@apis/museum/exhibition';
 import styles from './exhibitionDetailPage.module.css';
 
 const ExhibitionDetailPage = () => {

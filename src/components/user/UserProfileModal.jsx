@@ -1,8 +1,26 @@
+import { useEffect } from "react";
 import useUserStore from "../../stores/userStore";
+import { getCurrentUser } from "../../apis/user/user.js";
 import styles from './userProfileModal.module.css';
 
 export default function UserProfileModal({ isOpen, onClose, onEditClick }) {
-  const { user, contactInfo, subscription } = useUserStore();
+  const { user, contactInfo, subscription, setUserFromAPI } = useUserStore();
+
+  useEffect(() => {
+    if (isOpen) {
+      // 모달이 열릴 때 사용자 정보 가져오기
+      const fetchUserData = async () => {
+        try {
+          const response = await getCurrentUser();
+          setUserFromAPI(response);
+        } catch (error) {
+          console.error('사용자 정보 조회 실패:', error);
+        }
+      };
+      
+      fetchUserData();
+    }
+  }, [isOpen, setUserFromAPI]);
 
   if (!isOpen) return null;
 

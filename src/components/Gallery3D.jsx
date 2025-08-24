@@ -3,8 +3,8 @@ import { Environment } from "@react-three/drei";
 import { Suspense, useState } from "react";
 import Exhibition from "./Exhibition";
 import CameraController from "./CameraController";
-import ResetCameraButton from "./common/ResetCameraButton";
-import ControlsInfoModal from "./common/ControlsInfoModal";
+import ResetCameraButton from "./ResetCameraButton";
+import ControlsInfoModal from "./ControlsInfoModal";
 import "./Gallery3D.css";
 
 function LoadingFallback() {

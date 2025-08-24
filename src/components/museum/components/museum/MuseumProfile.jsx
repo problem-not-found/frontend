@@ -7,12 +7,12 @@ export default function MuseumProfile({ user }) {
         <div 
           className={styles.profileImage}
           style={{
-            backgroundImage: user.profileImage ? `url(${user.profileImage})` : 'none'
+            backgroundImage: user.profileImageUrl ? `url(${user.profileImageUrl})` : 'none'
           }}
         />
         <div className={styles.profileDetails}>
-          <h2>{user.name}</h2>
-          <p>{user.title}</p>
+          <h2>{user.nickname || '사용자'}</h2>
+          <p>크리에이터의 전시장</p>
         </div>
       </div>
     </div>

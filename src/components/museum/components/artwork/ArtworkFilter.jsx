@@ -6,9 +6,7 @@ export default function ArtworkFilter({
   layoutMode, 
   onLayoutChange, 
   searchKeyword, 
-  onSearchChange,
-  applicated,
-  onApplicatedChange
+  onSearchChange
 }) {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [localSearchKeyword, setLocalSearchKeyword] = useState(searchKeyword || '');
@@ -37,26 +35,8 @@ export default function ArtworkFilter({
     setLocalSearchKeyword(e.target.value);
   };
 
-  const handleApplicatedToggle = () => {
-    if (onApplicatedChange) {
-      onApplicatedChange();
-    }
-  };
-
   return (
     <div className={styles.filterContainer}>
-      {/* 등록 상태 토글 */}
-      {onApplicatedChange && (
-        <div className={styles.applicatedToggle}>
-          <button
-            className={`${styles.toggleButton} ${applicated ? styles.toggleButtonActive : ''}`}
-            onClick={handleApplicatedToggle}
-          >
-            {applicated ? '등록 신청한 작품' : '임시 저장된 작품'}
-          </button>
-        </div>
-      )}
-
       {/* 검색바 */}
       <div className={styles.searchContainer}>
         <form onSubmit={handleSearchSubmit} className={styles.searchForm}>

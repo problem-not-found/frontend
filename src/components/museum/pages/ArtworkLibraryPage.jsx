@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ArtworkCard from '@museum/components/artwork/ArtworkCard';
-import useArtworkStore from '@museum/services/artworkStore';
+import { useInfinitePieces } from '@apis/museum/artwork';
 import chevronLeft from '@/assets/museum/chevron-left.png';
 import styles from './artworkLibraryPage.module.css';
 
@@ -12,14 +12,14 @@ export default function ArtworkLibraryPage() {
   // 전시 등록 페이지에서 전달받은 정보
   const { fromExhibition, artworkIndex, isThumbnail, isChangeMode } = location.state || {};
   
-  // Zustand 스토어에서 상태 가져오기
+  // API를 사용한 작품 목록 관리
   const {
-    artworks,
-    getFilteredArtworks,
-    loadArtworks,
-    loadMoreArtworks,
-    hasMore
-  } = useArtworkStore();
+    pieces: artworks,
+    loading,
+    hasMore,
+    loadMorePieces,
+    resetPieces
+  } = useInfinitePieces({ applicated: true, pageSize: 6 });
 
   // 선택된 작품들 관리
   const [selectedArtworks, setSelectedArtworks] = useState(new Set());
@@ -27,29 +27,29 @@ export default function ArtworkLibraryPage() {
 
   // 무한 스크롤을 위한 ref들
   const observerRef = useRef();
-  const loadingRef = useRef();
+  const lastArtworkRef = useRef();
 
   // 필터된 작품 목록 (검색어 없이 모든 작품)
-  const filteredArtworks = getFilteredArtworks();
+  const filteredArtworks = artworks;
 
-  // 컴포넌트 마운트 시 작품 데이터 로드 (라이브러리 페이지에서는 6개)
+  // 컴포넌트 마운트 시 작품 데이터 초기화
   useEffect(() => {
-    loadArtworks(true, 6);
-  }, [loadArtworks]);
+    resetPieces();
+  }, [resetPieces]);
 
   // 무한 스크롤 구현 (IntersectionObserver 사용)
   const lastArtworkElementRef = useCallback((node) => {
-    if (artworks.isLoadingMore) return;
+    if (loading || !hasMore) return;
     if (observerRef.current) observerRef.current.disconnect();
     
     observerRef.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore()) {
-        loadMoreArtworks();
+      if (entries[0].isIntersecting && hasMore) {
+        loadMorePieces();
       }
     });
     
     if (node) observerRef.current.observe(node);
-  }, [artworks.isLoadingMore, hasMore, loadMoreArtworks]);
+  }, [loading, hasMore, loadMorePieces]);
 
   const handleBack = () => {
     if (fromExhibition) {
@@ -67,16 +67,25 @@ export default function ArtworkLibraryPage() {
   };
 
   const handleArtworkSelection = (artwork) => {
+    const artworkId = artwork.pieceId || artwork.id; // pieceId 우선, 없으면 id 사용
+    
+    console.log('작품 선택:', {
+      artwork,
+      artworkId,
+      currentSelected: Array.from(selectedArtworks),
+      isChangeMode
+    });
+    
     if (isChangeMode) {
       // 변경 모드: 한 장만 선택 가능
-      setSelectedArtworks(new Set([artwork.id]));
+      setSelectedArtworks(new Set([artworkId]));
     } else {
       // 새로 추가 모드: 여러 장 선택 가능
       const newSelected = new Set(selectedArtworks);
-      if (newSelected.has(artwork.id)) {
-        newSelected.delete(artwork.id);
+      if (newSelected.has(artworkId)) {
+        newSelected.delete(artworkId);
       } else {
-        newSelected.add(artwork.id);
+        newSelected.add(artworkId);
       }
       setSelectedArtworks(newSelected);
     }
@@ -87,7 +96,7 @@ export default function ArtworkLibraryPage() {
     
     // 선택된 작품들 가져오기
     const selectedArtworkList = filteredArtworks.filter(artwork => 
-      selectedArtworks.has(artwork.id)
+      selectedArtworks.has(artwork.pieceId || artwork.id)
     );
     
     if (fromExhibition && selectedArtworkList.length > 0) {
@@ -103,6 +112,18 @@ export default function ArtworkLibraryPage() {
     }
   };
 
+  const handleArtworkClick = (artwork) => {
+    // 작품 클릭 시에는 아무 동작하지 않음 (체크박스만 동작)
+    // 필요시 작품 상세 페이지로 이동하는 로직 추가 가능
+    console.log('작품 클릭:', artwork);
+  };
+
+  // 작품 삭제 완료 시 작품 목록 새로고침
+  const handleArtworkDeleted = (deletedIds) => {
+    console.log('삭제된 작품 ID들:', deletedIds);
+    // 작품 목록을 새로고침
+    resetPieces();
+  };
 
 
   return (
@@ -128,26 +149,27 @@ export default function ArtworkLibraryPage() {
           // 마지막 요소에 ref 추가 (무한 스크롤용)
           const isLast = index === filteredArtworks.length - 1;
           return (
-            <div key={artwork.id} ref={isLast ? lastArtworkElementRef : null}>
-              <ArtworkCard
-                artwork={artwork}
-                layoutMode="grid"
-                onClick={() => handleArtworkSelection(artwork)}
-                showDate={true}
-                showStatus={false}
-                showDescription={true}
-                isEditMode={true}
-                isSelected={selectedArtworks.has(artwork.id)}
-                onSelect={handleArtworkSelection}
-                isLibraryMode={true}
-                checkboxSize="large"
-              />
+            <div key={artwork.pieceId || artwork.id} ref={isLast ? lastArtworkRef : null}>
+                             <ArtworkCard
+                 artwork={artwork}
+                 layoutMode="grid"
+                 onClick={handleArtworkClick}
+                 showDate={true}
+                 showStatus={false}
+                 showDescription={true}
+                 isEditMode={true}
+                 isSelected={selectedArtworks.has(artwork.pieceId || artwork.id)}
+                 onSelect={handleArtworkSelection}
+                 isLibraryMode={true}
+                 checkboxSize="large"
+                 onArtworkDeleted={handleArtworkDeleted}
+               />
             </div>
           );
         })}
         
         {/* 더 로딩 중 표시 */}
-        {artworks.isLoadingMore && (
+        {loading && (
           <div className={styles.loadingMore}>
             <div className={styles.spinner}></div>
             <p>더 많은 작품을 불러오는 중...</p>

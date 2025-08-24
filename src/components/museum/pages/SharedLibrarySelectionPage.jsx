@@ -2,11 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import chevronLeft from '@/assets/museum/chevron-left.png';
 import styles from './sharedLibrarySelectionPage.module.css';
-import useUserStore from '@/stores/userStore';
 
 export default function SharedLibrarySelectionPage() {
   const navigate = useNavigate();
-  const { updateInvitation } = useUserStore();
   
   // 상태 관리
   const [sharedLibraries, setSharedLibraries] = useState([]);
@@ -41,12 +39,6 @@ export default function SharedLibrarySelectionPage() {
     console.log('입장할 라이브러리:', library);
     
     // TODO: API 호출로 라이브러리 입장 처리
-    
-    // userStore 상태 업데이트 - 작품 등록 단계로
-    updateInvitation({
-      hasSharedLibraryRequest: false, // 공유 라이브러리 선택 안내 숨김
-      // 다음 단계는 작품 등록이므로 별도 상태 필요
-    });
     
     // 공유 라이브러리 입장 페이지로 이동
     navigate('/exhibition/shared-library-entry', {

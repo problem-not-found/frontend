@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { getImageUrl, getStatusStyle } from '@apis/museum/artwork';
 import styles from './artworkCard.module.css';
 import checkIcon from '@/assets/museum/check.png';
 
@@ -14,11 +16,24 @@ export default function ArtworkCard({
   onSelect,
   checkboxSize = 'normal' // 'normal' (24x24) 또는 'large' (36x36)
 }) {
+  const [imageError, setImageError] = useState(false);
+
+  const imageUrl = getImageUrl(artwork);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   const handleClick = () => {
+    if (onClick) {
+      onClick(artwork);
+    }
+  };
+
+  const handleCheckboxClick = (e) => {
+    e.stopPropagation();
     if (isEditMode && onSelect) {
       onSelect(artwork);
-    } else if (!isEditMode && onClick) {
-      onClick(artwork);
     }
   };
 
@@ -29,35 +44,31 @@ export default function ArtworkCard({
     }
   };
 
-  const getStatusStyle = (status) => {
-    switch (status) {
-      case '전시 중':
-        return styles.statusExhibiting;
-      case '미승인':
-        return styles.statusRejected;
-      case '승인 대기':
-        return styles.statusPending;
-      default:
-        return styles.statusDefault;
-    }
-  };
-
   if (layoutMode === 'grid') {
     return (
       <div className={styles.gridCard} onClick={handleClick}>
         <div 
           className={styles.gridImage}
           style={{
-            backgroundImage: artwork.image ? `url(${artwork.image})` : 'none'
+            backgroundImage: imageUrl && !imageError ? `url(${imageUrl})` : 'none'
           }}
         >
-          {showStatus && artwork.status && (
-            <div className={`${styles.statusBadge} ${getStatusStyle(artwork.status)}`}>
-              {artwork.status}
+          {!imageUrl || imageError ? (
+            <div className={styles.noImagePlaceholder}>
+              <span>이미지 없음</span>
+            </div>
+          ) : null}
+          
+          {showStatus && artwork.progressStatus === 'ON_DISPLAY' && (
+            <div className={`${styles.statusBadge} ${styles.statusExhibiting}`}>
+              전시 중
             </div>
           )}
           {isEditMode && (
-            <div className={`${styles.checkbox} ${isSelected ? styles.checkboxSelected : ''} ${checkboxSize === 'large' ? styles.checkboxLarge : ''}`}>
+            <div 
+              className={`${styles.checkbox} ${isSelected ? styles.checkboxSelected : ''} ${checkboxSize === 'large' ? styles.checkboxLarge : ''}`}
+              onClick={handleCheckboxClick}
+            >
               {isSelected && (
                 <img src={checkIcon} alt="선택됨" className={`${styles.checkIcon} ${checkboxSize === 'large' ? styles.checkIconLarge : ''}`} />
               )}
@@ -75,16 +86,25 @@ export default function ArtworkCard({
           <div 
             className={styles.verticalImage}
             style={{
-              backgroundImage: artwork.image ? `url(${artwork.image})` : 'none'
+              backgroundImage: imageUrl && !imageError ? `url(${imageUrl})` : 'none'
             }}
           >
-            {showStatus && artwork.status && (
-              <div className={`${styles.statusBadge} ${getStatusStyle(artwork.status)}`}>
-                {artwork.status}
+            {!imageUrl || imageError ? (
+              <div className={styles.noImagePlaceholder}>
+                <span>이미지 없음</span>
+              </div>
+            ) : null}
+            
+            {showStatus && artwork.progressStatus === 'ON_DISPLAY' && (
+              <div className={`${styles.statusBadge} ${styles.statusExhibiting}`}>
+                전시 중
               </div>
             )}
             {isEditMode && (
-              <div className={`${styles.checkbox} ${isSelected ? styles.checkboxSelected : ''} ${checkboxSize === 'large' ? styles.checkboxLarge : ''}`}>
+              <div 
+                className={`${styles.checkbox} ${isSelected ? styles.checkboxSelected : ''} ${checkboxSize === 'large' ? styles.checkboxLarge : ''}`}
+                onClick={handleCheckboxClick}
+              >
                 {isSelected && (
                   <img src={checkIcon} alt="선택됨" className={`${styles.checkIcon} ${checkboxSize === 'large' ? styles.checkIconLarge : ''}`} />
                 )}

@@ -6,6 +6,7 @@ import chevronLeft from '@/assets/museum/chevron-left.png';
 import arrowDown from '@/assets/museum/arrow-down.svg';
 import xImage from '@/assets/museum/x.png';
 import styles from './exhibitionList.module.css';
+import { getMyExhibitions } from '@/apis/museum/exhibition';
 
 export default function ExhibitionList({ 
   showAddButton = true,
@@ -14,7 +15,7 @@ export default function ExhibitionList({
   onBack,
   onExhibitionClick
 }) {
-  // 임시 전시 데이터 (추후 store로 대체)
+  // 전시 데이터 상태
   const [exhibitions, setExhibitions] = useState([]);
   const [layoutMode, setLayoutMode] = useState('grid');
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -22,6 +23,22 @@ export default function ExhibitionList({
   const [showScrollHeader, setShowScrollHeader] = useState(false);
   const [selectedExhibitions, setSelectedExhibitions] = useState(new Set());
   const headerRef = useRef();
+
+  // 전시 데이터 로드
+  useEffect(() => {
+    const loadExhibitions = async () => {
+      try {
+        const response = await getMyExhibitions({ pageNum: 1, pageSize: 20, fillAll: true });
+        if (response?.data?.data) {
+          setExhibitions(response.data.data.content || []);
+        }
+      } catch (error) {
+        console.error('전시 데이터 로드 실패:', error);
+      }
+    };
+
+    loadExhibitions();
+  }, []);
 
   // 필터된 전시 목록
   const filteredExhibitions = exhibitions.filter(exhibition => 
@@ -194,9 +211,9 @@ export default function ExhibitionList({
       ) : (
         // 정상적인 전시 목록
         <div className={`${styles.exhibitionGrid} ${layoutMode === 'grid' ? styles.exhibitionGridLayout : styles.exhibitionVerticalLayout}`}>
-          {filteredExhibitions.map((exhibition, index) => (
-            <div key={exhibition.id}>
-              <ExhibitionCard
+                     {filteredExhibitions.map((exhibition, index) => (
+             <div key={exhibition.exhibitionId || index}>
+               <ExhibitionCard
                 exhibition={exhibition}
                 layoutMode={layoutMode}
                 onClick={onExhibitionClick}

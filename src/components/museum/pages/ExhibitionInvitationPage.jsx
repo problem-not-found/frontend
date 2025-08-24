@@ -3,12 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import chevronLeft from '@/assets/museum/chevron-left.png';
 import checkImage from '@/assets/museum/check.png';
 import styles from './exhibitionInvitationPage.module.css';
-import useUserStore from '@/stores/userStore';
 
 export default function ExhibitionInvitationPage() {
   const navigate = useNavigate();
-  const { updateInvitation } = useUserStore();
-  
   // 상태 관리
   const [invitations, setInvitations] = useState([]);
   const [selectedInvitations, setSelectedInvitations] = useState([]);

@@ -7,43 +7,74 @@ import InsightSection from "@museum/components/museum/InsightSection";
 import InvitationSection from "@museum/components/museum/InvitationSection";
 import BackToTopButton from "@/components/common/BackToTopButton";
 import AppFooter from "@/components/footer/AppFooter";
-import useUserStore from "@/stores/userStore";
-import { fetchMyArtworks } from "@/apis/artwork";
+import { getMyPieces } from "@apis/museum/artwork";
+import { getMyExhibitions } from "@apis/museum/exhibition";
+import { getCurrentUser } from "@/apis/user/user.js";
 import styles from "@museum/components/museum/museum.module.css";
 import commonStyles from "@museum/components/museum/common.module.css";
 
-// 이미지 import
-import exhibition1 from "@/assets/museum/큰사진1.png";
-import exhibition2 from "@/assets/museum/큰사진2.png";
 
 export default function MuseumPage() {
-  // Zustand에서 사용자 정보 가져오기
-  const { user, subscription, invitation } = useUserStore();
-  
   // 작품 데이터 상태
   const [artworks, setArtworks] = useState([]);
+  const [artworksTotal, setArtworksTotal] = useState(0);
+  
+  // 전시회 데이터 상태
+  const [exhibitions, setExhibitions] = useState([]);
+  const [exhibitionsTotal, setExhibitionsTotal] = useState(0);
+  
+  // 사용자 정보 상태
+  const [user, setUser] = useState(null);
+  
+  // 초대 정보 상태
+  const [invitation, setInvitation] = useState({
+    hasInvitation: false,
+    hasSharedLibraryRequest: false,
+    invitationCount: 0
+  });
   
   // 스크롤 상태 관리
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // 작품 데이터 로드
+  // 데이터 로드
   useEffect(() => {
-    const loadArtworks = async () => {
+    const loadData = async () => {
       try {
-        console.log('작품 데이터 로드 시작...');
-        const response = await fetchMyArtworks(true, 0, 10); // 등록 완료된 작품 10개
-        console.log('API 응답:', response);
-        console.log('응답 데이터:', response.data);
-        console.log('작품 목록:', response.content);
+        // 사용자 정보 로드
+        const userResponse = await getCurrentUser();
+        if (userResponse?.data) {
+          setUser(userResponse.data);
+          console.log('MuseumPage - 사용자 정보:', userResponse.data);
+        }
         
-        setArtworks(response.content || []);
-        console.log('설정된 작품 목록:', response.content || []);
+        // 작품 데이터 로드
+        const artworksResponse = await getMyPieces({ applicated: true, pageNum: 1, pageSize: 3 });
+        if (artworksResponse?.data) {
+          setArtworks(artworksResponse.data.content || []);
+          setArtworksTotal(artworksResponse.data.totalElements || 0);
+          console.log('설정된 작품 목록:', artworksResponse.data.content);
+          console.log('작품 총 개수:', artworksResponse.data.totalElements);
+        }
+        
+        // 전시회 데이터 로드
+        const exhibitionsResponse = await getMyExhibitions({ pageNum: 1, pageSize: 3, fillAll: true });
+        console.log('전시회 API 응답:', exhibitionsResponse);
+        if (exhibitionsResponse?.data?.data) {
+          const content = exhibitionsResponse.data.data.content || [];
+          const totalElements = exhibitionsResponse.data.data.totalElements || 0;
+          
+          setExhibitions(content);
+          setExhibitionsTotal(totalElements);
+          
+          console.log('전시회 데이터 설정:', { content, totalElements });
+        }
+        
       } catch (error) {
-        console.error('작품 로드 오류:', error);
+        console.error('데이터 로드 오류:', error);
       }
     };
 
-    loadArtworks();
+    loadData();
   }, []);
 
   // 스크롤 이벤트 처리
@@ -57,51 +88,13 @@ export default function MuseumPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const exhibitions = [
-    {
-      id: 1,
-      title: "김땡땡 개인전 : 두 번째 여름",
-      date: "24.12.5 - 25.2.19",
-      image: exhibition1
-    },
-    {
-      id: 2,
-      title: "김땡땡 개인전",
-      date: "24.12.5 - 25.2.19",
-      image: exhibition2
-    },
-    {
-      id: 3,
-      title: "추상 미술의 세계",
-      date: "24.11.1 - 25.1.15",
-      image: exhibition1
-    },
-    {
-      id: 4,
-      title: "도시 풍경 전시",
-      date: "24.10.20 - 24.12.30",
-      image: exhibition2
-    },
-    {
-      id: 5,
-      title: "자연과 빛의 조화",
-      date: "24.9.15 - 24.11.30",
-      image: exhibition1
-    },
-    {
-      id: 6,
-      title: "현대 미술의 흐름",
-      date: "24.8.1 - 24.10.15",
-      image: exhibition2
-    }
-  ];
 
   return (
     <div className={styles.page}>
       <div style={{height: '10px'}}></div>
       <div className={`${styles.topShadow} ${isScrolled ? styles.topShadowVisible : ''}`} />
       
-      <MuseumProfile user={user} />
+      {user && <MuseumProfile user={user} />}
       <PremiumBar />
       
       {/* 공동 전시 초대가 온 사용자에게만 보여주는 섹션 */}
@@ -114,10 +107,12 @@ export default function MuseumPage() {
       )}
       
       <main className={commonStyles.main}>
-        <ArtworkSection artworks={artworks} />
-        <ExhibitionSection exhibitions={exhibitions} />
+        <ArtworkSection artworks={artworks} totalElements={artworksTotal} />
+        <ExhibitionSection exhibitions={exhibitions} totalElements={exhibitionsTotal} />
         <InsightSection />
       </main>
+      
+
 
       <BackToTopButton />
       <AppFooter />

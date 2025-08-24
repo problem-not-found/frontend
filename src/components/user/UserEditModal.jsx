@@ -56,7 +56,7 @@ export default function UserEditModal({ isOpen, onClose }) {
             <input 
               type="email" 
               className={styles.editContactInput}
-              defaultValue="asd123@naver.com"
+              defaultValue=""
             />
           </div>
           <div className={styles.editContactItem}>
@@ -65,7 +65,7 @@ export default function UserEditModal({ isOpen, onClose }) {
             <input 
               type="text" 
               className={styles.editContactInput}
-              defaultValue="@simonisnextdoor"
+              defaultValue=""
             />
           </div>
         </div>

@@ -1,12 +1,13 @@
 import { useNavigate } from 'react-router-dom';
+import { getImageUrl } from '@apis/museum/artwork';
 import artworkStyles from './artworkSection.module.css';
 import commonStyles from './common.module.css';
 
-export default function ArtworkSection({ artworks = [] }) {
+export default function ArtworkSection({ artworks = [], totalElements = 0 }) {
   const navigate = useNavigate();
   const maxVisible = 5;
   const visibleArtworks = artworks.slice(0, maxVisible);
-  const hasMoreArtworks = artworks.length > maxVisible;
+  const hasMoreArtworks = totalElements > maxVisible;
 
   const handleShowMore = () => {
     navigate('/artwork/my'); // 내 작품 페이지로 이동
@@ -21,27 +22,38 @@ export default function ArtworkSection({ artworks = [] }) {
       <div className={commonStyles.sectionHeader}>
         <div className={commonStyles.sectionTitle}>
           <h3>내 작품</h3>
-          <span className={commonStyles.sectionCount}>_ {artworks.length}개</span>
+          <span className={commonStyles.sectionCount}>_ {totalElements}개</span>
         </div>
       </div>
       
       <div className={artworkStyles.artworkGrid}>
-        {visibleArtworks.map((artwork, index) => (
-          <div 
-            key={artwork.id || index}
-            className={artworkStyles.artworkCard}
-            style={{
-              backgroundImage: artwork.image ? `url(${artwork.image})` : 'none'
-            }}
-            title={artwork.title || `작품 ${index + 1}`}
-          />
-        ))}
+        {visibleArtworks.map((artwork, index) => {
+          const imageUrl = getImageUrl(artwork);
+          return (
+            <div 
+              key={artwork.id || index}
+              className={artworkStyles.artworkCard}
+              style={{
+                backgroundImage: imageUrl ? `url(${imageUrl})` : 'none',
+                backgroundColor: imageUrl ? 'transparent' : '#f0f0f0'
+              }}
+              title={artwork.title || `작품 ${index + 1}`}
+            />
+          );
+        })}
         
         {hasMoreArtworks && (
           <div 
             className={artworkStyles.artworkCard}
             style={{
-              backgroundImage: artworks[maxVisible] ? `url(${artworks[maxVisible].image})` : 'none'
+              backgroundImage: (() => {
+                const imageUrl = getImageUrl(artworks[maxVisible]);
+                return imageUrl ? `url(${imageUrl})` : 'none';
+              })(),
+              backgroundColor: (() => {
+                const imageUrl = getImageUrl(artworks[maxVisible]);
+                return imageUrl ? 'transparent' : '#f0f0f0';
+              })()
             }}
             onClick={handleShowMore}
           >

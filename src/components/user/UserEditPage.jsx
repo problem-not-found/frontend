@@ -1,40 +1,107 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import useUserStore from "@/stores/userStore";
+import { getCurrentUser, updateUserProfile, updateUserProfileImage, checkUserCode } from "@/apis/user/user.js";
 import AppFooter from "@/components/footer/AppFooter";
 import styles from "@/components/user/userEdit.module.css";
 
 export default function UserEditPage() {
   const navigate = useNavigate();
-  const { user, updateUser } = useUserStore();
-  const [userId, setUserId] = useState(user.nickname || "simonisnextdoor");
+  const fileInputRef = useRef(null);
+  const [user, setUser] = useState({
+    id: null,
+    name: '',
+    nickname: '',
+    introduction: '',
+    profileImageUrl: null,
+    code: null
+  });
+  const [userId, setUserId] = useState('');
   const [userIdStatus, setUserIdStatus] = useState("available");
   const [userIdMessage, setUserIdMessage] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
   
   // 폼 상태 관리
   const [formData, setFormData] = useState({
-    name: user.name || "김땡땡",
-    nickname: user.nickname || "simonisnextdoor", 
-    bio: ""
+    name: '',
+    nickname: '', 
+    introduction: ''
   });
 
-  const handleCompleteClick = () => {
-    // userStore 업데이트
-    updateUser({
-      name: formData.name,
-      nickname: formData.nickname,
-      bio: formData.bio
-    });
+  // 이미지 선택 핸들러
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
 
-    // 편집 완료 후 프로필 상세 페이지로 이동
-    navigate('/user/profile');
+  // 파일 선택 핸들러
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // 파일 유효성 검사
+      if (!file.type.startsWith('image/')) {
+        alert('이미지 파일만 선택할 수 있습니다.');
+        return;
+      }
+      
+      if (file.size > 5 * 1024 * 1024) { // 5MB 제한
+        alert('파일 크기는 5MB 이하여야 합니다.');
+        return;
+      }
+
+      setSelectedImage(file);
+      
+      // 미리보기 생성
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreviewImage(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCompleteClick = async () => {
+    // 아이디 유효성 검사
+    if (userIdStatus !== "available") {
+      alert('사용할 수 없는 아이디입니다. 다른 아이디를 입력해주세요.');
+      return;
+    }
+
+    try {
+      // 프로필 이미지 업데이트 (이미지가 선택된 경우)
+      if (selectedImage) {
+        try {
+          const imageResponse = await updateUserProfileImage(selectedImage);
+        } catch (error) {
+          console.error('프로필 이미지 업데이트 실패:', error);
+          console.error('에러 상세 정보:', {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status
+          });
+          alert(`프로필 이미지 업데이트에 실패했습니다.\n에러: ${error.message}`);
+        }
+      }
+
+      // API로 사용자 정보 업데이트
+      const response = await updateUserProfile({
+        nickname: formData.name,        // 닉네임
+        code: formData.nickname,        // 아이디 (code)
+        introduction: formData.introduction  // 자기소개
+      });
+
+      // 편집 완료 후 프로필 상세 페이지로 이동
+      navigate('/user/profile');
+    } catch (error) {
+      console.error('사용자 정보 업데이트 실패:', error);
+      alert('프로필 수정에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   const handleBackClick = () => {
     navigate('/user/profile');
   };
 
-  // 아이디 중복 체크 함수 (실제로는 API 호출)
+  // 아이디 중복 체크 함수 (API 호출)
   const checkUserIdAvailability = useCallback(async (id) => {
     if (id.length < 3) {
       setUserIdStatus("idle");
@@ -42,34 +109,59 @@ export default function UserEditPage() {
       return;
     }
 
+    if (id.length > 15) {
+      setUserIdStatus("unavailable");
+      setUserIdMessage("3~15자 이내로 입력해주세요");
+      return;
+    }
+
+    // 특수문자 체크 (영문, 숫자, 언더스코어, 점, 하이픈 허용)
+    const codeRegex = /^[a-zA-Z0-9_.-]+$/;
+    if (!codeRegex.test(id)) {
+      setUserIdStatus("unavailable");
+      setUserIdMessage("사용할 수 없는 특수문자가 포함되어 있습니다");
+      return;
+    }
+
+    // 현재 사용자의 code와 동일한 경우 중복 체크 건너뛰기
+    if (id === user.code) {
+      setUserIdStatus("available");
+      setUserIdMessage("현재 사용 중인 아이디입니다");
+      return;
+    }
+
     setUserIdStatus("checking");
     setUserIdMessage("확인 중...");
 
-    // 실제 구현에서는 API 호출
-    setTimeout(() => {
-      // 임시 로직: 특정 아이디들을 이미 사용 중으로 설정
-      const unavailableIds = ["admin", "test", "user", "guest"];
-      
-      if (unavailableIds.includes(id.toLowerCase())) {
-        setUserIdStatus("unavailable");
-        setUserIdMessage("이미 사용 중인 아이디입니다");
-      } else {
-        setUserIdStatus("available");
-        setUserIdMessage("사용 가능한 아이디입니다");
+    try {
+      const response = await checkUserCode(id);
+      if (response && response.data !== undefined) {
+        // API 응답: data가 true면 중복, false면 사용 가능
+        if (response.data === false) {
+          setUserIdStatus("available");
+          setUserIdMessage("사용 가능한 아이디입니다");
+        } else {
+          setUserIdStatus("unavailable");
+          setUserIdMessage("이미 사용 중인 아이디입니다");
+        }
       }
-    }, 1000);
-  }, []);
+    } catch (error) {
+      console.error('아이디 중복 확인 실패:', error);
+      setUserIdStatus("error");
+      setUserIdMessage("확인 중 오류가 발생했습니다");
+    }
+  }, [user.code]);
 
   const handleUserIdChange = (e) => {
     const newUserId = e.target.value;
     setUserId(newUserId);
     setFormData(prev => ({ ...prev, nickname: newUserId }));
     
-    // 디바운싱을 위한 타이머
+    // 디바운싱을 위한 타이머 (1.3초 후 요청)
     clearTimeout(window.userIdCheckTimer);
     window.userIdCheckTimer = setTimeout(() => {
-      checkUserIdAvailability(newUserId);
-    }, 500);
+      checkUserIdAvailability(newUserId); 
+    }, 1300);
   };
 
   // 입력 필드 변경 핸들러
@@ -77,9 +169,45 @@ export default function UserEditPage() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // 컴포넌트 마운트 시 사용자 정보 불러오기
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userResponse = await getCurrentUser();
+        console.log('사용자 정보 API 응답:', userResponse);
+        
+        if (userResponse && userResponse.data) {
+          const userData = userResponse.data;
+          const newUser = {
+            id: userData.userId,
+            name: userData.nickname,
+            nickname: userData.code,        // code를 nickname으로 매핑
+            introduction: userData.introduction || '',
+            profileImageUrl: userData.profileImageUrl,
+            code: userData.code
+          };
+          
+          setUser(newUser);
+          setUserId(userData.code || '');   // code를 userId로 설정
+          setFormData({
+            name: userData.nickname || '',      // nickname을 name으로
+            nickname: userData.code || '',      // code를 nickname으로
+            introduction: userData.introduction || ''
+          });
+        }
+      } catch (error) {
+        console.error('사용자 정보 조회 실패:', error);
+      }
+    };
+    
+    fetchUserData();
+  }, []);
+
   useEffect(() => {
     // 초기 아이디 체크
-    checkUserIdAvailability(userId);
+    if (userId) {
+      checkUserIdAvailability(userId);
+    }
   }, [checkUserIdAvailability, userId]);
 
   return (
@@ -100,9 +228,36 @@ export default function UserEditPage() {
 
         {/* 프로필 사진 영역 */}
         <div className={styles.profileImageSection}>
-          <div className={styles.profileDetailImage}>
-            <img src="/src/assets/user/camera.png" alt="camera" className={styles.cameraIcon} />
+          <div 
+            className={styles.profileDetailImage}
+            style={{
+              backgroundImage: previewImage ? `url(${previewImage})` : (user.profileImageUrl ? `url(${user.profileImageUrl})` : 'none')
+            }}
+            onClick={handleImageClick}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleImageClick();
+              }
+            }}
+          >
+            {!previewImage && !user.profileImageUrl && (
+              <img src="/src/assets/user/camera.png" alt="camera" className={styles.cameraIcon} />
+            )}
+            <div className={styles.imageOverlay}>
+              <span className={styles.changeImageText}>사진 변경</span>
+            </div>
           </div>
+          
+          {/* 숨겨진 파일 입력 */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            style={{ display: 'none' }}
+          />
         </div>
 
         {/* 닉네임 영역 */}
@@ -139,7 +294,9 @@ export default function UserEditPage() {
           <div className={`${styles.userIdMessage} ${
             userIdStatus === 'available' ? styles.messageAvailable : 
             userIdStatus === 'unavailable' ? styles.messageUnavailable :
-            userIdStatus === 'checking' ? styles.messageChecking : ''
+            userIdStatus === 'checking' ? styles.messageChecking :
+            userIdStatus === 'error' ? styles.messageError :
+            userIdStatus === 'idle' ? styles.messageIdle : ''
           }`}>
             {userIdMessage}
           </div>
@@ -150,8 +307,8 @@ export default function UserEditPage() {
           <textarea 
             className={styles.editBioInput}
             placeholder="자기소개를 등록하세요(최대 50자)"
-            value={formData.bio}
-            onChange={(e) => handleInputChange('bio', e.target.value)}
+            value={formData.introduction}
+            onChange={(e) => handleInputChange('introduction', e.target.value)}
           />
         </div>
       </div>

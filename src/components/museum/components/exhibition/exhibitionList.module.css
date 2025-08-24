@@ -1,20 +1,30 @@
 .container {
-  background-color: #f6f1eb;
-  padding: 0 32px;
-  position: relative;
-  max-width: 430px;
-  margin: 0 auto;
-}
-
-/* 빈 상태가 아닐 때만 최소 높이 적용 */
-.container:not(.emptyContainer) {
   min-height: 100vh;
+  background-color: #f2eee9;
+  padding: 0 32px 40px;
+  position: relative;
 }
 
 /* 빈 상태일 때는 최소 높이 제거 */
 .emptyContainer {
   min-height: auto;
   height: auto;
+}
+
+/* 로딩 상태 */
+.loadingState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  padding: 40px 0;
+}
+
+.loadingText {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  color: #666;
+  text-align: center;
 }
 
 /* 헤더 */
@@ -102,8 +112,6 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  max-width: 430px;
-  margin: 0 auto;
 }
 
 .scrollBackButton {
@@ -186,7 +194,6 @@
   height: 56px;
   background-color: #f37021;
   border: 1px solid #000;
-  border-radius: 0;
   margin-bottom: 32px;
   display: flex;
   align-items: center;
@@ -245,10 +252,15 @@
   letter-spacing: -0.4px;
   color: #000;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .addButton:hover {
   background: #e55a00;
+}
+
+.addButton:active {
+  background: #d44a00;
 }
 
 .addButton.disabledButton {
@@ -258,6 +270,10 @@
 }
 
 .addButton.disabledButton:hover {
+  background: #d9d9d9;
+}
+
+.addButton.disabledButton:active {
   background: #d9d9d9;
 }
 

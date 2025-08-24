@@ -66,11 +66,48 @@
   height: 80px;
   border-radius: 50%;
   background-color: #eeeeee;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   aspect-ratio: 1/1;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.profileDetailImage:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.profileDetailImage:hover .imageOverlay {
+  opacity: 1;
+}
+
+.changeImageText {
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
 }
 
 .cameraIcon {
@@ -345,4 +382,12 @@
 
 .messageChecking {
   color: #434343;
+}
+
+.messageError {
+  color: #ff6b6b;
+}
+
+.messageIdle {
+  color: #757575;
 }

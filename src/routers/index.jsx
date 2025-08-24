@@ -50,6 +50,7 @@ const router = createBrowserRouter([
   { path: "/artwork/my", element: <MyArtworkPage /> },
   { path: "/artwork/drafts", element: <DraftArtworkPage /> },
   { path: "/artwork/upload", element: <ArtworkUploadPage /> },
+  { path: "/artwork/edit/:id", element: <ArtworkUploadPage /> },
   { path: "/exhibition", element: <MyExhibitionPage /> },
   { path: "/exhibition/my", element: <MyExhibitionPage /> },
   { path: "/exhibition/upload", element: <ExhibitionUploadPage /> },

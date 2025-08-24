@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import useArtworkDraftStore from '@museum/services/artworkDraftStore';
-import useArtworkStore from '@museum/services/artworkStore';
-import useUserStore from '@/stores/userStore';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { createPiece, updatePiece } from '@apis/museum/artwork';
+import { getCurrentUser } from '@apis/user/user';
+import { getPieceDetail } from '@apis/exhibition/exhibition';
 import ArtworkModal from '@museum/components/artwork/ArtworkModal';
 import chevronLeft from '@/assets/museum/chevron-left.png';
 import cameraIcon from '@/assets/user/camera.png';
@@ -11,15 +11,26 @@ import styles from './artworkUploadPage.module.css';
 
 export default function ArtworkUploadPage() {
   const navigate = useNavigate();
-  const { saveDraft } = useArtworkDraftStore();
-  const { addArtwork } = useArtworkStore();
-  const { user } = useUserStore();
+  const location = useLocation();
+  const { id } = useParams(); // URL에서 작품 ID 가져오기
   
+  // 전시 등록에서 넘어온 경우 draft 데이터 받기
+  const draft = location.state?.draft;
+  const fromExhibition = location.state?.fromExhibition;
+  const isThumbnail = location.state?.isThumbnail;
+  const isChangeMode = location.state?.isChangeMode;
+  const returnTo = location.state?.returnTo;
+  const artworkId = id || location.state?.artworkId; // URL 파라미터 우선, 없으면 state에서 가져오기
+  const isDraft = location.state?.isDraft; // 임시저장 작품인지 여부
+  const fromDraft = location.state?.fromDraft; // 임시저장 페이지에서 왔는지 여부
+  
+  const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     mainImage: null,
-    detailImages: []
+    detailImages: [],
+    isPurchasable: true
   });
 
   const [modal, setModal] = useState({
@@ -29,13 +40,219 @@ export default function ArtworkUploadPage() {
 
   const [errorMessage, setErrorMessage] = useState('');
   const [showErrors, setShowErrors] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationTimeout, setValidationTimeout] = useState(null);
+  const [mainImageUrl, setMainImageUrl] = useState('');
+  const [detailImageUrls, setDetailImageUrls] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [originalDetailImageIds, setOriginalDetailImageIds] = useState([]); // 기존 디테일 이미지 ID들
+  const [saveStatus, setSaveStatus] = useState('APPLICATION'); // 저장 상태 (APPLICATION 또는 DRAFT)
+
+  // 수정 모드인지 확인
+  const isEditMode = !!artworkId;
+
+  // 유저 정보 가져오기
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await getCurrentUser();
+        setUser(response.data);
+      } catch (error) {
+        console.error('유저 정보 조회 실패:', error);
+        // 에러가 발생해도 페이지는 계속 사용할 수 있도록 함
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  // 수정 모드일 때 기존 작품 데이터 불러오기
+  useEffect(() => {
+    if (isEditMode && artworkId) {
+      const fetchArtwork = async () => {
+        setIsLoading(true);
+        try {
+          const response = await getPieceDetail(artworkId);
+          const artwork = response.data?.data || response.data;
+          
+          if (artwork) {
+            setFormData({
+              title: artwork.title || '',
+              description: artwork.description || '',
+              mainImage: null, // 기존 이미지는 URL로 표시
+              detailImages: [],
+              isPurchasable: artwork.isPurchasable || true // 기존 작품의 구매 가능 여부 설정
+            });
+            
+            // 기존 이미지 URL 설정
+            if (artwork.imageUrl) {
+              setMainImageUrl(artwork.imageUrl);
+            }
+            
+            // 디테일 이미지가 있다면 설정
+            if (artwork.detailImages && artwork.detailImages.length > 0) {
+              const urls = artwork.detailImages.map(img => img.imageUrl || img);
+              setDetailImageUrls(urls);
+              // pieceDetailId를 사용하여 기존 디테일 이미지 ID 저장
+              const detailIds = artwork.detailImages.map(img => img.pieceDetailId || img.id);
+              setOriginalDetailImageIds(detailIds.filter(id => id)); // null/undefined 제거
+            }
+            
+            // saveStatus 설정 (임시저장 작품인 경우 DRAFT, 등록신청 작품인 경우 APPLICATION)
+            if (artwork.saveStatus) {
+              setSaveStatus(artwork.saveStatus);
+            } else if (isDraft) {
+              setSaveStatus('DRAFT');
+            } else {
+              setSaveStatus('APPLICATION');
+            }
+          }
+        } catch (error) {
+          console.error('작품 정보 조회 실패:', error);
+          setErrorMessage('작품 정보를 불러올 수 없습니다.');
+          setShowErrors(true);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchArtwork();
+    }
+  }, [isEditMode, artworkId]);
+
+  // 메인 이미지 URL 생성 및 정리
+  useEffect(() => {
+    if (formData.mainImage) {
+      const url = URL.createObjectURL(formData.mainImage);
+      setMainImageUrl(url);
+      
+      // 컴포넌트 언마운트 시 URL 정리
+      return () => URL.revokeObjectURL(url);
+    }
+    // 수정 모드에서는 기존 이미지 URL을 유지
+  }, [formData.mainImage]);
+
+  // 디테일 이미지 URL 생성 및 정리
+  useEffect(() => {
+    const urls = [];
+    formData.detailImages.forEach((image, index) => {
+      if (image) {
+        const url = URL.createObjectURL(image);
+        urls[index] = url;
+      }
+    });
+    
+    setDetailImageUrls(prev => {
+      const newUrls = [...prev];
+      urls.forEach((url, index) => {
+        if (url) newUrls[index] = url;
+      });
+      return newUrls;
+    });
+    
+    // 컴포넌트 언마운트 시 모든 URL 정리
+    return () => {
+      urls.forEach(url => {
+        if (url) URL.revokeObjectURL(url);
+      });
+    };
+  }, [formData.detailImages]);
+
+  // 입력 완료 후 1초 뒤에 에러 메시지만 숨기기
+  useEffect(() => {
+    if (validationTimeout) {
+      clearTimeout(validationTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      // 입력이 완료되면 에러 메시지 숨기기
+      if (showErrors) {
+        setShowErrors(false);
+        setErrorMessage('');
+      }
+    }, 1000);
+
+    setValidationTimeout(timeout);
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [formData.title, formData.description, showErrors]);
+
+  // 폼 검증 함수
+  const validateForm = () => {
+    let hasError = false;
+    let errorMsg = '';
+    
+    // 1순위: 메인 이미지 없음 (수정 모드에서는 기존 이미지가 있으면 OK)
+    if (!formData.mainImage && !mainImageUrl) {
+      errorMsg = '메인 이미지를 등록해주세요';
+      hasError = true;
+    }
+    // 2순위: 작품 소개 500자 이상
+    else if (formData.description && formData.description.length > 500) {
+      errorMsg = '작품 소개는 최대 500자까지만 가능해요';
+      hasError = true;
+    }
+    // 3순위: 작품명 없음
+    else if (!formData.title || !formData.title.trim()) {
+      errorMsg = '작품명을 작성해주세요';
+      hasError = true;
+    }
+    // 4순위: 작품 소개 없음
+    else if (!formData.description || !formData.description.trim()) {
+      errorMsg = '작품 소개를 작성해주세요';
+      hasError = true;
+    }
+    
+    // 에러가 있을 때만 상태 업데이트
+    if (hasError) {
+      setErrorMessage(errorMsg);
+      setShowErrors(true);
+      
+      // 에러 메시지를 3초 후에 자동으로 숨기기
+      setTimeout(() => {
+        setShowErrors(false);
+        setErrorMessage('');
+      }, 3000);
+    }
+    
+    return hasError; // 에러 여부 반환
+  };
+
+  // 모달 상태 변화 추적
+  useEffect(() => {
+    console.log('모달 상태 변경됨:', modal);
+  }, [modal]);
+
+  // 로컬 draft 저장소 (localStorage 사용)
+  const saveDraft = (data) => {
+    try {
+      localStorage.setItem('artworkDraft', JSON.stringify(data));
+      console.log('임시저장 완료:', data);
+    } catch (error) {
+      console.error('임시저장 실패:', error);
+    }
+  };
 
   const handleBack = () => {
     // 작성 중인 내용이 있으면 취소 모달 표시
     if (formData.title || formData.description || formData.mainImage || formData.detailImages.length > 0) {
       setModal({ isOpen: true, type: 'cancel' });
     } else {
-      navigate('/artwork/my');
+      // 전시 등록에서 넘어온 경우 draft 데이터와 함께 돌아가기
+      if (fromExhibition && returnTo === 'exhibition-upload') {
+        navigate('/exhibition/upload', {
+          state: { draft: draft }
+        });
+      } else if (fromDraft) {
+        // 임시저장 페이지에서 왔을 경우 임시저장 페이지로 돌아가기
+        navigate('/artwork/drafts');
+      } else {
+        navigate('/artwork/my');
+      }
     }
   };
 
@@ -65,9 +282,19 @@ export default function ArtworkUploadPage() {
         newDetailImages[index] = file;
         return {
           ...prev,
-          detailImages: newDetailImages
+          detailImages: newDetailImages.filter(img => img !== null)
         };
       });
+      
+      // 새로운 디테일컷을 추가한 경우, 해당 인덱스를 originalDetailImageIds에서 제거
+      // (새 파일이므로 기존 ID가 아님)
+      if (originalDetailImageIds[index]) {
+        setOriginalDetailImageIds(prev => {
+          const newIds = [...prev];
+          newIds[index] = null; // 해당 인덱스의 기존 ID 제거
+          return newIds.filter(id => id !== null);
+        });
+      }
     }
   };
 
@@ -80,78 +307,124 @@ export default function ArtworkUploadPage() {
         detailImages: newDetailImages.filter(img => img !== null)
       };
     });
+    
+    // 기존 디테일컷을 삭제한 경우 originalDetailImageIds에서도 제거
+    if (detailImageUrls[index] && !detailImageUrls[index].startsWith('blob:')) {
+      // blob: URL이 아닌 경우 (기존 S3 이미지)
+      setOriginalDetailImageIds(prev => prev.filter((_, i) => i !== index));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    let hasError = false;
+    // 즉시 검증 실행하고 에러 여부 확인
+    const hasError = validateForm();
     
-    // 1순위: 메인 이미지 없음
-    if (!formData.mainImage) {
-      setErrorMessage('메인 이미지를 등록해주세요');
-      hasError = true;
-    }
-    // 2순위: 작품 소개 500자 이상
-    else if (formData.description && formData.description.length > 500) {
-      setErrorMessage('작품 소개는 최대 500자까지만 가능해요');
-      hasError = true;
-    }
-    // 3순위: 작품명 없음
-    else if (!formData.title || !formData.title.trim()) {
-      setErrorMessage('작품명을 작성해주세요');
-      hasError = true;
-    }
-    // 4순위: 작품 소개 없음
-    else if (!formData.description || !formData.description.trim()) {
-      setErrorMessage('작품 소개를 작성해주세요');
-      hasError = true;
-    }
-    
-    setShowErrors(hasError);
-    
-    // 에러가 있으면 에러 메시지 표시
+    // 에러가 있으면 제출 중단
     if (hasError) {
+      return;
+    }
+    
+    // 등록/수정 확인 모달 표시
+    setModal({ isOpen: true, type: isEditMode ? 'edit' : 'register' });
+  };
+
+  const handleRegisterConfirm = async () => {
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      // API를 사용하여 작품 등록
+      const response = await createPiece(formData, 'APPLICATION');
+      
+      if (response?.success === true && (response?.code === 200 || response?.code === 201)) {
+        console.log('작품 등록 완료:', response.data);
+        
+        // 등록 완료 모달 표시
+        setModal({ isOpen: true, type: 'complete' });
+      } else {
+        throw new Error('작품 등록에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('작품 등록 실패:', error);
+      setErrorMessage('작품 등록에 실패했습니다. 다시 시도해주세요.');
+      setShowErrors(true);
+      
       // 에러 메시지를 3초 후에 자동으로 숨기기
       setTimeout(() => {
         setShowErrors(false);
         setErrorMessage('');
       }, 3000);
-      return;
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    // 등록 확인 모달 표시
-    setModal({ isOpen: true, type: 'register' });
   };
 
-  const handleRegisterConfirm = () => {
-    // 실제 작품 등록 로직
-    const newArtwork = {
-      title: formData.title,
-      description: formData.description,
-      image: formData.mainImage ? URL.createObjectURL(formData.mainImage) : null,
-      // 추가 정보들
-      artistName: user.name,
-      artistNickname: user.nickname,
-      // 이미지 파일들 (실제 구현에서는 서버에 업로드 후 URL 사용)
-      mainImage: formData.mainImage,
-      detailImages: formData.detailImages.filter(img => img !== null)
-    };
+  const handleEditConfirm = async () => {
+    if (isSubmitting) return;
     
-    // store에 작품 등록
-    const registeredArtwork = addArtwork(newArtwork);
-    console.log('작품 등록 완료:', registeredArtwork);
+    console.log('handleEditConfirm 시작 - 현재 모달 상태:', modal);
+    console.log('기존 디테일컷 ID들:', originalDetailImageIds);
+    console.log('새로 추가할 디테일컷들:', formData.detailImages);
     
-    // 등록 완료 모달 표시
-    setModal({ isOpen: true, type: 'complete' });
+    setIsSubmitting(true);
+    
+    try {
+      // 작품 수정 API 호출
+      const response = await updatePiece(artworkId, formData, saveStatus, originalDetailImageIds);
+      
+      if (response?.success === true && (response?.code === 200 || response?.code === 201)) {
+        console.log('작품 수정 완료:', response.data);
+        console.log('API 성공 후 현재 모달 상태:', modal);
+        console.log('complete 모달을 표시합니다...');
+        
+        // 수정 완료 모달 표시
+        setModal({ isOpen: true, type: 'complete' });
+        console.log('setModal 호출 완료 - 새로운 상태: { isOpen: true, type: "complete" }');
+        
+        // 즉시 상태 확인 (비동기 업데이트 확인용)
+        setTimeout(() => {
+          console.log('setTimeout 후 모달 상태:', modal);
+        }, 0);
+      } else {
+        throw new Error('작품 수정에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('작품 수정 실패:', error);
+      setErrorMessage('작품 수정에 실패했습니다. 다시 시도해주세요.');
+      setShowErrors(true);
+      
+      // 에러 메시지를 3초 후에 자동으로 숨기기
+      setTimeout(() => {
+        setShowErrors(false);
+        setErrorMessage('');
+      }, 3000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCompleteConfirm = () => {
-    // 등록 완료시 모달 닫고 페이지 이동
-    setModal({ isOpen: false, type: null });
+    console.log('handleCompleteConfirm 호출됨 - 완료 모달 확인 버튼 클릭');
     
-    // 내 작품 페이지로 바로 이동
-    navigate('/artwork/my');
+    // 등록/수정 완료시 모달 닫고 페이지 이동
+    setModal({ isOpen: false, type: null });
+    console.log('모달 닫힘, 내 작품 페이지로 이동합니다...');
+    
+    // 전시 등록에서 넘어온 경우 draft 데이터와 함께 돌아가기
+    if (fromExhibition && returnTo === 'exhibition-upload') {
+      navigate('/exhibition/upload', {
+        state: { draft: draft }
+      });
+    } else if (fromDraft) {
+      // 임시저장 페이지에서 왔을 경우 임시저장 페이지로 돌아가기
+      navigate('/artwork/drafts');
+    } else {
+      // 내 작품 페이지로 바로 이동
+      navigate('/artwork/my');
+    }
   };
 
   const handleCancelConfirm = () => {
@@ -169,20 +442,70 @@ export default function ArtworkUploadPage() {
     setModal({ isOpen: false, type: null });
   };
 
-  const handleSave = () => {
-    // 수동 임시 저장
-    saveDraft(formData);
+  const handleSave = async () => {
+    // 임시저장 중이면 중단
+    if (isSubmitting) return;
     
-    // 임시저장 완료 메시지 표시
-    setErrorMessage('임시 저장이 완료되었어요');
-    setShowErrors(true);
+    setIsSubmitting(true);
     
-    // 메시지를 3초 후에 자동으로 숨기기
-    setTimeout(() => {
-      setShowErrors(false);
-      setErrorMessage('');
-    }, 3000);
+    try {
+      // API를 사용하여 임시저장 (DRAFT)
+      const response = await createPiece(formData, 'DRAFT');
+      
+      if (response?.success === true && (response?.code === 200 || response?.code === 201)) {
+        console.log('임시저장 완료:', response.data);
+        
+        // 로컬 draft도 업데이트
+        saveDraft(formData);
+        
+        // 임시저장 완료 메시지 표시
+        setErrorMessage('임시 저장이 완료되었어요');
+        setShowErrors(true);
+        
+        // 메시지를 3초 후에 자동으로 숨기기
+        setTimeout(() => {
+          setShowErrors(false);
+          setErrorMessage('');
+        }, 3000);
+      } else {
+        throw new Error('임시저장에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('임시저장 실패:', error);
+      setErrorMessage('임시저장에 실패했습니다. 다시 시도해주세요.');
+      setShowErrors(true);
+      
+      // 에러 메시지를 3초 후에 자동으로 숨기기
+      setTimeout(() => {
+        setShowErrors(false);
+        setErrorMessage('');
+      }, 3000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  // 로딩 중일 때 표시
+  if (isLoading) {
+    return (
+      <div className={styles.page}>
+        <div style={{height: '54px'}}></div>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.headerLeft}>
+              <button className={styles.backButton} onClick={handleBack}>
+                <img src={chevronLeft} alt="back" className={styles.backIcon} />
+              </button>
+              <h1 className={styles.title}>{isEditMode ? '작품 수정하기' : '작품 등록하기'}</h1>
+            </div>
+          </div>
+          <div style={{textAlign: 'center', padding: '50px'}}>
+            작품 정보를 불러오는 중...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
@@ -196,7 +519,7 @@ export default function ArtworkUploadPage() {
             <button className={styles.backButton} onClick={handleBack}>
               <img src={chevronLeft} alt="back" className={styles.backIcon} />
             </button>
-            <h1 className={styles.title}>작품 등록하기</h1>
+            <h1 className={styles.title}>{isEditMode ? '작품 수정하기' : '작품 등록하기'}</h1>
           </div>
           <div className={styles.headerRight}>
             <button className={styles.saveButton} onClick={handleSave}>
@@ -215,9 +538,9 @@ export default function ArtworkUploadPage() {
                 <div className={styles.imageUploadBox}>
                   <div className={styles.imageTag}>메인 이미지</div>
                   <label htmlFor="mainImage" className={styles.imageLabel}>
-                    {formData.mainImage ? (
+                    {mainImageUrl ? (
                       <img 
-                        src={URL.createObjectURL(formData.mainImage)} 
+                        src={mainImageUrl} 
                         alt="메인 이미지" 
                         className={styles.previewImage}
                       />
@@ -248,10 +571,10 @@ export default function ArtworkUploadPage() {
                     <div className={styles.detailTag}>디테일 컷{index + 1}</div>
                     
                     <label htmlFor={`detailImage${index}`} className={styles.imageLabel}>
-                      {formData.detailImages[index] ? (
+                      {detailImageUrls[index] ? (
                         <div className={styles.detailImagePreview}>
                           <img 
-                            src={URL.createObjectURL(formData.detailImages[index])} 
+                            src={detailImageUrls[index]} 
                             alt={`디테일 이미지 ${index + 1}`} 
                             className={styles.previewImage}
                           />
@@ -302,6 +625,35 @@ export default function ArtworkUploadPage() {
             />
           </div>
 
+          {/* 저장 상태 선택 (임시저장 작품인 경우에만 표시) */}
+          {isEditMode && isDraft && (
+            <div className={styles.inputGroup}>
+              <label className={styles.label}>저장 상태</label>
+              <div className={styles.radioGroup}>
+                <label className={styles.radioLabel}>
+                  <input
+                    type="radio"
+                    name="saveStatus"
+                    value="DRAFT"
+                    checked={saveStatus === 'DRAFT'}
+                    onChange={(e) => setSaveStatus(e.target.value)}
+                  />
+                  <span>임시저장</span>
+                </label>
+                <label className={styles.radioLabel}>
+                  <input
+                    type="radio"
+                    name="saveStatus"
+                    value="APPLICATION"
+                    checked={saveStatus === 'APPLICATION'}
+                    onChange={(e) => setSaveStatus(e.target.value)}
+                  />
+                  <span>등록신청</span>
+                </label>
+              </div>
+            </div>
+          )}
+
           {/* 작품 소개 입력 */}
           <div className={styles.inputGroup}>
             <textarea
@@ -317,13 +669,10 @@ export default function ArtworkUploadPage() {
 
           {/* 추가 기능 버튼들 */}
           <div className={styles.additionalFeatures}>
-            <button type="button" className={styles.featureButton}>
-              VR 등록하기
-            </button>
             <button 
               type="button" 
               className={`${styles.featureButton} ${
-                user.email || user.nickname ? styles.contactRegistered : ''
+                user?.email || user?.nickname ? styles.contactRegistered : ''
               }`}
             >
               연락 정보 등록하기
@@ -332,10 +681,10 @@ export default function ArtworkUploadPage() {
 
         </form>
         
-        {/* 등록하기 버튼 (고정 위치) */}
+        {/* 등록/수정하기 버튼 (고정 위치) */}
         <div className={styles.submitButtonContainer}>
           <button type="submit" form="artworkForm" className={styles.submitButton}>
-            작품 등록하기
+            {isEditMode ? '작품 수정하기' : '작품 등록하기'}
           </button>
         </div>
 
@@ -356,12 +705,14 @@ export default function ArtworkUploadPage() {
         onClose={closeModal}
         onConfirm={
           modal.type === 'register' ? handleRegisterConfirm :
+          modal.type === 'edit' ? handleEditConfirm :
           modal.type === 'complete' ? handleCompleteConfirm :
           modal.type === 'cancel' ? handleCancelConfirm :
           closeModal
         }
         onCancel={
           modal.type === 'register' ? closeModal :
+          modal.type === 'edit' ? closeModal :
           modal.type === 'cancel' ? handleCancelModal :
           undefined
         }

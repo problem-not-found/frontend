@@ -17,7 +17,7 @@ export default function UserEditModal({ isOpen, onClose }) {
                 backgroundImage: user.profileImage ? `url(/src/assets/user/camera.png)` : `url(/src/assets/user/camera.png)`
               }}
             />
-            <div className={styles.cameraIcon}>📷</div>
+            <img src="/src/assets/user/camera.png" alt="camera" className={styles.cameraIcon} />
           </div>
           
           <div className={styles.editFields}>
@@ -51,21 +51,21 @@ export default function UserEditModal({ isOpen, onClose }) {
 
         <div className={styles.editContactSection}>
           <div className={styles.editContactItem}>
-            <div className={styles.contactIcon}>📧</div>
+            <img src="/src/assets/user/mail2.png" alt="mail" className={styles.contactIcon} />
             <span className={styles.editContactLabel}>이메일</span>
             <input 
               type="email" 
               className={styles.editContactInput}
-              defaultValue="asd123@naver.com"
+              defaultValue=""
             />
           </div>
           <div className={styles.editContactItem}>
-            <div className={styles.contactIcon}>📷</div>
+            <img src="/src/assets/user/instagram.png" alt="instagram" className={styles.contactIcon} />
             <span className={styles.editContactLabel}>인스타그램</span>
             <input 
               type="text" 
               className={styles.editContactInput}
-              defaultValue="@simonisnextdoor"
+              defaultValue=""
             />
           </div>
         </div>

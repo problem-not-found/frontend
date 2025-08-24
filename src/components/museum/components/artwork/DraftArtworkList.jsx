@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import ArtworkCard from './ArtworkCard';
 import ArtworkFilter from './ArtworkFilter';
-import useArtworkDraftStore from '@museum/services/artworkDraftStore';
 import BackToTopButton from '@/components/common/BackToTopButton';
 import chevronLeft from '@/assets/museum/chevron-left.png';
 import arrowDown from '@/assets/museum/arrow-down.svg';
@@ -15,20 +14,55 @@ export default function DraftArtworkList({
   onBack,
   onArtworkClick
 }) {
-  // Zustand 스토어에서 임시저장 데이터 가져오기
-  const {
-    drafts,
-    deleteDraft
-  } = useArtworkDraftStore();
-
+  // 로컬 상태로 draft 관리
+  const [drafts, setDrafts] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [showScrollHeader, setShowScrollHeader] = useState(false);
   const [selectedDrafts, setSelectedDrafts] = useState(new Set());
   const [layoutMode, setLayoutMode] = useState('vertical');
   const [searchKeyword, setSearchKeyword] = useState('');
+  
   const observerRef = useRef();
   const loadingRef = useRef();
   const headerRef = useRef();
+
+  // localStorage에서 draft 데이터 로드
+  useEffect(() => {
+    const loadDrafts = () => {
+      try {
+        const savedDraft = localStorage.getItem('artworkDraft');
+        if (savedDraft) {
+          const draftData = JSON.parse(savedDraft);
+          // draft 데이터를 배열 형태로 변환
+          setDrafts([{
+            id: 'draft-1',
+            title: draftData.title || '제목 없음',
+            description: draftData.description || '설명 없음',
+            image: draftData.mainImage ? URL.createObjectURL(draftData.mainImage) : null,
+            status: "임시저장",
+            createdAt: new Date().toLocaleDateString('ko-KR'),
+            isExhibiting: false
+          }]);
+        } else {
+          setDrafts([]);
+        }
+      } catch (error) {
+        console.error('Draft 로드 실패:', error);
+        setDrafts([]);
+      }
+    };
+
+    loadDrafts();
+  }, []);
+
+  // draft 삭제 함수
+  const deleteDraft = (draftId) => {
+    if (draftId === 'draft-1') {
+      // localStorage에서 draft 제거
+      localStorage.removeItem('artworkDraft');
+      setDrafts([]);
+    }
+  };
 
   // 임시저장 데이터를 ArtworkCard에서 사용할 수 있는 형태로 변환
   const convertedDrafts = drafts.map(draft => ({

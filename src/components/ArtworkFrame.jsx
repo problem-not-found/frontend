@@ -26,27 +26,37 @@ function SafeImagePlane({
     }
 
     console.log("이미지 로딩 시작:", imageUrl);
+    console.log("환경:", import.meta.env.MODE);
+
     const loader = new TextureLoader();
 
+    // 배포 환경이거나 S3 원본 URL인 경우 CORS 설정 적용
+    const isS3Url = imageUrl.includes(
+      "likelion13-artium.s3.ap-northeast-2.amazonaws.com"
+    );
+    const isProduction = import.meta.env.PROD;
+
+    if (isProduction || isS3Url) {
+      console.log("CORS 설정 적용");
+      loader.setCrossOrigin("anonymous");
+    }
+
     loader.load(
-      imageUrl, // 프록시 URL 사용
+      imageUrl,
       (loadedTexture) => {
-        console.log("✅ 이미지 로딩 성공:", imageUrl);
-        console.log("텍스처 정보:", loadedTexture);
+        console.log(" 이미지 로딩 성공:", imageUrl);
         loadedTexture.flipY = true; // 이미지 뒤집힘 문제 해결
         setTexture(loadedTexture);
         setLoading(false);
       },
       (progress) => {
-        console.log("📥 이미지 로딩 진행:", imageUrl, progress);
+        console.log(" 이미지 로딩 진행:", imageUrl, progress);
       },
       (err) => {
-        console.error("❌ 이미지 로드 실패:", imageUrl);
+        console.error(" 이미지 로드 실패:", imageUrl);
         console.error("에러 상세:", err);
-        console.error("에러 타입:", typeof err);
-        console.error("에러 메시지:", err?.message);
 
-        // 원본 URL로 직접 시도해보기
+        // 개발 환경에서 프록시 실패 시에만 원본 URL로 재시도
         if (imageUrl.startsWith("/s3-proxy/")) {
           const originalUrl = `https://likelion13-artium.s3.ap-northeast-2.amazonaws.com${imageUrl.replace(
             "/s3-proxy",
@@ -72,6 +82,7 @@ function SafeImagePlane({
             }
           );
         } else {
+          console.error("❌ 최종 실패");
           setError(true);
           setLoading(false);
         }
@@ -133,7 +144,7 @@ function ArtworkFrame({ artwork, position, onArtworkClick }) {
   const frameRef = useRef();
 
   // 디버깅을 위한 로그
-  console.log("ArtworkFrame 렌더링:", artwork.title, position, artwork.image);
+  console.log("🖼️ ArtworkFrame:", artwork.title);
 
   // 벽 위치에 따른 회전 계산
   const getRotation = () => {

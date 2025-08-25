@@ -1,15 +1,51 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ArtworkList from '@museum/components/artwork/ArtworkList';
-import useArtworkDraftStore from '@museum/services/artworkDraftStore';
+import { useInfinitePieces, getPieceDraftCount } from '@apis/museum/artwork';
 import styles from './myArtworkPage.module.css';
 
 export default function MyArtworkPage() {
   const navigate = useNavigate();
-  const { hasDraft } = useArtworkDraftStore();
+  
+  // 임시저장 작품 개수 상태
+  const [draftCount, setDraftCount] = useState(0);
+  
+  // API를 사용한 작품 목록 관리
+  const { 
+    pieces: artworks, 
+    loading, 
+    hasMore, 
+    loadMorePieces, 
+    resetPieces 
+  } = useInfinitePieces({ applicated: true, pageSize: 3 });
   
   // 스크롤 상태 관리 (기존 뮤지엄 페이지와 동일)
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // 임시저장 작품 개수 조회
+  const fetchDraftCount = async () => {
+    try {
+      const response = await getPieceDraftCount();
+      console.log('getPieceDraftCount 응답:', response);
+      if (response?.success === true && response?.data) {
+        const count = response.data.count || response.data;
+        console.log('설정할 draftCount:', count);
+        setDraftCount(count);
+      } else {
+        console.log('응답이 성공이 아니거나 data가 없음');
+        setDraftCount(0);
+      }
+    } catch (error) {
+      console.error('임시저장 작품 개수 조회 실패:', error);
+      setDraftCount(0);
+    }
+  };
+
+  // 컴포넌트 마운트 시 작품 목록 초기화 및 draft 개수 확인
+  useEffect(() => {
+    resetPieces();
+    fetchDraftCount();
+  }, [resetPieces]);
 
   // 스크롤 이벤트 처리
   useEffect(() => {
@@ -35,8 +71,19 @@ export default function MyArtworkPage() {
   };
 
   const handleArtworkClick = (artwork) => {
-    // 작품 상세 페이지로 이동 (추후 구현)
-    console.log('작품 클릭:', artwork);
+    // 작품 수정 페이지로 이동
+    navigate(`/artwork/edit/${artwork.pieceId}`, {
+      state: { artworkId: artwork.pieceId }
+    });
+  };
+
+  // 작품 삭제 완료 시 작품 목록 새로고침
+  const handleArtworkDeleted = (deletedIds) => {
+    console.log('삭제된 작품 ID들:', deletedIds);
+    // 작품 목록을 새로고침
+    resetPieces();
+    // 임시저장 작품 개수도 새로고침
+    fetchDraftCount();
   };
 
   return (
@@ -50,8 +97,13 @@ export default function MyArtworkPage() {
         showAddButton={true}
         onAddArtwork={handleAddArtwork}
         onArtworkClick={handleArtworkClick}
-        showDraftButton={hasDraft()}
+        showDraftButton={draftCount > 0}
         onDraftClick={handleDraftClick}
+        artworks={artworks}
+        loading={loading}
+        hasMore={hasMore}
+        onLoadMore={loadMorePieces}
+        onArtworkDeleted={handleArtworkDeleted}
       />
     </div>
   );

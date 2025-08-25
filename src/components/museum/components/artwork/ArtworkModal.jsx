@@ -23,11 +23,19 @@ export default function ArtworkModal({
           confirmText: '확인',
           confirmColor: 'orange'
         };
+      case 'edit':
+        return {
+          title: '작품을 수정할게요!',
+          description: '수정된 내용으로 작품이 업데이트됩니다.',
+          showCancel: true,
+          cancelText: '취소',
+          confirmText: '확인',
+          confirmColor: 'orange'
+        };
       case 'complete':
         return {
-          title: '작품이 등록되었습니다',
-          description: '관리자의 승인을 거쳐 작품이 게시됩니다.\n승인까지는 최대 7일까지 소요될 수 있습니다.',
-          regulationText: '규정에 어긋나는 작품은 거절될 수 있습니다.',
+          title: '작품이 수정되었습니다',
+          description: '수정된 내용으로 작품이 업데이트되었습니다.',
           showCancel: false,
           confirmText: '확인했어요!',
           confirmColor: 'orange'

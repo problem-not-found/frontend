@@ -1,175 +1,175 @@
 .page {
-    min-height: 100vh;
-    background-color: #f6f1eb;
-    padding: 0 32px 100px;
-    position: relative;
-    max-width: 430px;
-    margin: 0 auto;
-  }
+  min-height: 100vh;
+  background-color: #f6f1eb;
+  padding: 0 32px 100px;
+  position: relative;
+  max-width: 430px;
+  margin: 0 auto;
+}
 
 /* 헤더 */
 .header {
-  padding: 10px 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f6f1eb;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+padding: 10px 0 20px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+background-color: #f6f1eb;
+position: sticky;
+top: 0;
+z-index: 100;
 }
-  
+
 .headerLeft {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+display: flex;
+align-items: center;
+gap: 10px;
 }
-  
+
 .headerRight {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+display: flex;
+align-items: center;
+gap: 8px;
 }
-  
+
 .backButton {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+background: none;
+border: none;
+cursor: pointer;
+padding: 0;
+display: flex;
+align-items: center;
+justify-content: center;
 }
-  
+
 .backIcon {
-  width: 44px;
-  height: 44px;
-  object-fit: contain;
+width: 44px;
+height: 44px;
+object-fit: contain;
 }
-  
+
 .title {
-  font-family: 'Pretendard', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 25px;
-  letter-spacing: -0.5px;
-  color: #000;
-  margin: 0;
+font-family: 'Pretendard', sans-serif;
+font-size: 20px;
+font-weight: 600;
+line-height: 25px;
+letter-spacing: -0.5px;
+color: #000;
+margin: 0;
 }
 
 /* 작품 그리드 */
 .artworkGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 16px;
 }
 
 /* 로딩 상태 */
 .loadingMore {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  gap: 12px;
+grid-column: 1 / -1;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 20px;
+gap: 12px;
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
-  border: 2px solid #f0f0f0;
-  border-top: 2px solid #f37021;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+width: 24px;
+height: 24px;
+border: 2px solid #f0f0f0;
+border-top: 2px solid #f37021;
+border-radius: 50%;
+animation: spin 1s linear infinite;
 }
 
 .loadingMore p {
-  font-family: 'Pretendard', sans-serif;
-  font-size: 14px;
-  color: #666;
-  margin: 0;
+font-family: 'Pretendard', sans-serif;
+font-size: 14px;
+color: #666;
+margin: 0;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
 }
 
 /* 더 보기 버튼 */
 .loadMoreButtonContainer {
-  grid-column: 1 / -1;
-  display: flex;
-  justify-content: center;
-  padding: 20px 0;
+grid-column: 1 / -1;
+display: flex;
+justify-content: center;
+padding: 20px 0;
 }
 
 .loadMoreButton {
-  width: 100%;
-  max-width: 200px;
-  height: 48px;
-  background-color: #ffffff;
-  border: 1px solid #000;
-  border-radius: 0;
-  font-family: 'Pretendard', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: #000;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.20);
+width: 100%;
+max-width: 200px;
+height: 48px;
+background-color: #ffffff;
+border: 1px solid #000;
+border-radius: 0;
+font-family: 'Pretendard', sans-serif;
+font-size: 16px;
+font-weight: 600;
+color: #000;
+cursor: pointer;
+transition: background-color 0.2s ease;
+box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.20);
 }
 
 .loadMoreButton:hover {
-  background-color: #f0f0f0;
+background-color: #f0f0f0;
 }
 
 /* 하단 고정 버튼 */
 .bottomButtonContainer {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 430px;
-  padding: 20px;
-  z-index: 100;
+position: fixed;
+bottom: 0;
+left: 50%;
+transform: translateX(-50%);
+width: 100%;
+max-width: 430px;
+padding: 20px;
+z-index: 100;
 }
 
 .selectButton {
-  width: 100%;
-  height: 48px;
-  background-color: #ffffff;
-  border: 1px solid #000;
-  border-radius: 0;
-  font-family: 'Pretendard', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: #000;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.20);
+width: 100%;
+height: 48px;
+background-color: #ffffff;
+border: 1px solid #000;
+border-radius: 0;
+font-family: 'Pretendard', sans-serif;
+font-size: 16px;
+font-weight: 600;
+color: #000;
+cursor: pointer;
+transition: background-color 0.2s ease;
+box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.20);
 }
 
 .selectButton:hover {
-  background-color: #f0f0f0;
+background-color: #f0f0f0;
 }
 
 .confirmButton {
-  width: 100%;
-  height: 48px;
-  background-color: #f37021;
-  border: 1px solid #000;
-  border-radius: 0;
-  font-family: 'Pretendard', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: #000;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.20);
+width: 100%;
+height: 48px;
+background-color: #f37021;
+border: 1px solid #000;
+border-radius: 0;
+font-family: 'Pretendard', sans-serif;
+font-size: 16px;
+font-weight: 600;
+color: #000;
+cursor: pointer;
+transition: background-color 0.2s ease;
+box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.20);
 }
 
 .confirmButton:hover {
-  background-color: #e55a00;
+background-color: #e55a00;
 }

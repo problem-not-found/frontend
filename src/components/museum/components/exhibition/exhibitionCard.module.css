@@ -1,91 +1,99 @@
 /* 그리드 카드 */
 .gridCard {
   cursor: pointer;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.2s ease;
-}
-
-.gridCard:hover {
-  transform: translateY(-2px);
+  width: 100%;
 }
 
 .gridImage {
   width: 100%;
-  height: 180px;
+  height: 0;
+  padding-bottom: 100%;
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-  background-color: #d9d9d9;
-  position: relative;
   border: 1px solid #000;
+  position: relative;
+  background-color: #f0f0f0;
 }
 
 /* 세로 카드 */
 .verticalCard {
+  margin-bottom: 40px;
   cursor: pointer;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.2s ease;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-}
-
-.verticalCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: calc(100% + 64px);
+  margin-left: -32px;
+  margin-right: -32px;
 }
 
 .mainContainer {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .imageContainer {
+  display: flex;
+  align-items: flex-start;
+  margin-left: 0;
+  gap: 0;
   position: relative;
 }
 
 .verticalImage {
-  width: 100%;
-  height: 240px;
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-  background-color: #d9d9d9;
+  border: 1px solid #000;
   position: relative;
-  border-bottom: 1px solid #e0e0e0;
+  background-color: #f0f0f0;
+  flex-shrink: 0;
+  width: 390px;
+  height: 284px;
+  margin-left: 0;
 }
 
 /* 상태 배지 */
 .statusBadge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-family: 'Pretendard', sans-serif;
+  width: 64px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 12px;
   font-weight: 500;
-  line-height: 16px;
+  line-height: 25px;
   letter-spacing: -0.3px;
-  color: #000;
   border: 1px solid #000;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.verticalImage .statusBadge {
+  top: 12px;
+  right: 12px;
+}
+
+.gridImage .statusBadge {
+  top: 8px;
+  right: 8px;
 }
 
 .statusExhibiting {
-  background: #f37021;
-}
-
-.statusPending {
-  background: #ffd700;
+  background-color: #f37021;
+  color: #000;
 }
 
 .statusRejected {
-  background: #ff6b6b;
+  background-color: #cfdde3;
+  color: #000;
+}
+
+.statusPending {
+  background-color: #fff;
+  color: #000;
 }
 
 .statusDefault {
-  background: #cfdde3;
+  background-color: #cfdde3;
+  color: #000;
 }
 
 /* 체크박스 */
@@ -117,45 +125,63 @@
 
 /* 날짜 표시 */
 .dateDisplay {
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
   font-family: 'Pretendard', sans-serif;
   font-size: 12px;
-  font-weight: 500;
-  line-height: 16px;
+  font-weight: 400;
+  line-height: 26px;
   letter-spacing: -0.3px;
+  color: #989898;
+  height: 284px;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 0;
 }
 
 /* 전시 정보 */
 .exhibitionInfo {
-  padding: 16px;
+  display: flex;
+  width: 390px;
+  padding: 20px 18px 20px 22px;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 1px solid #000;
+  background: #cfdde3;
+  margin-left: 40px;
+  margin-right: -32px;
+  margin-top: -40px;
+  z-index: 10;
+  position: relative;
 }
 
 .exhibitionTitle {
   font-family: 'Pretendard', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
-  line-height: 20px;
-  letter-spacing: -0.4px;
+  line-height: 25px;
+  letter-spacing: -0.35px;
   color: #000;
-  margin: 0 0 8px 0;
+  margin: 0 0 5px 0;
+}
+
+.exhibitionDate {
+  color: #434343;
+  font-family: Pretendard;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 19px; /* 158.333% */
+  letter-spacing: -0.3px;
 }
 
 .exhibitionDescription {
   font-family: 'Pretendard', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 18px;
-  letter-spacing: -0.35px;
-  color: #757575;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 19px;
+  letter-spacing: -0.3px;
+  color: #434343;
   margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  white-space: pre-line;
 }

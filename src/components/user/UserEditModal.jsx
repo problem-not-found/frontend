@@ -1,5 +1,8 @@
 import useUserStore from "../../stores/userStore";
 import styles from './userEditModal.module.css';
+import cameraIcon from '@assets/user/camera.png';
+import mailIcon from '@assets/user/mail2.png';
+import instagramIcon from '@assets/user/instagram.png';
 
 export default function UserEditModal({ isOpen, onClose }) {
   const { user } = useUserStore();
@@ -14,10 +17,10 @@ export default function UserEditModal({ isOpen, onClose }) {
             <div 
               className={styles.editProfileImageContainer}
               style={{
-                backgroundImage: user.profileImage ? `url(/src/assets/user/camera.png)` : `url(/src/assets/user/camera.png)`
+                backgroundImage: user.profileImage ? `url(${cameraIcon})` : `url(${cameraIcon})`
               }}
             />
-            <img src="/src/assets/user/camera.png" alt="camera" className={styles.cameraIcon} />
+            <img src={cameraIcon} alt="camera" className={styles.cameraIcon} />
           </div>
           
           <div className={styles.editFields}>
@@ -51,7 +54,7 @@ export default function UserEditModal({ isOpen, onClose }) {
 
         <div className={styles.editContactSection}>
           <div className={styles.editContactItem}>
-            <img src="/src/assets/user/mail2.png" alt="mail" className={styles.contactIcon} />
+            <img src={mailIcon} alt="mail" className={styles.contactIcon} />
             <span className={styles.editContactLabel}>이메일</span>
             <input 
               type="email" 
@@ -60,7 +63,7 @@ export default function UserEditModal({ isOpen, onClose }) {
             />
           </div>
           <div className={styles.editContactItem}>
-            <img src="/src/assets/user/instagram.png" alt="instagram" className={styles.contactIcon} />
+            <img src={instagramIcon} alt="instagram" className={styles.contactIcon} />
             <span className={styles.editContactLabel}>인스타그램</span>
             <input 
               type="text" 

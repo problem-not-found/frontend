@@ -1,8 +1,10 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getCurrentUser, updateUserProfile, updateUserProfileImage, checkUserCode } from "@/apis/user/user.js";
 import AppFooter from "@/components/footer/AppFooter";
 import styles from "@/components/user/userEdit.module.css";
+import backIcon from "@/assets/user/chevron-left.png";
+import cameraIcon from "@/assets/user/camera.png";
 
 export default function UserEditPage() {
   const navigate = useNavigate();
@@ -217,9 +219,9 @@ export default function UserEditPage() {
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <button className={styles.backButton} onClick={handleBackClick}>
-              <img src="/src/assets/user/chevron-left.png" alt="back" className={styles.backIcon} />
+              <img src={backIcon} alt="back" className={styles.backIcon} />
             </button>
-            <span className={styles.headerTitle}>프로필 수정하기</span>
+            <span className={styles.headerTitle}>프로필 편집</span>
           </div>
           <button className={styles.completeButton} onClick={handleCompleteClick}>
             완료
@@ -228,36 +230,24 @@ export default function UserEditPage() {
 
         {/* 프로필 사진 영역 */}
         <div className={styles.profileImageSection}>
-          <div 
-            className={styles.profileDetailImage}
-            style={{
-              backgroundImage: previewImage ? `url(${previewImage})` : (user.profileImageUrl ? `url(${user.profileImageUrl})` : 'none')
-            }}
-            onClick={handleImageClick}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                handleImageClick();
-              }
-            }}
-          >
-            {!previewImage && !user.profileImageUrl && (
-              <img src="/src/assets/user/camera.png" alt="camera" className={styles.cameraIcon} />
-            )}
-            <div className={styles.imageOverlay}>
-              <span className={styles.changeImageText}>사진 변경</span>
-            </div>
+          <div className={styles.profileImageContainer}>
+            <div 
+              className={styles.profileImage}
+              style={{
+                backgroundImage: user.profileImageUrl ? `url(${user.profileImageUrl})` : 'none'
+              }}
+            />
+            <img src={cameraIcon} alt="camera" className={styles.cameraIcon} />
+
+            {/* 숨겨진 파일 입력 */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileSelect}
+              style={{ display: 'none' }}
+            />
           </div>
-          
-          {/* 숨겨진 파일 입력 */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileSelect}
-            style={{ display: 'none' }}
-          />
         </div>
 
         {/* 닉네임 영역 */}

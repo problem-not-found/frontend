@@ -12,7 +12,7 @@ import styles from './artworkUploadPage.module.css';
 export default function ArtworkUploadPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id } = useParams(); // URL에서 작품 ID 가져오기
+  const { id } = useParams(); // URL에서 작품 ID 가져오기\
   
   // 전시 등록에서 넘어온 경우 draft 데이터 받기
   const draft = location.state?.draft;
@@ -24,6 +24,14 @@ export default function ArtworkUploadPage() {
   const isDraft = location.state?.isDraft; // 임시저장 작품인지 여부
   const fromDraft = location.state?.fromDraft; // 임시저장 페이지에서 왔는지 여부
   
+  // 디버깅 로그 추가
+  console.log('🔍 ArtworkUploadPage 변수들:', { 
+    artworkId, 
+    isEditMode: !!artworkId,
+    id,
+    locationState: location.state 
+  });
+
   const [user, setUser] = useState(null);
   const [userContact, setUserContact] = useState(null);
   const [formData, setFormData] = useState({

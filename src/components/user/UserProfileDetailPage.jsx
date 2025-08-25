@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getCurrentUser, getContactStatus } from "@/apis/user/user.js";
 import AppFooter from "@/components/footer/AppFooter";
 import styles from "@/components/user/userProfileDetail.module.css";
+import backIcon from "@/assets/user/chevron-left.png";
+import cameraIcon from "@/assets/user/camera.png";
 
 export default function UserProfileDetailPage() {
   const navigate = useNavigate();
@@ -69,9 +71,9 @@ export default function UserProfileDetailPage() {
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <button className={styles.backButton} onClick={handleBackClick}>
-              <img src="/src/assets/user/chevron-left.png" alt="back" className={styles.backIcon} />
+              <img src={backIcon} alt="back" className={styles.backIcon} />
             </button>
-            <span className={styles.headerTitle}>프로필</span>
+            <span className={styles.headerTitle}>프로필 편집</span>
           </div>
           <button className={styles.editButton} onClick={handleEditClick}>
             편집하기
@@ -81,15 +83,14 @@ export default function UserProfileDetailPage() {
         {/* 프로필 사진 영역 */}
         <div className={styles.profileImageSection}>
           {console.log('현재 사용자 상태:', user)}
-          <div 
-            className={styles.profileDetailImage}
-            style={{
-              backgroundImage: user.profileImageUrl ? `url(${user.profileImageUrl})` : 'none'
-            }}
-          >
-            {!user.profileImageUrl && (
-              <img src="/src/assets/user/camera.png" alt="camera" className={styles.cameraIcon} />
-            )}
+          <div className={styles.profileImageContainer}>
+            <div 
+              className={styles.profileImage}
+              style={{
+                backgroundImage: user.profileImageUrl ? `url(${user.profileImageUrl})` : 'none'
+              }}
+            />
+            <img src={cameraIcon} alt="camera" className={styles.cameraIcon} />
           </div>
         </div>
 

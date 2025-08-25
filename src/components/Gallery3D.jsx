@@ -1,11 +1,13 @@
 import { Canvas } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
+import PropTypes from "prop-types";
 import Exhibition from "./Exhibition";
 import CameraController from "./CameraController";
 import ResetCameraButton from "./ResetCameraButton";
 import ControlsInfoModal from "./ControlsInfoModal";
+import ErrorBoundary from "./common/ErrorBoundary";
 import {
   useExhibitionDetail,
   usePieceImages,
@@ -22,12 +24,15 @@ function LoadingFallback() {
   );
 }
 
-function Gallery3D({ exhibitionId = "1" }) {
-  console.log('🏛️ Gallery3D 컴포넌트 렌더링:', { exhibitionId });
+function Gallery3D({ exhibitionId: propExhibitionId = "1" }) {
+  console.log('🏛️ Gallery3D 컴포넌트 렌더링:', { propExhibitionId });
   
   const [selectedArtwork, setSelectedArtwork] = useState(null);
   const { id } = useParams(); // URL에서 전시 ID 가져오기
-  const exhibitionId = id ? parseInt(id, 10) : null;
+  const exhibitionId = id ? parseInt(id, 10) : parseInt(propExhibitionId, 10);
+
+  // Canvas 재생성을 위한 키 생성
+  const canvasKey = useMemo(() => `canvas-${exhibitionId}-${Date.now()}`, [exhibitionId]);
 
   // 전시 정보 가져오기
   const {
@@ -49,6 +54,13 @@ function Gallery3D({ exhibitionId = "1" }) {
   const closeModal = () => {
     console.log('❌ 모달 닫기');
     setSelectedArtwork(null);
+  };
+
+  // WebGL 에러 처리 함수
+  const handleWebGLError = () => {
+    console.log('🔄 WebGL 컨텍스트 손실, Canvas 재생성 시도');
+    // Canvas가 자동으로 재생성되도록 key를 업데이트
+    window.location.reload();
   };
 
   // 로딩 상태

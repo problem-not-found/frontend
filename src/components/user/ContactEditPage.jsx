@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { updateContact, getUserContact, getCurrentUser } from "@/apis/user/user.js";
 import AppFooter from "@/components/footer/AppFooter";
 import styles from "@/components/user/userEdit.module.css";
+import backIcon from "@/assets/user/chevron-left.png";
+import mailIcon from "@/assets/user/mail2.png";
+import instagramIcon from "@/assets/user/instagram.png";
 
 export default function ContactEditPage() {
   const navigate = useNavigate();
@@ -180,7 +183,7 @@ export default function ContactEditPage() {
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <button className={styles.backButton} onClick={handleBackClick}>
-              <img src="/src/assets/user/chevron-left.png" alt="back" className={styles.backIcon} />
+              <img src={backIcon} alt="back" className={styles.backIcon} />
             </button>
             <span className={styles.headerTitle}>연락 정보 등록하기</span>
           </div>
@@ -191,7 +194,7 @@ export default function ContactEditPage() {
 
         <div className={styles.editContactSection}>
           <div className={styles.editContactItem}>
-            <img src="/src/assets/user/mail2.png" alt="mail" className={styles.contactIcon} />
+            <img src={mailIcon} alt="mail" className={styles.contactIcon} />
             <span className={`${styles.editContactLabel} ${styles.email}`}>이메일</span>
             <div className={styles.emailInputContainer}>
               <input 
@@ -231,7 +234,7 @@ export default function ContactEditPage() {
             </div>
           </div>
           <div className={styles.editContactItem}>
-            <img src="/src/assets/user/instagram.png" alt="instagram" className={styles.contactIcon} />
+            <img src={instagramIcon} alt="instagram" className={styles.contactIcon} />
             <span className={`${styles.editContactLabel} ${styles.instagram}`}>인스타그램</span>
             <input 
               type="text" 

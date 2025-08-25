@@ -3,7 +3,6 @@ import { useFrame } from "@react-three/fiber";
 import { Text, Box, Plane } from "@react-three/drei";
 import { TextureLoader } from "three";
 import PropTypes from "prop-types";
-import { APIService } from "../apis/axios";
 
 // 안전한 이미지 로더 컴포넌트
 function SafeImagePlane({
@@ -27,79 +26,58 @@ function SafeImagePlane({
     }
 
     console.log("이미지 로딩 시작:", imageUrl);
+    const loader = new TextureLoader();
+
     
-    // S3 URL에서 파일명만 추출하는 함수
-    const extractFilenameFromS3Url = (url) => {
-      if (!url) return '';
-      
-      console.log("원본 URL:", url);
-      
-      // UUID 패턴으로 파일명 추출 (가장 우선순위)
-      const uuidPattern = /([a-f0-9-]{36})/;
-      const match = url.match(uuidPattern);
-      if (match && match[1]) {
-        const filename = match[1];
-        console.log("UUID 패턴에서 추출:", filename);
-        return filename;
-      }
-      
-      // UUID가 없는 경우 원본 반환
-      console.log("UUID 패턴 매칭 실패, 원본 반환:", url);
-      return url;
-    };
-    
-    // 파일명 추출
-    const filename = extractFilenameFromS3Url(imageUrl);
-    console.log("추출된 파일명:", filename);
-    
-    // APIService.private를 사용하여 인증된 이미지 요청
-    const loadImageWithAuth = async () => {
-      try {
-        console.log("🔑 APIService.private로 이미지 요청:", filename);
-        
-        // APIService.private.get을 사용하여 이미지 요청
-        const response = await APIService.private.get(`/api/s3/${filename}`, {
-          responseType: 'blob', // 이미지 데이터를 blob으로 받기
-        });
-        
-        console.log("✅ APIService로 이미지 로드 성공, TextureLoader로 변환 중...");
-
-        // Blob 데이터를 URL로 변환
-        const blob = new Blob([response], { type: 'image/jpeg' });
-        const imageUrl = URL.createObjectURL(blob);
-
-        // Blob URL을 TextureLoader로 변환
-        const loader = new TextureLoader();
-        const texture = loader.load(
-          imageUrl,
-          undefined,
-          undefined,
-          (err) => {
-            console.error("❌ TextureLoader 로드 실패", err);
-            setError(true);
-            setLoading(false);
-          }
-        );
-
-        // 이미지 뒤집기 설정
-        texture.flipY = true;
-
-        setTexture(texture);
+    loader.load(
+      imageUrl, // 프록시 URL 사용
+      (loadedTexture) => {
+        console.log("✅ 이미지 로딩 성공:", imageUrl);
+        console.log("텍스처 정보:", loadedTexture);
+        loadedTexture.flipY = true; // 이미지 뒤집힘 문제 해결
+        setTexture(loadedTexture);
         setLoading(false);
-        console.log("🎨 Three.js 텍스처 변환 완료!");
-        
-        // Blob URL 정리
-        URL.revokeObjectURL(imageUrl);
-        
-      } catch (error) {
-        console.error("❌ 이미지 로드 실패:", error);
-        setError(true);
-        setLoading(false);
-      }
-    };
+      },
+      (progress) => {
+        console.log("📥 이미지 로딩 진행:", imageUrl, progress);
+      },
+      (err) => {
+        console.error("❌ 이미지 로드 실패:", imageUrl);
+        console.error("에러 상세:", err);
+        console.error("에러 타입:", typeof err);
+        console.error("에러 메시지:", err?.message);
 
-    // 이미지 로드 시작
-    loadImageWithAuth();
+        // 원본 URL로 직접 시도해보기
+        if (imageUrl.startsWith("/s3-proxy/")) {
+          const originalUrl = `https://likelion13-artium.s3.ap-northeast-2.amazonaws.com${imageUrl.replace(
+            "/s3-proxy",
+            ""
+          )}`;
+          console.log("🔄 원본 URL로 재시도:", originalUrl);
+
+          const retryLoader = new TextureLoader();
+          retryLoader.setCrossOrigin("anonymous");
+          retryLoader.load(
+            originalUrl,
+            (loadedTexture) => {
+              console.log("✅ 원본 URL로 로딩 성공:", originalUrl);
+              loadedTexture.flipY = true;
+              setTexture(loadedTexture);
+              setLoading(false);
+            },
+            undefined,
+            (retryErr) => {
+              console.error("❌ 원본 URL로도 실패:", retryErr);
+              setError(true);
+              setLoading(false);
+            }
+          );
+        } else {
+          setError(true);
+          setLoading(false);
+        }
+      }
+    );
   }, [imageUrl]);
 
   if (loading) {

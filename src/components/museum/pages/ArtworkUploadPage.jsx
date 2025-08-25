@@ -46,7 +46,6 @@ export default function ArtworkUploadPage() {
   const [detailImageUrls, setDetailImageUrls] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [originalDetailImageIds, setOriginalDetailImageIds] = useState([]); // 기존 디테일 이미지 ID들
-  const [saveStatus, setSaveStatus] = useState('APPLICATION'); // 저장 상태 (APPLICATION 또는 DRAFT)
 
   // 수정 모드인지 확인
   const isEditMode = !!artworkId;
@@ -96,15 +95,6 @@ export default function ArtworkUploadPage() {
               // pieceDetailId를 사용하여 기존 디테일 이미지 ID 저장
               const detailIds = artwork.detailImages.map(img => img.pieceDetailId || img.id);
               setOriginalDetailImageIds(detailIds.filter(id => id)); // null/undefined 제거
-            }
-            
-            // saveStatus 설정 (임시저장 작품인 경우 DRAFT, 등록신청 작품인 경우 APPLICATION)
-            if (artwork.saveStatus) {
-              setSaveStatus(artwork.saveStatus);
-            } else if (isDraft) {
-              setSaveStatus('DRAFT');
-            } else {
-              setSaveStatus('APPLICATION');
             }
           }
         } catch (error) {
@@ -186,8 +176,16 @@ export default function ArtworkUploadPage() {
     let hasError = false;
     let errorMsg = '';
     
+    // 입력 완성도 확인
+    const hasMainImage = formData.mainImage || mainImageUrl;
+    const hasTitle = formData.title && formData.title.trim();
+    const hasDescription = formData.description && formData.description.trim();
+    
+    // 모든 필수 항목이 완성되었는지 확인
+    const isComplete = hasMainImage && hasTitle && hasDescription;
+    
     // 1순위: 메인 이미지 없음 (수정 모드에서는 기존 이미지가 있으면 OK)
-    if (!formData.mainImage && !mainImageUrl) {
+    if (!hasMainImage) {
       errorMsg = '메인 이미지를 등록해주세요';
       hasError = true;
     }
@@ -197,12 +195,12 @@ export default function ArtworkUploadPage() {
       hasError = true;
     }
     // 3순위: 작품명 없음
-    else if (!formData.title || !formData.title.trim()) {
+    else if (!hasTitle) {
       errorMsg = '작품명을 작성해주세요';
       hasError = true;
     }
     // 4순위: 작품 소개 없음
-    else if (!formData.description || !formData.description.trim()) {
+    else if (!hasDescription) {
       errorMsg = '작품 소개를 작성해주세요';
       hasError = true;
     }
@@ -326,7 +324,7 @@ export default function ArtworkUploadPage() {
       return;
     }
     
-    // 등록/수정 확인 모달 표시
+    // 모든 필수 항목이 완성된 경우 - 등록/수정 확인 모달
     setModal({ isOpen: true, type: isEditMode ? 'edit' : 'register' });
   };
 
@@ -372,8 +370,8 @@ export default function ArtworkUploadPage() {
     setIsSubmitting(true);
     
     try {
-      // 작품 수정 API 호출
-      const response = await updatePiece(artworkId, formData, saveStatus, originalDetailImageIds);
+      // 작품 수정 API 호출 (모든 필수 항목이 완성된 경우이므로 APPLICATION)
+      const response = await updatePiece(artworkId, formData, 'APPLICATION', originalDetailImageIds);
       
       if (response?.success === true && (response?.code === 200 || response?.code === 201)) {
         console.log('작품 수정 완료:', response.data);
@@ -446,32 +444,62 @@ export default function ArtworkUploadPage() {
     // 임시저장 중이면 중단
     if (isSubmitting) return;
     
+    // 입력값이 1개 이상 있는지 확인
+    const hasMainImage = formData.mainImage || mainImageUrl;
+    const hasTitle = formData.title && formData.title.trim();
+    const hasDescription = formData.description && formData.description.trim();
+    
+    if (!hasMainImage && !hasTitle && !hasDescription) {
+      setErrorMessage('임시저장할 내용이 없습니다.');
+      setShowErrors(true);
+      
+      setTimeout(() => {
+        setShowErrors(false);
+        setErrorMessage('');
+      }, 3000);
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
-      // API를 사용하여 임시저장 (DRAFT)
-      const response = await createPiece(formData, 'DRAFT');
-      
-      if (response?.success === true && (response?.code === 200 || response?.code === 201)) {
-        console.log('임시저장 완료:', response.data);
+      if (isEditMode) {
+        // 수정 모드: updatePiece API 호출 (DRAFT)
+        const response = await updatePiece(artworkId, formData, 'DRAFT', originalDetailImageIds);
         
-        // 로컬 draft도 업데이트
-        saveDraft(formData);
-        
-        // 임시저장 완료 메시지 표시
-        setErrorMessage('임시 저장이 완료되었어요');
-        setShowErrors(true);
-        
-        // 메시지를 3초 후에 자동으로 숨기기
-        setTimeout(() => {
-          setShowErrors(false);
-          setErrorMessage('');
-        }, 3000);
+        if (response?.success === true && (response?.code === 200 || response?.code === 201)) {
+          console.log('작품 임시저장 완료:', response.data);
+          setErrorMessage('임시저장이 완료되었어요');
+          setShowErrors(true);
+          
+          // 3초 후 에러 메시지 숨기기
+          setTimeout(() => {
+            setShowErrors(false);
+            setErrorMessage('');
+          }, 3000);
+        } else {
+          throw new Error('작품 임시저장에 실패했습니다.');
+        }
       } else {
-        throw new Error('임시저장에 실패했습니다.');
+        // 등록 모드: createPiece API 호출 (DRAFT)
+        const response = await createPiece(formData, 'DRAFT');
+        
+        if (response?.success === true && (response?.code === 200 || response?.code === 201)) {
+          console.log('작품 임시저장 완료:', response.data);
+          setErrorMessage('임시저장이 완료되었어요');
+          setShowErrors(true);
+          
+          // 3초 후 에러 메시지 숨기기
+          setTimeout(() => {
+            setShowErrors(false);
+            setErrorMessage('');
+          }, 3000);
+        } else {
+          throw new Error('작품 임시저장에 실패했습니다.');
+        }
       }
     } catch (error) {
-      console.error('임시저장 실패:', error);
+      console.error('작품 임시저장 실패:', error);
       setErrorMessage('임시저장에 실패했습니다. 다시 시도해주세요.');
       setShowErrors(true);
       
@@ -624,35 +652,6 @@ export default function ArtworkUploadPage() {
               className={styles.titleInput}
             />
           </div>
-
-          {/* 저장 상태 선택 (임시저장 작품인 경우에만 표시) */}
-          {isEditMode && isDraft && (
-            <div className={styles.inputGroup}>
-              <label className={styles.label}>저장 상태</label>
-              <div className={styles.radioGroup}>
-                <label className={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    name="saveStatus"
-                    value="DRAFT"
-                    checked={saveStatus === 'DRAFT'}
-                    onChange={(e) => setSaveStatus(e.target.value)}
-                  />
-                  <span>임시저장</span>
-                </label>
-                <label className={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    name="saveStatus"
-                    value="APPLICATION"
-                    checked={saveStatus === 'APPLICATION'}
-                    onChange={(e) => setSaveStatus(e.target.value)}
-                  />
-                  <span>등록신청</span>
-                </label>
-              </div>
-            </div>
-          )}
 
           {/* 작품 소개 입력 */}
           <div className={styles.inputGroup}>

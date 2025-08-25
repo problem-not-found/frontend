@@ -51,8 +51,8 @@ const getCookie = (name) => {
   // 디버깅을 위한 로그
   console.log(`🍪 [getCookie] ${name} 쿠키 찾는 중...`);
   console.log("🍪 [getCookie] 전체 쿠키:", document.cookie);
-  
-  if (!document.cookie || document.cookie.trim() === '') {
+
+  if (!document.cookie || document.cookie.trim() === "") {
     console.log("🍪 [getCookie] 쿠키가 없습니다.");
     return null;
   }
@@ -61,12 +61,15 @@ const getCookie = (name) => {
   try {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
-    
+
     if (parts.length === 2) {
       const cookieValue = parts.pop().split(";").shift();
       if (cookieValue) {
         const decoded = decodeURIComponent(cookieValue);
-        console.log(`🍪 [getCookie] ${name} 찾음 (방법1):`, decoded.substring(0, 50) + '...');
+        console.log(
+          `🍪 [getCookie] ${name} 찾음 (방법1):`,
+          decoded.substring(0, 50) + "..."
+        );
         return decoded;
       }
     }
@@ -76,10 +79,15 @@ const getCookie = (name) => {
 
   // 방법 2: 정규식 방식
   try {
-    const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+    const matches = document.cookie.match(
+      new RegExp(`(?:^|; )${name}=([^;]*)`)
+    );
     if (matches) {
       const decoded = decodeURIComponent(matches[1]);
-      console.log(`🍪 [getCookie] ${name} 찾음 (방법2):`, decoded.substring(0, 50) + '...');
+      console.log(
+        `🍪 [getCookie] ${name} 찾음 (방법2):`,
+        decoded.substring(0, 50) + "..."
+      );
       return decoded;
     }
   } catch (e) {
@@ -88,19 +96,22 @@ const getCookie = (name) => {
 
   // 방법 3: 모든 쿠키를 파싱해서 찾기
   try {
-    const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-      const [key, value] = cookie.trim().split('=');
+    const cookies = document.cookie.split(";").reduce((acc, cookie) => {
+      const [key, value] = cookie.trim().split("=");
       if (key && value) {
         acc[key.trim()] = value.trim();
       }
       return acc;
     }, {});
-    
+
     console.log(`🍪 [getCookie] 파싱된 모든 쿠키:`, cookies);
-    
+
     if (cookies[name]) {
       const decoded = decodeURIComponent(cookies[name]);
-      console.log(`🍪 [getCookie] ${name} 찾음 (방법3):`, decoded.substring(0, 50) + '...');
+      console.log(
+        `🍪 [getCookie] ${name} 찾음 (방법3):`,
+        decoded.substring(0, 50) + "..."
+      );
       return decoded;
     }
   } catch (e) {
@@ -109,22 +120,28 @@ const getCookie = (name) => {
 
   // 방법 4: 대소문자 구분 없이 찾기 (혹시 이름이 다를 경우)
   try {
-    const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-      const [key, value] = cookie.trim().split('=');
+    const cookies = document.cookie.split(";").reduce((acc, cookie) => {
+      const [key, value] = cookie.trim().split("=");
       if (key && value) {
-        acc[key.trim().toLowerCase()] = { 
-          originalKey: key.trim(), 
-          value: value.trim() 
+        acc[key.trim().toLowerCase()] = {
+          originalKey: key.trim(),
+          value: value.trim(),
         };
       }
       return acc;
     }, {});
-    
+
     const lowerName = name.toLowerCase();
     if (cookies[lowerName]) {
       const decoded = decodeURIComponent(cookies[lowerName].value);
-      console.log(`🍪 [getCookie] ${name} 찾음 (방법4 - 대소문자무시):`, decoded.substring(0, 50) + '...');
-      console.log(`🍪 [getCookie] 원본 키 이름:`, cookies[lowerName].originalKey);
+      console.log(
+        `🍪 [getCookie] ${name} 찾음 (방법4 - 대소문자무시):`,
+        decoded.substring(0, 50) + "..."
+      );
+      console.log(
+        `🍪 [getCookie] 원본 키 이름:`,
+        cookies[lowerName].originalKey
+      );
       return decoded;
     }
   } catch (e) {
@@ -218,25 +235,27 @@ export const checkAuthStatus = () => {
  */
 export const forceLogout = (reason = "401/403 인증 에러") => {
   console.log("🚪 강제 로그아웃 실행 - 이유:", reason);
-  
+
   // 모든 관련 쿠키 정리
   const cookiesToClear = ["ACCESS_TOKEN", "REFRESH_TOKEN", "JSESSIONID"];
   const currentDomain = window.location.hostname;
-  
+
   // 다양한 도메인/경로 조합으로 쿠키 삭제
   const domains = [
-    '',
+    "",
     currentDomain,
     `.${currentDomain}`,
-    currentDomain.replace('www.', ''),
-    `.${currentDomain.replace('www.', '')}`
+    currentDomain.replace("www.", ""),
+    `.${currentDomain.replace("www.", "")}`,
   ];
-  const paths = ['/', '/api', ''];
+  const paths = ["/", "/api", ""];
 
   cookiesToClear.forEach((cookieName) => {
-    domains.forEach(domain => {
-      paths.forEach(path => {
-        const cookieString = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path};${domain ? ` domain=${domain};` : ''}`;
+    domains.forEach((domain) => {
+      paths.forEach((path) => {
+        const cookieString = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path};${
+          domain ? ` domain=${domain};` : ""
+        }`;
         document.cookie = cookieString;
       });
     });
@@ -244,7 +263,7 @@ export const forceLogout = (reason = "401/403 인증 에러") => {
 
   console.log("🍪 쿠키 정리 후 상태:", document.cookie);
   console.log("➡️ 로그인 페이지로 리다이렉트");
-  
+
   // 알림 없이 바로 리다이렉트 (더 부드러운 UX)
   window.location.href = "/login";
 };
@@ -253,18 +272,16 @@ export const forceLogout = (reason = "401/403 인증 에러") => {
  * 토큰이 필요없는 일반 요청 (public API)
  */
 const publicApi = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_URL,
+  baseURL: import.meta.env.DEV ? "" : import.meta.env.VITE_APP_API_URL,
   timeout: 30000,
-  withCredentials: true, // 쿠키 자동 전송
 });
 
 /**
  * 토큰이 필요한 인증 요청 (private API)
  */
 const privateApi = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_URL,
+  baseURL: import.meta.env.DEV ? "" : import.meta.env.VITE_APP_API_URL,
   timeout: 30000,
-  withCredentials: true, // 쿠키 자동 전송
 });
 
 /**
@@ -371,7 +388,9 @@ privateApi.interceptors.response.use(
         console.log("🚪 로그인 페이지로 리다이렉트");
 
         // 토큰 갱신 실패 시 무조건 로그아웃 처리
-        forceLogout(`토큰 갱신 실패 (${refreshError.response?.status || 'Network Error'})`);
+        forceLogout(
+          `토큰 갱신 실패 (${refreshError.response?.status || "Network Error"})`
+        );
         return Promise.reject(refreshError);
       }
     }

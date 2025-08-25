@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import useUserStore from "../../stores/userStore";
 import { getCurrentUser } from "../../apis/user/user.js";
 import styles from './userProfileModal.module.css';
+import mailIcon from '@/assets/user/mail2.png';
+import instagramIcon from '@/assets/user/instagram.png';
 
 export default function UserProfileModal({ isOpen, onClose, onEditClick }) {
   const { user, contactInfo, subscription, setUserFromAPI } = useUserStore();
@@ -61,11 +63,11 @@ export default function UserProfileModal({ isOpen, onClose, onEditClick }) {
 
         <div className={styles.contactSection}>
           <div className={styles.contactItem}>
-            <img src="/src/assets/user/mail2.png" alt="mail" className={styles.contactIcon} />
+            <img src={mailIcon} alt="mail" className={styles.contactIcon} />
             <span className={styles.contactText}>이메일 {user.email}</span>
           </div>
           <div className={styles.contactItem}>
-            <img src="/src/assets/user/instagram.png" alt="instagram" className={styles.contactIcon} />
+            <img src={instagramIcon} alt="instagram" className={styles.contactIcon} />
             <span className={styles.contactText}>인스타그램 @{user.instagram || user.nickname}</span>
           </div>
         </div>

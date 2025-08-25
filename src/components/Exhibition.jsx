@@ -6,7 +6,7 @@ import { artworks } from "../dummy";
 import ArtworkFrame from "./ArtworkFrame";
 
 function Exhibition({ onArtworkClick, exhibition, pieceImages }) {
-  // React 방식처럼 원본 URL 그대로 사용
+  // React 방식 원본 URL 그대로 사용
   const convertToProxyUrl = (imageUrl) => {
     console.log("🔧 원본 S3 URL 사용:", imageUrl);
     return imageUrl; // React img 태그처럼 원본 URL 직접 사용

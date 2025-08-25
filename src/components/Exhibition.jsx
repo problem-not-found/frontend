@@ -6,10 +6,28 @@ import { artworks } from "../dummy";
 import ArtworkFrame from "./ArtworkFrame";
 
 function Exhibition({ onArtworkClick, exhibition, pieceImages }) {
-  // React 방식 원본 URL 그대로 사용
+  // S3 URL을 프록시 URL로 변환하는 함수
   const convertToProxyUrl = (imageUrl) => {
-    console.log("🔧 원본 S3 URL 사용:", imageUrl);
-    return imageUrl; // React img 태그처럼 원본 URL 직접 사용
+    if (!imageUrl) return imageUrl;
+
+    console.log("원본 이미지 URL:", imageUrl);
+
+    // S3 URL인지 확인
+    if (
+      imageUrl.includes("likelion13-artium.s3.ap-northeast-2.amazonaws.com")
+    ) {
+      // S3 URL을 프록시 URL로 변환
+      const path = imageUrl.replace(
+        "https://likelion13-artium.s3.ap-northeast-2.amazonaws.com",
+        ""
+      );
+      const proxyUrl = `/s3-proxy${path}`;
+      console.log("프록시 URL로 변환:", proxyUrl);
+      return proxyUrl;
+    }
+
+    console.log("S3 URL이 아님, 원본 사용:", imageUrl);
+    return imageUrl;
   };
 
   // 실제 전시 데이터가 있으면 사용하고, 없으면 더미 데이터 사용
@@ -40,7 +58,8 @@ function Exhibition({ onArtworkClick, exhibition, pieceImages }) {
         })
       : artworks;
 
-  console.log(`🎨 전시장에 표시될 작품 수: ${displayArtworks.length}`);
+  console.log(`전시장에 표시될 작품 수: ${displayArtworks.length}`);
+  console.log("모든 작품 정보:", displayArtworks);
   // 나무 바닥 텍스처 로드
   const woodTexture = useLoader(TextureLoader, "/wood-floor.jpg");
 
@@ -50,24 +69,6 @@ function Exhibition({ onArtworkClick, exhibition, pieceImages }) {
     woodTexture.wrapT = RepeatWrapping;
     woodTexture.repeat.set(8, 6); // 바닥 크기에 맞게 반복
   }
-
-  // 로딩 중이거나 에러가 있으면 빈 그룹 반환
-  if (loading) {
-    console.log("⏳ Exhibition: 로딩 중...");
-    return <group />;
-  }
-
-  if (error) {
-    console.log("❌ Exhibition: 에러 발생:", error);
-    return <group />;
-  }
-
-  if (!exhibition) {
-    console.log("⚠️ Exhibition: 전시 정보가 없습니다.");
-    return <group />;
-  }
-
-  console.log("🎨 Exhibition: 작품 렌더링 시작, 작품 수:", artworks.length);
 
   return (
     <group>
@@ -246,7 +247,6 @@ function Exhibition({ onArtworkClick, exhibition, pieceImages }) {
 }
 
 Exhibition.propTypes = {
-  exhibitionId: PropTypes.string.isRequired,
   onArtworkClick: PropTypes.func.isRequired,
   exhibition: PropTypes.object,
   pieceImages: PropTypes.array,

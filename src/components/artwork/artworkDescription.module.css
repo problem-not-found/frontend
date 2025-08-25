@@ -25,4 +25,5 @@
   letter-spacing: -0.025em;
   color: #434343;
   margin: 0;
+  white-space: pre-wrap; /* \n을 줄바꿈으로 처리 */
 }

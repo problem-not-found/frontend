@@ -47,12 +47,12 @@ export default function ExhibitionCard({
         <div 
           className={styles.gridImage}
           style={{
-            backgroundImage: exhibition.thumbnail ? `url(${exhibition.thumbnail})` : 'none'
+            backgroundImage: exhibition.thumbnailImageUrl ? `url(${exhibition.thumbnailImageUrl})` : 'none'
           }}
         >
-          {showStatus && exhibition.status && (
-            <div className={`${styles.statusBadge} ${getStatusStyle(exhibition.status)}`}>
-              {exhibition.status}
+          {showStatus && exhibition.status === 'ONGOING' && (
+            <div className={`${styles.statusBadge} ${styles.statusExhibiting}`}>
+              전시 중
             </div>
           )}
           {isEditMode && (
@@ -74,12 +74,12 @@ export default function ExhibitionCard({
           <div 
             className={styles.verticalImage}
             style={{
-              backgroundImage: exhibition.thumbnail ? `url(${exhibition.thumbnail})` : 'none'
+              backgroundImage: exhibition.thumbnailImageUrl ? `url(${exhibition.thumbnailImageUrl})` : 'none'
             }}
           >
-            {showStatus && exhibition.status && (
-              <div className={`${styles.statusBadge} ${getStatusStyle(exhibition.status)}`}>
-                {exhibition.status}
+            {showStatus && exhibition.status === 'ONGOING' && (
+              <div className={`${styles.statusBadge} ${styles.statusExhibiting}`}>
+                전시 중
               </div>
             )}
             {isEditMode && (
@@ -90,17 +90,16 @@ export default function ExhibitionCard({
               </div>
             )}
           </div>
-          
-          {showDate && exhibition.createdAt && (
-            <div className={styles.dateDisplay}>
-              {exhibition.createdAt}
-            </div>
-          )}
         </div>
         
         {showDescription && (
           <div className={styles.exhibitionInfo}>
             <h3 className={styles.exhibitionTitle}>{exhibition.title}</h3>
+            {showDate && exhibition.startDate && exhibition.endDate && (
+              <p className={styles.exhibitionDate}>
+                {`${exhibition.startDate.slice(2, 4)}.${exhibition.startDate.slice(5, 7)}.${exhibition.startDate.slice(8, 10)} - ${exhibition.endDate.slice(2, 4)}.${exhibition.endDate.slice(5, 7)}.${exhibition.endDate.slice(8, 10)}`}
+              </p>
+            )}
             <p className={styles.exhibitionDescription}>{exhibition.description}</p>
           </div>
         )}

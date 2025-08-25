@@ -1,13 +1,16 @@
+import { useNavigate } from 'react-router-dom';
 import styles from './exhibitionArtworkModal.module.css';
 
 export default function ExhibitionArtworkModal({ 
   isOpen, 
   onClose, 
-  onNewArtwork, 
-  onLoadFromLibrary,
   isThumbnail = false,
-  isChangeMode = false
+  isChangeMode = false,
+  currentDraft = null,
+  returnTo = 'exhibition-upload'
 }) {
+  const navigate = useNavigate();
+
   if (!isOpen) return null;
 
   const handleOverlayClick = (e) => {
@@ -17,25 +20,30 @@ export default function ExhibitionArtworkModal({
   };
 
   const handleNewArtwork = () => {
-    // 숨겨진 파일 입력 요소 클릭
-    const fileInput = document.getElementById('artworkFileInput');
-    if (fileInput) {
-      fileInput.click();
-    }
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file && onNewArtwork) {
-      onNewArtwork(file);
-    }
+    // 새 작품 등록 페이지로 이동하면서 draft 데이터 전달
+    navigate('/artwork/upload', {
+      state: {
+        fromExhibition: true,
+        isThumbnail,
+        isChangeMode,
+        returnTo,
+        draft: currentDraft
+      }
+    });
     onClose();
   };
 
   const handleLoadFromLibrary = () => {
-    if (onLoadFromLibrary) {
-      onLoadFromLibrary();
-    }
+    // 작품 라이브러리 페이지로 이동하면서 draft 데이터 전달
+    navigate('/artwork/library', {
+      state: {
+        fromExhibition: true,
+        isThumbnail,
+        isChangeMode,
+        returnTo,
+        draft: currentDraft
+      }
+    });
     onClose();
   };
 
@@ -103,15 +111,6 @@ export default function ExhibitionArtworkModal({
           </div>
         </div>
       </div>
-      
-      {/* 숨겨진 파일 입력 요소 */}
-      <input
-        type="file"
-        id="artworkFileInput"
-        accept="image/*"
-        onChange={handleFileChange}
-        style={{ display: 'none' }}
-      />
     </div>
   );
 }

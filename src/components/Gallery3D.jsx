@@ -1,8 +1,16 @@
 import { Canvas } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import { Suspense, useState } from "react";
+import { useParams } from "react-router-dom";
 import Exhibition from "./Exhibition";
 import CameraController from "./CameraController";
+import ResetCameraButton from "./ResetCameraButton";
+import ControlsInfoModal from "./ControlsInfoModal";
+import {
+  useExhibitionDetail,
+  usePieceImages,
+} from "../apis/exhibition/exhibition";
+import { ClipLoader } from "react-spinners";
 import "./Gallery3D.css";
 
 function LoadingFallback() {
@@ -16,6 +24,20 @@ function LoadingFallback() {
 
 function Gallery3D() {
   const [selectedArtwork, setSelectedArtwork] = useState(null);
+  const { id } = useParams(); // URL에서 전시 ID 가져오기
+  const exhibitionId = id ? parseInt(id, 10) : null;
+
+  // 전시 정보 가져오기
+  const {
+    exhibition,
+    loading: exhibitionLoading,
+    error: exhibitionError,
+  } = useExhibitionDetail(exhibitionId);
+
+  // 전시 작품 이미지들 가져오기
+  const { pieceImages, loading: pieceImagesLoading } = usePieceImages(
+    exhibition?.pieceIdList
+  );
 
   const handleArtworkClick = (artwork) => {
     setSelectedArtwork(artwork);
@@ -25,12 +47,60 @@ function Gallery3D() {
     setSelectedArtwork(null);
   };
 
+  // 로딩 상태
+  if (exhibitionLoading || pieceImagesLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          flexDirection: "column",
+          gap: "20px",
+          backgroundColor: "#000",
+          color: "#fff",
+        }}
+      >
+        <ClipLoader color="#fff" size={40} />
+        <p>전시장을 불러오는 중...</p>
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (exhibitionError || (!exhibitionId && id)) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          flexDirection: "column",
+          gap: "20px",
+          backgroundColor: "#000",
+          color: "#fff",
+        }}
+      >
+        <h2>전시 정보를 불러올 수 없습니다.</h2>
+        <p>잠시 후 다시 시도해주세요.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="gallery-container">
       <div className="gallery-header">
-        <h1>Artium Gallery</h1>
-        <p>현대 미술의 새로운 시선</p>
+        <h1>{exhibition?.title || "Artium Gallery"}</h1>
+        <p>{exhibition?.description || "현대 미술의 새로운 시선"}</p>
       </div>
+
+      {/* 초기 위치로 돌아가기 버튼 */}
+      <ResetCameraButton />
+
+      {/* 조작법 정보 모달 */}
+      <ControlsInfoModal />
 
       <div className="canvas-container">
         <Suspense fallback={<LoadingFallback />}>
@@ -60,7 +130,11 @@ function Gallery3D() {
             <Environment preset="night" intensity={0.1} />
 
             {/* 전시장 */}
-            <Exhibition onArtworkClick={handleArtworkClick} />
+            <Exhibition
+              onArtworkClick={handleArtworkClick}
+              exhibition={exhibition}
+              pieceImages={pieceImages}
+            />
 
             {/* 카메라 컨트롤러 */}
             <CameraController isModalOpen={!!selectedArtwork} />
@@ -94,15 +168,6 @@ function Gallery3D() {
           </div>
         </div>
       )}
-
-      <div className="gallery-footer">
-        <div className="controls-info">
-          <p>
-            🖱️ 클릭해서 시점 조작 활성화 | ⌨️ WASD로 이동 | 🔍 휠로 확대/축소 |
-            ✋ 작품 클릭으로 정보 보기
-          </p>
-        </div>
-      </div>
     </div>
   );
 }

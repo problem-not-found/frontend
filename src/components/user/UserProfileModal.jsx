@@ -1,8 +1,26 @@
+import { useEffect } from "react";
 import useUserStore from "../../stores/userStore";
+import { getCurrentUser } from "../../apis/user/user.js";
 import styles from './userProfileModal.module.css';
 
 export default function UserProfileModal({ isOpen, onClose, onEditClick }) {
-  const { user, contactInfo, subscription } = useUserStore();
+  const { user, contactInfo, subscription, setUserFromAPI } = useUserStore();
+
+  useEffect(() => {
+    if (isOpen) {
+      // 모달이 열릴 때 사용자 정보 가져오기
+      const fetchUserData = async () => {
+        try {
+          const response = await getCurrentUser();
+          setUserFromAPI(response);
+        } catch (error) {
+          console.error('사용자 정보 조회 실패:', error);
+        }
+      };
+      
+      fetchUserData();
+    }
+  }, [isOpen, setUserFromAPI]);
 
   if (!isOpen) return null;
 
@@ -43,11 +61,11 @@ export default function UserProfileModal({ isOpen, onClose, onEditClick }) {
 
         <div className={styles.contactSection}>
           <div className={styles.contactItem}>
-            <div className={styles.contactIcon}>📧</div>
+            <img src="/src/assets/user/mail2.png" alt="mail" className={styles.contactIcon} />
             <span className={styles.contactText}>이메일 {user.email}</span>
           </div>
           <div className={styles.contactItem}>
-            <div className={styles.contactIcon}>📷</div>
+            <img src="/src/assets/user/instagram.png" alt="instagram" className={styles.contactIcon} />
             <span className={styles.contactText}>인스타그램 @{user.instagram || user.nickname}</span>
           </div>
         </div>

@@ -2,10 +2,17 @@ import { useLoader } from "@react-three/fiber";
 import { Text, Box, Plane, SpotLight } from "@react-three/drei";
 import { TextureLoader, RepeatWrapping } from "three";
 import PropTypes from "prop-types";
-import { artworks } from "../dummy";
+import { useExhibitionArtworks } from "../hooks/useExhibitionArtworks";
 import ArtworkFrame from "./ArtworkFrame";
 
-function Exhibition({ onArtworkClick }) {
+function Exhibition({ exhibitionId, onArtworkClick }) {
+  console.log('🎭 Exhibition 컴포넌트 렌더링:', { exhibitionId });
+  
+  // 전시 정보와 작품들 로드
+  const { exhibition, artworks, loading, error } = useExhibitionArtworks(exhibitionId);
+  
+  console.log('📊 Exhibition 상태:', { exhibition, artworksCount: artworks.length, loading, error });
+
   // 나무 바닥 텍스처 로드
   const woodTexture = useLoader(TextureLoader, "/wood-floor.jpg");
 
@@ -15,6 +22,24 @@ function Exhibition({ onArtworkClick }) {
     woodTexture.wrapT = RepeatWrapping;
     woodTexture.repeat.set(8, 6); // 바닥 크기에 맞게 반복
   }
+
+  // 로딩 중이거나 에러가 있으면 빈 그룹 반환
+  if (loading) {
+    console.log('⏳ Exhibition: 로딩 중...');
+    return <group />;
+  }
+  
+  if (error) {
+    console.log('❌ Exhibition: 에러 발생:', error);
+    return <group />;
+  }
+  
+  if (!exhibition) {
+    console.log('⚠️ Exhibition: 전시 정보가 없습니다.');
+    return <group />;
+  }
+
+  console.log('🎨 Exhibition: 작품 렌더링 시작, 작품 수:', artworks.length);
 
   return (
     <group>
@@ -81,6 +106,8 @@ function Exhibition({ onArtworkClick }) {
 
       {/* 각 작품별 스포트라이트 - 정면에서 비추도록 */}
       {artworks.map((artwork) => {
+        console.log('💡 스포트라이트 생성:', artwork.id, artwork.position);
+        
         // 벽 위치에 따라 조명 위치와 각도 계산
         const [x, y, z] = artwork.position;
         let lightPosition, lightTarget;
@@ -147,14 +174,18 @@ function Exhibition({ onArtworkClick }) {
       })}
 
       {/* 전시 작품들 */}
-      {artworks.map((artwork) => (
-        <ArtworkFrame
-          key={artwork.id}
-          artwork={artwork}
-          position={artwork.position}
-          onArtworkClick={onArtworkClick}
-        />
-      ))}
+      {artworks.map((artwork) => {
+        console.log('🖼️ 작품 프레임 생성:', artwork.id, artwork.title, artwork.position);
+        
+        return (
+          <ArtworkFrame
+            key={artwork.id}
+            artwork={artwork}
+            position={artwork.position}
+            onArtworkClick={onArtworkClick}
+          />
+        );
+      })}
 
       {/* 전시 제목 - 별도 조명 */}
       <SpotLight
@@ -174,7 +205,7 @@ function Exhibition({ onArtworkClick }) {
         anchorX="center"
         anchorY="middle"
       >
-        현대 미술의 새로운 시선
+        {exhibition.title || "현대 미술의 새로운 시선"}
       </Text>
 
       <Text
@@ -184,13 +215,17 @@ function Exhibition({ onArtworkClick }) {
         anchorX="center"
         anchorY="middle"
       >
-        Contemporary Art Exhibition 2023
+        {exhibition.startDate && exhibition.endDate 
+          ? `${exhibition.startDate} - ${exhibition.endDate}`
+          : "Contemporary Art Exhibition 2023"
+        }
       </Text>
     </group>
   );
 }
 
 Exhibition.propTypes = {
+  exhibitionId: PropTypes.string.isRequired,
   onArtworkClick: PropTypes.func.isRequired,
 };
 

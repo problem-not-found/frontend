@@ -257,3 +257,14 @@ export const checkUserCode = async (code) => {
     throw error;
   }
 };
+
+// 사용자 전시 참여 개수 조회
+export const getUserParticipationCount = async (params) => {
+  try {
+    const response = await APIService.private.get('/api/users/join/count', { params });
+    return response;
+  } catch (error) {
+    console.error('사용자 전시 참여 개수 조회 오류:', error);
+    throw error;
+  }
+};

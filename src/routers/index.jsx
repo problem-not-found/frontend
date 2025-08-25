@@ -54,6 +54,7 @@ const router = createBrowserRouter([
   { path: "/exhibition", element: <MyExhibitionPage /> },
   { path: "/exhibition/my", element: <MyExhibitionPage /> },
   { path: "/exhibition/upload", element: <ExhibitionUploadPage /> },
+  { path: "/exhibition/edit/:id", element: <ExhibitionUploadPage /> },
   { path: "/exhibition/participants", element: <ExhibitionParticipantPage /> },
   { path: "/exhibition/offline-location", element: <OfflineLocationPage /> },
   { path: "/artwork/library", element: <ArtworkLibraryPage /> },

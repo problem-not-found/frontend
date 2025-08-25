@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import PremiumBar from "@museum/components/museum/PremiumBar";
 import MuseumProfile from "@museum/components/museum/MuseumProfile";
 import ArtworkSection from "@museum/components/museum/ArtworkSection";
@@ -9,12 +10,14 @@ import BackToTopButton from "@/components/common/BackToTopButton";
 import AppFooter from "@/components/footer/AppFooter";
 import { getMyPieces } from "@apis/museum/artwork";
 import { getMyExhibitions } from "@apis/museum/exhibition";
-import { getCurrentUser } from "@/apis/user/user.js";
+import { getCurrentUser, getUserParticipationCount } from "@/apis/user/user.js";
 import styles from "@museum/components/museum/museum.module.css";
 import commonStyles from "@museum/components/museum/common.module.css";
 
 
 export default function MuseumPage() {
+  const location = useLocation();
+  
   // 작품 데이터 상태
   const [artworks, setArtworks] = useState([]);
   const [artworksTotal, setArtworksTotal] = useState(0);
@@ -36,46 +39,105 @@ export default function MuseumPage() {
   // 스크롤 상태 관리
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // 데이터 로드
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // 사용자 정보 로드
-        const userResponse = await getCurrentUser();
-        if (userResponse?.data) {
-          setUser(userResponse.data);
-          console.log('MuseumPage - 사용자 정보:', userResponse.data);
-        }
-        
-        // 작품 데이터 로드
-        const artworksResponse = await getMyPieces({ applicated: true, pageNum: 1, pageSize: 3 });
-        if (artworksResponse?.data) {
-          setArtworks(artworksResponse.data.content || []);
-          setArtworksTotal(artworksResponse.data.totalElements || 0);
-          console.log('설정된 작품 목록:', artworksResponse.data.content);
-          console.log('작품 총 개수:', artworksResponse.data.totalElements);
-        }
-        
-        // 전시회 데이터 로드
-        const exhibitionsResponse = await getMyExhibitions({ pageNum: 1, pageSize: 3, fillAll: true });
-        console.log('전시회 API 응답:', exhibitionsResponse);
-        if (exhibitionsResponse?.data?.data) {
-          const content = exhibitionsResponse.data.data.content || [];
-          const totalElements = exhibitionsResponse.data.data.totalElements || 0;
-          
-          setExhibitions(content);
-          setExhibitionsTotal(totalElements);
-          
-          console.log('전시회 데이터 설정:', { content, totalElements });
-        }
-        
-      } catch (error) {
-        console.error('데이터 로드 오류:', error);
+  // 초대 데이터 로드
+  const loadInvitationData = async () => {
+    try {
+      // REQUESTED 상태의 전시 개수 조회 (아직 승인하지 않은 초대)
+      const requestedResponse = await getUserParticipationCount({ status: 'REQUESTED' });
+      
+      if (requestedResponse?.data?.data !== undefined) {
+        setInvitation(prev => ({
+          ...prev,
+          hasInvitation: requestedResponse.data.data > 0,
+          invitationCount: requestedResponse.data.data
+        }));
       }
-    };
+    } catch (error) {
+      console.error('초대 데이터 로드 오류:', error);
+    }
+  };
 
+  // 초대 데이터만 새로고침하는 함수
+  const refreshInvitationData = async () => {
+    await loadInvitationData();
+  };
+
+  // 데이터 로드
+  const loadData = async () => {
+    try {
+      // 사용자 정보 로드
+      const userResponse = await getCurrentUser();
+      if (userResponse?.data) {
+        setUser(userResponse.data);
+        console.log('MuseumPage - 사용자 정보:', userResponse.data);
+      }
+      
+      // 작품 데이터 로드
+      const artworksResponse = await getMyPieces({ applicated: true, pageNum: 1, pageSize: 3 });
+      if (artworksResponse?.data) {
+        setArtworks(artworksResponse.data.content || []);
+        setArtworksTotal(artworksResponse.data.totalElements || 0);
+        console.log('설정된 작품 목록:', artworksResponse.data.content);
+        console.log('작품 총 개수:', artworksResponse.data.totalElements);
+      }
+      
+      // 전시회 데이터 로드 (fillAll: false인 전시도 포함)
+      const exhibitionsResponse = await getMyExhibitions({ pageNum: 1, pageSize: 3, fillAll: true });
+      console.log('전시회 API 응답:', exhibitionsResponse);
+      if (exhibitionsResponse?.data?.data) {
+        const content = exhibitionsResponse.data.data.content || [];
+        const totalElements = exhibitionsResponse.data.data.totalElements || 0;
+        
+        setExhibitions(content);
+        setExhibitionsTotal(totalElements);
+        
+        console.log('전시회 데이터 설정:', { content, totalElements });
+      }
+      
+      // 초대 데이터 로드
+      await loadInvitationData();
+      
+    } catch (error) {
+      console.error('데이터 로드 오류:', error);
+    }
+  };
+
+  // 전시 목록만 새로고침하는 함수
+  const refreshExhibitions = async () => {
+    try {
+      const exhibitionsResponse = await getMyExhibitions({ pageNum: 1, pageSize: 3, fillAll: true });
+      console.log('전시회 새로고침 API 응답:', exhibitionsResponse);
+      if (exhibitionsResponse?.data?.data) {
+        const content = exhibitionsResponse.data.data.content || [];
+        const totalElements = exhibitionsResponse.data.data.totalElements || 0;
+        
+        setExhibitions(content);
+        setExhibitionsTotal(totalElements);
+        
+        console.log('전시회 데이터 새로고침 완료:', { content, totalElements });
+      }
+      
+      // 전시 목록 새로고침 후 초대 데이터도 새로고침
+      await loadInvitationData();
+    } catch (error) {
+      console.error('전시회 데이터 새로고침 오류:', error);
+    }
+  };
+
+  // 컴포넌트 마운트 시 데이터 로드
+  useEffect(() => {
     loadData();
   }, []);
+
+  // refreshExhibitions 플래그 감지하여 전시 목록 새로고침
+  useEffect(() => {
+    if (location.state?.refreshExhibitions) {
+      console.log('전시 등록 후 새로고침 감지됨');
+      refreshExhibitions();
+      // state 초기화 (중복 실행 방지)
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // 스크롤 이벤트 처리
   useEffect(() => {

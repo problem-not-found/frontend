@@ -1,21 +1,106 @@
-import { useRef, useState, useEffect } from "react";
-import { useFrame, useLoader } from "@react-three/fiber";
+import React, { useState, useEffect, useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { TextureLoader } from 'three';
+import PropTypes from 'prop-types';
 import { Text, Box, Plane } from "@react-three/drei";
-import { TextureLoader } from "three";
 
 function ArtworkFrame({ artwork, position, onArtworkClick }) {
   const [hovered, setHovered] = useState(false);
+  const [texture, setTexture] = useState(null);
   const frameRef = useRef();
 
-  // 작품 이미지 텍스처 로드
-  const texture = useLoader(TextureLoader, artwork.image);
-
-  // 텍스처 설정
+  // 이미지 텍스처 로드
   useEffect(() => {
-    if (texture) {
-      texture.flipY = false;
-    }
-  }, [texture]);
+    const loadTexture = async () => {
+      try {
+        const textureLoader = new TextureLoader();
+        
+        // S3 이미지인 경우 Canvas를 통해 변환 시도
+        if (artwork.image.startsWith('http')) {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          await new Promise((resolve, reject) => {
+            img.onload = () => {
+              try {
+                // Canvas 크기 설정
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                
+                // Canvas에 이미지 그리기
+                ctx.drawImage(img, 0, 0);
+                
+                // Canvas를 base64로 변환
+                const dataURL = canvas.toDataURL('image/jpeg', 0.9);
+                
+                // base64 이미지로 텍스처 로드
+                textureLoader.load(dataURL, (texture) => {
+                  texture.flipY = false;
+                  setTexture(texture);
+                  resolve();
+                }, undefined, (error) => {
+                  reject(error);
+                });
+                
+              } catch (canvasError) {
+                reject(canvasError);
+              }
+            };
+            
+            img.onerror = () => {
+              reject(new Error('Image load failed'));
+            };
+            
+            img.src = artwork.image;
+          });
+          
+        } else {
+          // 로컬 이미지 로딩
+          const loadedTexture = await new Promise((resolve, reject) => {
+            textureLoader.load(
+              artwork.image,
+              (texture) => resolve(texture),
+              undefined,
+              (error) => reject(error)
+            );
+          });
+          
+          loadedTexture.flipY = false;
+          setTexture(loadedTexture);
+        }
+        
+      } catch (error) {
+        // 에러 발생 시 로컬 이미지 사용
+        try {
+          const fallbackImages = ['/artwork1.png', '/artwork2.png', '/artwork3.png', '/example1.png'];
+          const artworkId = artwork.id.toString();
+          const lastDigit = parseInt(artworkId.slice(-1)) || 0;
+          const fallbackImage = fallbackImages[lastDigit % fallbackImages.length];
+          
+          const fallbackTexture = await new Promise((resolve, reject) => {
+            const fallbackLoader = new TextureLoader();
+            fallbackLoader.load(
+              fallbackImage,
+              (texture) => resolve(texture),
+              undefined,
+              (error) => reject(error)
+            );
+          });
+          
+          fallbackTexture.flipY = false;
+          setTexture(fallbackTexture);
+          
+        } catch (fallbackError) {
+          setTexture(null);
+        }
+      }
+    };
+    
+    loadTexture();
+  }, [artwork.image]);
 
   // 벽 위치에 따른 회전 계산
   const getRotation = () => {
@@ -94,7 +179,11 @@ function ArtworkFrame({ artwork, position, onArtworkClick }) {
         onPointerOut={() => setHovered(false)}
         onClick={handleClick}
       >
-        <meshStandardMaterial map={texture} transparent={false} />
+        <meshStandardMaterial 
+          map={texture} 
+          transparent={false}
+          color={texture ? undefined : "#cccccc"} // 텍스처가 없으면 회색
+        />
       </Plane>
 
       {/* 작품 정보 플레이트 */}
@@ -128,5 +217,17 @@ function ArtworkFrame({ artwork, position, onArtworkClick }) {
     </group>
   );
 }
+
+ArtworkFrame.propTypes = {
+  artwork: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    title: PropTypes.string.isRequired,
+    artist: PropTypes.string.isRequired,
+    year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    image: PropTypes.string.isRequired,
+  }).isRequired,
+  position: PropTypes.arrayOf(PropTypes.number).isRequired,
+  onArtworkClick: PropTypes.func,
+};
 
 export default ArtworkFrame;

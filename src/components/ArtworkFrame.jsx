@@ -58,7 +58,7 @@ function SafeImagePlane({
         console.log("🔑 APIService.private로 이미지 요청:", filename);
         
         // APIService.private.get을 사용하여 이미지 요청
-        const response = await APIService.private.get(`/api/piece?filename=${filename}`, {
+        const response = await APIService.private.get(`/api/s3/${filename}`, {
           responseType: 'blob', // 이미지 데이터를 blob으로 받기
         });
         

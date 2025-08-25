@@ -8,13 +8,21 @@
 
 .indexInfo {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
   height: 160px;
-  writing-mode: sideways-lr;
-  text-orientation: mixed;
   flex-shrink: 0;
+  width: 20px;
+  position: relative;
+}
+
+/* 모바일 대응을 위한 미디어 쿼리 */
+@media (max-width: 768px) {
+  .indexInfo {
+    height: 120px;
+    width: 18px;
+  }
 }
 
 .indexNumber {
@@ -26,8 +34,15 @@
   line-height: 26px; /* 216.667% */
   letter-spacing: -0.3px;
   margin-bottom: 12px;
-  writing-mode: sideways-lr;
-  text-orientation: mixed;
+  transform: rotate(90deg);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .indexNumber {
+    font-size: 10px;
+    line-height: 20px;
+  }
 }
 
 .indexText {
@@ -36,6 +51,14 @@
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 1px;
+  transform: rotate(90deg);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .indexText {
+    font-size: 10px;
+  }
 }
 
 .verticalLine {

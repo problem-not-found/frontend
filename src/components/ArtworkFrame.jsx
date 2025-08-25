@@ -27,6 +27,27 @@ function SafeImagePlane({
 
     console.log("이미지 로딩 시작:", imageUrl);
     
+    // S3 URL에서 파일명만 추출하는 함수
+    const extractFilenameFromS3Url = (url) => {
+      if (!url) return '';
+      
+      // S3 URL 패턴 확인
+      const s3Pattern = /https:\/\/likelion13-artium\.s3\.ap-northeast-2\.amazonaws\.com\/piece\/(.+)/;
+      const match = url.match(s3Pattern);
+      
+      if (match && match[1]) {
+        // 파일명 부분만 반환
+        return match[1];
+      }
+      
+      // S3 URL이 아닌 경우 원본 URL 반환
+      return url;
+    };
+    
+    // 파일명 추출
+    const filename = extractFilenameFromS3Url(imageUrl);
+    console.log("추출된 파일명:", filename);
+    
     // HTML Image 객체를 사용하여 백엔드 프록시를 통해 이미지 로드
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -37,7 +58,7 @@ function SafeImagePlane({
       // HTML Image를 Three.js TextureLoader로 변환
       const loader = new TextureLoader();
       const texture = loader.load(
-        `https://api.artium.life/api/piece?filename=${encodeURIComponent(imageUrl)}`, // 백엔드 프록시 URL
+        `https://api.artium.life/api/piece?filename=${encodeURIComponent(filename)}`, // 파일명만 전송
         undefined,
         undefined,
         (err) => {
@@ -59,8 +80,8 @@ function SafeImagePlane({
       console.error("❌ HTML Image 로드 실패:", imageUrl);
       console.error("에러 상세:", err);
       
-      // 백엔드 프록시 URL로 재시도
-      const proxyUrl = `https://api.artium.life/api/piece?filename=${encodeURIComponent(imageUrl)}`;
+      // 백엔드 프록시 URL로 재시도 (파일명만 사용)
+      const proxyUrl = `https://api.artium.life/api/piece?filename=${encodeURIComponent(filename)}`;
       console.log("🔄 백엔드 프록시 URL로 재시도:", proxyUrl);
       
       const retryImg = new Image();
@@ -95,8 +116,8 @@ function SafeImagePlane({
       retryImg.src = proxyUrl;
     };
 
-    // 백엔드 프록시 URL로 이미지 로드 시작
-    const proxyUrl = `https://api.artium.life/api/piece?filename=${encodeURIComponent(imageUrl)}`;
+    // 백엔드 프록시 URL로 이미지 로드 시작 (파일명만 사용)
+    const proxyUrl = `https://api.artium.life/api/piece?filename=${encodeURIComponent(filename)}`;
     img.src = proxyUrl;
   }, [imageUrl]);
 

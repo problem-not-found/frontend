@@ -6,23 +6,28 @@ import { artworks } from "../dummy";
 import ArtworkFrame from "./ArtworkFrame";
 
 function Exhibition({ onArtworkClick, exhibition, pieceImages }) {
-  // S3 URL을 프록시 URL로 변환하는 함수
+  // 배포 환경에서는 원본 URL을 직접 사용 (개발환경에서는 프록시 사용)
   const convertToProxyUrl = (imageUrl) => {
     if (!imageUrl) return imageUrl;
 
     console.log("원본 이미지 URL:", imageUrl);
 
-    // S3 URL인지 확인
+    // 배포 환경에서는 원본 URL을 그대로 사용
+    if (import.meta.env.PROD) {
+      console.log("배포 환경: 원본 URL 사용");
+      return imageUrl;
+    }
+
+    // 개발 환경에서만 프록시 사용
     if (
       imageUrl.includes("likelion13-artium.s3.ap-northeast-2.amazonaws.com")
     ) {
-      // S3 URL을 프록시 URL로 변환
       const path = imageUrl.replace(
         "https://likelion13-artium.s3.ap-northeast-2.amazonaws.com",
         ""
       );
       const proxyUrl = `/s3-proxy${path}`;
-      console.log("프록시 URL로 변환:", proxyUrl);
+      console.log("개발 환경: 프록시 URL로 변환:", proxyUrl);
       return proxyUrl;
     }
 
@@ -58,8 +63,7 @@ function Exhibition({ onArtworkClick, exhibition, pieceImages }) {
         })
       : artworks;
 
-  console.log(`전시장에 표시될 작품 수: ${displayArtworks.length}`);
-  console.log("모든 작품 정보:", displayArtworks);
+  console.log(`🎨 전시장에 표시될 작품 수: ${displayArtworks.length}`);
   // 나무 바닥 텍스처 로드
   const woodTexture = useLoader(TextureLoader, "/wood-floor.jpg");
 

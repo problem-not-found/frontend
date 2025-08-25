@@ -17,6 +17,7 @@ import useUserStore from "../stores/userStore";
 const MyTypePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1); // 1: 기본정보, 2: 성별/연령, 3: 전시 선호도, 4: 작품 분위기, 5: 형식 선호도, 6: 완료화면
+  const [initialStep, setInitialStep] = useState(1); // 처음 진입할 때의 step을 기억
   const [selectedPreferences, setSelectedPreferences] = useState([]);
   const [selectedMoods, setSelectedMoods] = useState([]);
   const [selectedFormats, setSelectedFormats] = useState([]);
@@ -59,10 +60,12 @@ const MyTypePage = () => {
       const stepNumber = parseInt(step, 10);
       if (stepNumber >= 1 && stepNumber <= 6) {
         setCurrentStep(stepNumber);
+        setInitialStep(stepNumber); // 처음 진입할 때의 step 기억
       }
     } else {
       // step 파라미터가 없으면 기본값 1로 설정하고 URL 업데이트
       updateStepInURL(1);
+      setInitialStep(1);
     }
   }, [searchParams]);
 
@@ -123,9 +126,16 @@ const MyTypePage = () => {
 
   const handleFinalComplete = async () => {
     try {
-      // 1. 사용자 기본 정보 등록
-      await updateUserInfo(nickname, userId);
-      console.log("사용자 기본 정보 등록 성공");
+      // step=2로 바로 온 경우(관심사 수정)가 아닐 때만 사용자 기본 정보 등록
+      const isEditMode = initialStep === 2;
+      
+      if (!isEditMode && userId && nickname) {
+        // 1. 사용자 기본 정보 등록
+        await updateUserInfo(nickname, userId);
+        console.log("사용자 기본 정보 등록 성공");
+      } else if (isEditMode) {
+        console.log("관심사 수정 모드 - updateUserInfo 건너뜀");
+      }
 
       // 2. 모든 선호도 정보 한번에 업데이트
       const apiGender = genderMapping[selectedGender];

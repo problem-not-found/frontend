@@ -234,6 +234,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/exhibition/invitations",
+    element: (
+      <AuthGuard>
+        <ExhibitionInvitationPage />
+      </AuthGuard>
+    ),
+  },
+  {
     path: "/exhibition/participants",
     element: (
       <AuthGuard>

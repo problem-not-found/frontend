@@ -16,6 +16,7 @@ import MyExhibitionPage from "@/components/museum/pages/MyExhibitionPage";
 import ArtworkLibraryPage from "@/components/museum/pages/ArtworkLibraryPage";
 import ExhibitionDatePicker from "@/components/museum/components/exhibition/ExhibitionDatePicker";
 import Gallery3D from "@/components/Gallery3D";
+import ExhibitionInvitationPage from "@/components/museum/pages/ExhibitionInvitationPage";
 
 import MyTypePage from "../pages/MyTypePage";
 import ExhibitionDetailPage from "../pages/ExhibitionDetailPage";
@@ -53,6 +54,7 @@ const router = createBrowserRouter([
   { path: "/artwork/upload", element: <AuthGuard><ArtworkUploadPage /></AuthGuard> },
   { path: "/exhibition", element: <AuthGuard><MyExhibitionPage /></AuthGuard> },
   { path: "/exhibition/my", element: <AuthGuard><MyExhibitionPage /></AuthGuard> },
+  { path: "/exhibition/invitations", element: <AuthGuard><ExhibitionInvitationPage /></AuthGuard> },
   { path: "/exhibition/upload", element: <AuthGuard><ExhibitionUploadPage /></AuthGuard> },
   { path: "/exhibition/participants", element: <AuthGuard><ExhibitionParticipantPage /></AuthGuard> },
   { path: "/exhibition/offline-location", element: <AuthGuard><OfflineLocationPage /></AuthGuard> },

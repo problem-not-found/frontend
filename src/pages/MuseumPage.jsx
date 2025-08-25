@@ -42,16 +42,46 @@ export default function MuseumPage() {
   // 초대 데이터 로드
   const loadInvitationData = async () => {
     try {
+      console.log('=== 초대 데이터 로드 시작 ===');
+      
       // REQUESTED 상태의 전시 개수 조회 (아직 승인하지 않은 초대)
       const requestedResponse = await getUserParticipationCount({ status: 'REQUESTED' });
+      console.log('초대 API 응답 전체:', requestedResponse);
+      console.log('초대 API 응답 data:', requestedResponse?.data);
+      console.log('초대 API 응답 data.data:', requestedResponse?.data?.data);
       
+      // API 응답 구조에 따라 데이터 추출
+      let count = 0;
       if (requestedResponse?.data?.data !== undefined) {
-        setInvitation(prev => ({
-          ...prev,
-          hasInvitation: requestedResponse.data.data > 0,
-          invitationCount: requestedResponse.data.data
-        }));
+        // 기존 구조: response.data.data
+        count = requestedResponse.data.data;
+      } else if (requestedResponse?.data !== undefined && typeof requestedResponse.data === 'number') {
+        // 새로운 구조: response.data가 직접 숫자
+        count = requestedResponse.data;
       }
+      
+      console.log('파싱된 초대 개수:', count);
+      console.log('count > 0 결과:', count > 0);
+      
+      if (count !== undefined) {
+        setInvitation(prev => {
+          console.log('이전 invitation 상태:', prev);
+          
+          const newState = {
+            ...prev,
+            hasInvitation: count > 0,
+            invitationCount: count
+          };
+          
+          console.log('새로운 invitation 상태:', newState);
+          return newState;
+        });
+      } else {
+        console.log('API 응답에서 초대 개수를 찾을 수 없음');
+        console.log('응답 구조:', JSON.stringify(requestedResponse, null, 2));
+      }
+      
+      console.log('=== 초대 데이터 로드 완료 ===');
     } catch (error) {
       console.error('초대 데이터 로드 오류:', error);
     }
@@ -128,6 +158,11 @@ export default function MuseumPage() {
   useEffect(() => {
     loadData();
   }, []);
+
+  // invitation 상태 변경 추적
+  useEffect(() => {
+    console.log('invitation 상태 변경됨:', invitation);
+  }, [invitation]);
 
   // refreshExhibitions 플래그 감지하여 전시 목록 새로고침
   useEffect(() => {

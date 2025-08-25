@@ -268,3 +268,25 @@ export const getUserParticipationCount = async (params) => {
     throw error;
   }
 };
+
+// 사용자 전시 참여리스트 조회
+export const getUserParticipation = async (params) => {
+  try {
+    const response = await APIService.private.get('/api/users/join', { params });
+    return response;
+  } catch (error) {
+    console.error('사용자 전시 참여리스트 조회 오류:', error);
+    throw error;
+  }
+};
+
+// 전시 참여 승인
+export const approveUserParticipation = async (exhibitionId) => {
+  try {
+    const response = await APIService.private.put(`/api/users/join/approve?exhibitionId=${exhibitionId}`);
+    return response;
+  } catch (error) {
+    console.error('전시 참여 승인 오류:', error);
+    throw error;
+  }
+};

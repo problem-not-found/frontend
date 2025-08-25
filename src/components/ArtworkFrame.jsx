@@ -213,6 +213,7 @@ function SafeImagePlane({
 
 function ArtworkFrame({ artwork, position, onArtworkClick }) {
   const [hovered, setHovered] = useState(false);
+  const [texture, setTexture] = useState(null);
   const frameRef = useRef();
 
   // 디버깅을 위한 로그

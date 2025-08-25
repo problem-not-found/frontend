@@ -122,9 +122,12 @@ export default function ArtworkList({
         // 선택된 작품들을 한 번에 삭제
         const pieceIds = Array.from(selectedArtworks);
         const response = await deletePieces(pieceIds);
-        
-        if (response?.status === 200) {
+        if (response?.status === 200 || response?.status === 204) {
           console.log('선택된 작품들 삭제 완료:', pieceIds);
+          
+          // 로컬 상태에서 삭제된 작품들 즉시 제거
+          setFilteredArtworks(prev => prev.filter(item => !pieceIds.includes(item.pieceId)));
+          
           // 부모 컴포넌트에 삭제 완료 알림
           if (onArtworkDeleted) {
             onArtworkDeleted(pieceIds);
@@ -149,6 +152,10 @@ export default function ArtworkList({
         const response = await deletePieces([artwork.pieceId]);
         if (response?.status === 200 || response?.status === 204) {
           console.log('작품 삭제 완료:', artwork);
+          
+          // 로컬 상태에서 삭제된 작품 즉시 제거
+          setFilteredArtworks(prev => prev.filter(item => item.pieceId !== artwork.pieceId));
+          
           // 부모 컴포넌트에 삭제 완료 알림
           if (onArtworkDeleted) {
             onArtworkDeleted([artwork.pieceId]);

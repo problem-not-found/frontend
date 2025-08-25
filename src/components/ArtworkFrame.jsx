@@ -148,9 +148,9 @@ function ArtworkFrame({ artwork, position, onArtworkClick }) {
     else if (x > 16) {
       return [0, -Math.PI / 2, 0]; // -90도 회전
     }
-    // 앞쪽 벽 (z > 7)
+    // 앞쪽 벽 (z > 7) - 카메라를 향하도록
     else if (z > 7) {
-      return [0, Math.PI, 0]; // 180도 회전
+      return [0, 0, 0]; // 회전 없음 (카메라를 향함)
     }
     // 뒷벽 (z < -7) 또는 기본
     else {

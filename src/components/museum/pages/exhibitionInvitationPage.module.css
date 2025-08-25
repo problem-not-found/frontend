@@ -1,0 +1,166 @@
+.container {
+    min-height: 100vh;
+    background-color: #f6f1eb;
+    padding: 0 32px 100px;
+    position: relative;
+    max-width: 430px;
+    margin: 0 auto;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    margin-bottom: 20px;
+  }
+  
+  .headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .backButton {
+    background: #f37021;
+    border: none;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .backIcon {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .title {
+    font-family: 'Pretendard', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: #000000;
+    margin: 0;
+    line-height: 25px;
+    letter-spacing: -0.5px;
+  }
+  
+  .invitationList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  
+  .invitationCard {
+    background-color: #cfdde3;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+  }
+  
+  .exhibitionInfo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+  }
+  
+  .exhibitionImage {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: #eeeeee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  
+  .defaultImage {
+    width: 100%;
+    height: 100%;
+    background-color: #cccccc;
+  }
+  
+  .exhibitionDetails {
+    display: flex;
+    flex-direction: column;
+    flex: 1;  
+  }
+  
+  .exhibitionTitle {
+    font-family: 'Pretendard', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: #000000;
+    line-height: 26px;
+    letter-spacing: -0.4px;
+  }
+  
+  .customCheckbox {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #f37021;
+    background-color: #f6f1eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+  
+  .customCheckbox:hover {
+    background-color: #f0e6e0;
+  }
+  
+  .customCheckbox.checked {
+    background-color: #f37021;
+    border-color: #f37021;
+  }
+  
+  .checkIcon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+  
+  .acceptButton {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 344px;
+    height: 48px;
+    background: #e05a1a;
+    border: none;
+    font-family: 'Pretendard', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: -0.4px;
+    line-height: 25px;
+    z-index: 1000;
+  }
+  
+  .acceptButton:hover:not(.disabledButton) {
+    background-color: #e05a1a;
+    transform: translateX(-50%) translateY(-1px);
+  }
+  
+  .acceptButton.disabledButton {
+    color: #000;
+    background: #F6F1EB;
+    border: 1px solid #000;
+  }

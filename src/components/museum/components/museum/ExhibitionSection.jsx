@@ -42,12 +42,6 @@ export default function ExhibitionSection({ exhibitions = [], totalElements = 0 
                  backgroundImage: exhibition.thumbnailImageUrl ? `url(${exhibition.thumbnailImageUrl})` : 'none',
                  backgroundColor: exhibition.thumbnailImageUrl ? 'transparent' : '#f0f0f0'
                }}
-               onClick={() => navigate(`/exhibition/edit/${exhibition.exhibitionId}`, {
-                 state: {
-                   isEditMode: true,
-                   exhibitionId: exhibition.exhibitionId
-                 }
-               })}
              />
              <div className={exhibitionStyles.exhibitionInfo}>
                 <h4 className={exhibitionStyles.exhibitionTitle}>

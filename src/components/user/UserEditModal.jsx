@@ -17,10 +17,13 @@ export default function UserEditModal({ isOpen, onClose }) {
             <div 
               className={styles.editProfileImageContainer}
               style={{
-                backgroundImage: user.profileImage ? `url(${cameraIcon})` : `url(${cameraIcon})`
+                backgroundImage: user.profileImageUrl ? `url(${user.profileImageUrl})` : 'none'
               }}
             />
-            <img src={cameraIcon} alt="camera" className={styles.cameraIcon} />
+            {/* 프로필 이미지가 있을 때는 카메라 아이콘을 숨김 */}
+            {!user.profileImageUrl && (
+              <img src={cameraIcon} alt="camera" className={styles.cameraIcon} />
+            )}
           </div>
           
           <div className={styles.editFields}>

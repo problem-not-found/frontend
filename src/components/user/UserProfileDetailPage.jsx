@@ -82,7 +82,6 @@ export default function UserProfileDetailPage() {
 
         {/* 프로필 사진 영역 */}
         <div className={styles.profileImageSection}>
-          {console.log('현재 사용자 상태:', user)}
           <div className={styles.profileImageContainer}>
             <div 
               className={styles.profileImage}
@@ -90,7 +89,10 @@ export default function UserProfileDetailPage() {
                 backgroundImage: user.profileImageUrl ? `url(${user.profileImageUrl})` : 'none'
               }}
             />
-            <img src={cameraIcon} alt="camera" className={styles.cameraIcon} />
+            {/* 프로필 이미지가 있을 때는 카메라 아이콘을 숨김 */}
+            {!user.profileImageUrl && (
+              <img src={cameraIcon} alt="camera" className={styles.cameraIcon} />
+            )}
           </div>
         </div>
 

@@ -226,6 +226,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/exhibition/edit/:id",
+    element: (
+      <AuthGuard>
+        <ExhibitionUploadPage />
+      </AuthGuard>
+    ),
+  },
+  {
     path: "/exhibition/participants",
     element: (
       <AuthGuard>

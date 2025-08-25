@@ -26,57 +26,78 @@ function SafeImagePlane({
     }
 
     console.log("이미지 로딩 시작:", imageUrl);
-    const loader = new TextureLoader();
+    
+    // HTML Image 객체를 사용하여 백엔드 프록시를 통해 이미지 로드
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    
+    img.onload = () => {
+      console.log("✅ HTML Image 로드 성공, TextureLoader로 변환 중...");
 
-    loader.load(
-      imageUrl, // 프록시 URL 사용
-      (loadedTexture) => {
-        console.log("✅ 이미지 로딩 성공:", imageUrl);
-        console.log("텍스처 정보:", loadedTexture);
-        loadedTexture.flipY = true; // 이미지 뒤집힘 문제 해결
-        setTexture(loadedTexture);
-        setLoading(false);
-      },
-      (progress) => {
-        console.log("📥 이미지 로딩 진행:", imageUrl, progress);
-      },
-      (err) => {
-        console.error("❌ 이미지 로드 실패:", imageUrl);
-        console.error("에러 상세:", err);
-        console.error("에러 타입:", typeof err);
-        console.error("에러 메시지:", err?.message);
-
-        // 원본 URL로 직접 시도해보기
-        if (imageUrl.startsWith("/s3-proxy/")) {
-          const originalUrl = `https://likelion13-artium.s3.ap-northeast-2.amazonaws.com${imageUrl.replace(
-            "/s3-proxy",
-            ""
-          )}`;
-          console.log("🔄 원본 URL로 재시도:", originalUrl);
-
-          const retryLoader = new TextureLoader();
-          retryLoader.setCrossOrigin("anonymous");
-          retryLoader.load(
-            originalUrl,
-            (loadedTexture) => {
-              console.log("✅ 원본 URL로 로딩 성공:", originalUrl);
-              loadedTexture.flipY = true;
-              setTexture(loadedTexture);
-              setLoading(false);
-            },
-            undefined,
-            (retryErr) => {
-              console.error("❌ 원본 URL로도 실패:", retryErr);
-              setError(true);
-              setLoading(false);
-            }
-          );
-        } else {
+      // HTML Image를 Three.js TextureLoader로 변환
+      const loader = new TextureLoader();
+      const texture = loader.load(
+        `https://api.artium.life/api/piece?filename=${encodeURIComponent(imageUrl)}`, // 백엔드 프록시 URL
+        undefined,
+        undefined,
+        (err) => {
+          console.error("❌ TextureLoader 로드 실패", err);
           setError(true);
           setLoading(false);
         }
-      }
-    );
+      );
+
+      // 이미지 뒤집기 설정
+      texture.flipY = true;
+
+      setTexture(texture);
+      setLoading(false);
+      console.log("🎨 Three.js 텍스처 변환 완료!");
+    };
+
+    img.onerror = (err) => {
+      console.error("❌ HTML Image 로드 실패:", imageUrl);
+      console.error("에러 상세:", err);
+      
+      // 백엔드 프록시 URL로 재시도
+      const proxyUrl = `https://api.artium.life/api/piece?filename=${encodeURIComponent(imageUrl)}`;
+      console.log("🔄 백엔드 프록시 URL로 재시도:", proxyUrl);
+      
+      const retryImg = new Image();
+      retryImg.crossOrigin = "anonymous";
+      
+      retryImg.onload = () => {
+        console.log("✅ 백엔드 프록시로 로딩 성공:", proxyUrl);
+        
+        const retryLoader = new TextureLoader();
+        const retryTexture = retryLoader.load(
+          proxyUrl,
+          undefined,
+          undefined,
+          (retryErr) => {
+            console.error("❌ 백엔드 프록시로도 실패:", retryErr);
+            setError(true);
+            setLoading(false);
+          }
+        );
+        
+        retryTexture.flipY = true;
+        setTexture(retryTexture);
+        setLoading(false);
+      };
+      
+      retryImg.onerror = (retryErr) => {
+        console.error("❌ 백엔드 프록시로도 실패:", retryErr);
+        setError(true);
+        setLoading(false);
+      };
+      
+      retryImg.src = proxyUrl;
+    };
+
+    // 백엔드 프록시 URL로 이미지 로드 시작
+    const proxyUrl = `https://api.artium.life/api/piece?filename=${encodeURIComponent(imageUrl)}`;
+    img.src = proxyUrl;
   }, [imageUrl]);
 
   if (loading) {

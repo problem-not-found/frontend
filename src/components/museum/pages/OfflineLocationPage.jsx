@@ -49,7 +49,7 @@ export default function OfflineLocationPage() {
         offlineLocation: {
           address,
           addressName,
-          offlineDescription: address // 주소를 설명으로도 사용
+          offlineDescription : "제가 열심히 준비한 전시입니다" // 주소를 설명으로도 사용
         }
       };
       

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { createPiece, updatePiece } from '@apis/museum/artwork';
-import { getCurrentUser } from '@apis/user/user';
+import { getCurrentUser, getUserContact } from '@apis/user/user';
 import { getPieceDetail } from '@apis/exhibition/exhibition';
 import ArtworkModal from '@museum/components/artwork/ArtworkModal';
 import chevronLeft from '@/assets/museum/chevron-left.png';
@@ -25,6 +25,7 @@ export default function ArtworkUploadPage() {
   const fromDraft = location.state?.fromDraft; // 임시저장 페이지에서 왔는지 여부
   
   const [user, setUser] = useState(null);
+  const [userContact, setUserContact] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -54,8 +55,22 @@ export default function ArtworkUploadPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await getCurrentUser();
-        setUser(response.data);
+        const userResponse = await getCurrentUser();
+        const userData = userResponse.data;
+        setUser(userData);
+        
+        // userId가 있으면 연락 정보 조회
+        if (userData?.userId) {
+          try {
+            const contactResponse = await getUserContact(userData.userId);
+            if (contactResponse) {
+              setUserContact(contactResponse.data);
+            }
+          } catch (contactError) {
+            console.error('연락 정보 조회 실패:', contactError);
+            // 연락 정보 조회 실패 시에도 기본 사용자 정보는 유지
+          }
+        }
       } catch (error) {
         console.error('유저 정보 조회 실패:', error);
         // 에러가 발생해도 페이지는 계속 사용할 수 있도록 함
@@ -89,12 +104,17 @@ export default function ArtworkUploadPage() {
             }
             
             // 디테일 이미지가 있다면 설정
-            if (artwork.detailImages && artwork.detailImages.length > 0) {
-              const urls = artwork.detailImages.map(img => img.imageUrl || img);
+            if (artwork.pieceDetails && artwork.pieceDetails.length > 0) {
+              console.log('디테일 이미지 데이터:', artwork.pieceDetails);
+              const urls = artwork.pieceDetails.map(img => img.imageUrl || img);
+              console.log('디테일 이미지 URL들:', urls);
               setDetailImageUrls(urls);
               // pieceDetailId를 사용하여 기존 디테일 이미지 ID 저장
-              const detailIds = artwork.detailImages.map(img => img.pieceDetailId || img.id);
+              const detailIds = artwork.pieceDetails.map(img => img.pieceDetailId || img.id);
+              console.log('디테일 이미지 ID들:', detailIds);
               setOriginalDetailImageIds(detailIds.filter(id => id)); // null/undefined 제거
+            } else {
+              console.log('디테일 이미지가 없습니다');
             }
           }
         } catch (error) {
@@ -280,7 +300,7 @@ export default function ArtworkUploadPage() {
         newDetailImages[index] = file;
         return {
           ...prev,
-          detailImages: newDetailImages.filter(img => img !== null)
+          detailImages: newDetailImages
         };
       });
       
@@ -290,7 +310,7 @@ export default function ArtworkUploadPage() {
         setOriginalDetailImageIds(prev => {
           const newIds = [...prev];
           newIds[index] = null; // 해당 인덱스의 기존 ID 제거
-          return newIds.filter(id => id !== null);
+          return newIds;
         });
       }
     }
@@ -302,14 +322,25 @@ export default function ArtworkUploadPage() {
       newDetailImages[index] = null;
       return {
         ...prev,
-        detailImages: newDetailImages.filter(img => img !== null)
+        detailImages: newDetailImages
       };
+    });
+    
+    // detailImageUrls 상태도 함께 업데이트
+    setDetailImageUrls(prev => {
+      const newUrls = [...prev];
+      newUrls[index] = null;
+      return newUrls;
     });
     
     // 기존 디테일컷을 삭제한 경우 originalDetailImageIds에서도 제거
     if (detailImageUrls[index] && !detailImageUrls[index].startsWith('blob:')) {
       // blob: URL이 아닌 경우 (기존 S3 이미지)
-      setOriginalDetailImageIds(prev => prev.filter((_, i) => i !== index));
+      setOriginalDetailImageIds(prev => {
+        const newIds = [...prev];
+        newIds[index] = null;
+        return newIds;
+      });
     }
   };
 
@@ -370,8 +401,22 @@ export default function ArtworkUploadPage() {
     setIsSubmitting(true);
     
     try {
-      // 작품 수정 API 호출 (모든 필수 항목이 완성된 경우이므로 APPLICATION)
-      const response = await updatePiece(artworkId, formData, 'APPLICATION', originalDetailImageIds);
+      // 폼 완성도에 따라 saveStatus 결정
+      const hasMainImage = formData.mainImage || mainImageUrl;
+      const hasTitle = formData.title && formData.title.trim();
+      const hasDescription = formData.description && formData.description.trim();
+      const isComplete = hasMainImage && hasTitle && hasDescription;
+      
+      const saveStatus = isComplete ? 'APPLICATION' : 'DRAFT';
+      console.log('결정된 saveStatus:', saveStatus);
+      
+      // remainPieceDetailIds: 기존 디테일컷 중에서 유지할 이미지의 ID들
+      // (새로운 이미지로 교체하지 않고 기존에 남겨둘 이미지들)
+      const remainPieceDetailIds = originalDetailImageIds.filter(id => id !== null);
+      console.log('유지할 기존 디테일컷 ID들:', remainPieceDetailIds);
+      
+      // 작품 수정 API 호출 (기존 이미지 유지 + 새로운 이미지 추가)
+      const response = await updatePiece(artworkId, formData, saveStatus, remainPieceDetailIds);
       
       if (response?.success === true && (response?.code === 200 || response?.code === 201)) {
         console.log('작품 수정 완료:', response.data);
@@ -465,7 +510,11 @@ export default function ArtworkUploadPage() {
     try {
       if (isEditMode) {
         // 수정 모드: updatePiece API 호출 (DRAFT)
-        const response = await updatePiece(artworkId, formData, 'DRAFT', originalDetailImageIds);
+        // remainPieceDetailIds: 기존 디테일컷 중에서 유지할 이미지의 ID들
+        const remainPieceDetailIds = originalDetailImageIds.filter(id => id !== null);
+        console.log('임시저장 시 유지할 기존 디테일컷 ID들:', remainPieceDetailIds);
+        
+        const response = await updatePiece(artworkId, formData, 'DRAFT', remainPieceDetailIds);
         
         if (response?.success === true && (response?.code === 200 || response?.code === 201)) {
           console.log('작품 임시저장 완료:', response.data);
@@ -511,6 +560,16 @@ export default function ArtworkUploadPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleContactRegistration = () => {
+    // 연락 정보 등록 페이지로 이동
+    navigate('/user/contact', {
+      state: { 
+        returnTo: isEditMode ? `/artwork/edit/${artworkId}` : '/artwork/upload',
+        fromArtwork: true
+      }
+    });
   };
 
   // 로딩 중일 때 표시
@@ -599,7 +658,7 @@ export default function ArtworkUploadPage() {
                     <div className={styles.detailTag}>디테일 컷{index + 1}</div>
                     
                     <label htmlFor={`detailImage${index}`} className={styles.imageLabel}>
-                      {detailImageUrls[index] ? (
+                      {detailImageUrls[index] && detailImageUrls[index] !== null ? (
                         <div className={styles.detailImagePreview}>
                           <img 
                             src={detailImageUrls[index]} 
@@ -671,10 +730,11 @@ export default function ArtworkUploadPage() {
             <button 
               type="button" 
               className={`${styles.featureButton} ${
-                user?.email || user?.nickname ? styles.contactRegistered : ''
+                userContact?.email || userContact?.instagram ? styles.contactRegistered : ''
               }`}
+              onClick={handleContactRegistration}
             >
-              연락 정보 등록하기
+              {userContact?.email || userContact?.instagram ? '연락 정보 등록됨' : '연락 정보 등록하기'}
             </button>
           </div>
 

@@ -16,6 +16,7 @@ import MyExhibitionPage from "@/components/museum/pages/MyExhibitionPage";
 import ArtworkLibraryPage from "@/components/museum/pages/ArtworkLibraryPage";
 import ExhibitionDatePicker from "@/components/museum/components/exhibition/ExhibitionDatePicker";
 import Gallery3D from "@/components/Gallery3D";
+import ExhibitionInvitationPage from "@/components/museum/pages/ExhibitionInvitationPage";
 
 import MyTypePage from "../pages/MyTypePage";
 import ExhibitionDetailPage from "../pages/ExhibitionDetailPage";

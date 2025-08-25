@@ -5,7 +5,61 @@ import PropTypes from "prop-types";
 import { artworks } from "../dummy";
 import ArtworkFrame from "./ArtworkFrame";
 
-function Exhibition({ onArtworkClick }) {
+function Exhibition({ onArtworkClick, exhibition, pieceImages }) {
+  // S3 URL을 프록시 URL로 변환하는 함수
+  const convertToProxyUrl = (imageUrl) => {
+    if (!imageUrl) return imageUrl;
+
+    console.log("원본 이미지 URL:", imageUrl);
+
+    // S3 URL인지 확인
+    if (
+      imageUrl.includes("likelion13-artium.s3.ap-northeast-2.amazonaws.com")
+    ) {
+      // S3 URL을 프록시 URL로 변환
+      const path = imageUrl.replace(
+        "https://likelion13-artium.s3.ap-northeast-2.amazonaws.com",
+        ""
+      );
+      const proxyUrl = `/s3-proxy${path}`;
+      console.log("프록시 URL로 변환:", proxyUrl);
+      return proxyUrl;
+    }
+
+    console.log("S3 URL이 아님, 원본 사용:", imageUrl);
+    return imageUrl;
+  };
+
+  // 실제 전시 데이터가 있으면 사용하고, 없으면 더미 데이터 사용
+  const displayArtworks =
+    pieceImages && pieceImages.length > 0
+      ? pieceImages.map((piece, index) => {
+          const artwork = {
+            id: piece.pieceId || index + 1,
+            title: piece.title || `작품 ${index + 1}`,
+            artist: piece.creatorName || "작가 미상",
+            year: piece.createdYear || new Date().getFullYear(),
+            description: piece.description || "작품 설명이 없습니다.",
+            image: convertToProxyUrl(piece.imageUrl), // 프록시 URL로 변환
+            price: piece.price
+              ? `${piece.price.toLocaleString()}원`
+              : "가격 문의",
+            position: artworks[index % artworks.length]?.position || [
+              0, 2.5, -7.8,
+            ],
+          };
+          console.log(
+            `작품 ${index + 1}:`,
+            artwork.title,
+            artwork.position,
+            artwork.image
+          );
+          return artwork;
+        })
+      : artworks;
+
+  console.log(`전시장에 표시될 작품 수: ${displayArtworks.length}`);
+  console.log("모든 작품 정보:", displayArtworks);
   // 나무 바닥 텍스처 로드
   const woodTexture = useLoader(TextureLoader, "/wood-floor.jpg");
 
@@ -80,7 +134,7 @@ function Exhibition({ onArtworkClick }) {
       </Plane>
 
       {/* 각 작품별 스포트라이트 - 정면에서 비추도록 */}
-      {artworks.map((artwork) => {
+      {displayArtworks.map((artwork) => {
         // 벽 위치에 따라 조명 위치와 각도 계산
         const [x, y, z] = artwork.position;
         let lightPosition, lightTarget;
@@ -147,7 +201,7 @@ function Exhibition({ onArtworkClick }) {
       })}
 
       {/* 전시 작품들 */}
-      {artworks.map((artwork) => (
+      {displayArtworks.map((artwork) => (
         <ArtworkFrame
           key={artwork.id}
           artwork={artwork}
@@ -174,7 +228,7 @@ function Exhibition({ onArtworkClick }) {
         anchorX="center"
         anchorY="middle"
       >
-        현대 미술의 새로운 시선
+        {exhibition?.title || "현대 미술의 새로운 시선"}
       </Text>
 
       <Text
@@ -184,7 +238,9 @@ function Exhibition({ onArtworkClick }) {
         anchorX="center"
         anchorY="middle"
       >
-        Contemporary Art Exhibition 2023
+        {exhibition?.startDate && exhibition?.endDate
+          ? `${exhibition.startDate} - ${exhibition.endDate}`
+          : "Contemporary Art Exhibition 2023"}
       </Text>
     </group>
   );
@@ -192,6 +248,8 @@ function Exhibition({ onArtworkClick }) {
 
 Exhibition.propTypes = {
   onArtworkClick: PropTypes.func.isRequired,
+  exhibition: PropTypes.object,
+  pieceImages: PropTypes.array,
 };
 
 export default Exhibition;

@@ -50,3 +50,29 @@
 .active .underline {
   background: #000000;
 }
+
+/* 각 아이콘별 mask-image 설정 */
+.icon_museum {
+  -webkit-mask-image: url("/src/assets/footer/museum.svg");
+  mask-image: url("/src/assets/footer/museum.svg");
+}
+
+.icon_search {
+  -webkit-mask-image: url("/src/assets/footer/search.svg");
+  mask-image: url("/src/assets/footer/search.svg");
+}
+
+.icon_home {
+  -webkit-mask-image: url("/src/assets/footer/feed.svg");
+  mask-image: url("/src/assets/footer/feed.svg");
+}
+
+.icon_taste {
+  -webkit-mask-image: url("/src/assets/footer/heart.svg");
+  mask-image: url("/src/assets/footer/heart.svg");
+}
+
+.icon_user {
+  -webkit-mask-image: url("/src/assets/footer/user.svg");
+  mask-image: url("/src/assets/footer/user.svg");
+}

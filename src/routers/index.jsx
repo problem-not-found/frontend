@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+import AuthGuard from "../components/common/AuthGuard";
 import FeedPage from "../pages/FeedPage";
 import MuseumPage from "../pages/MuseumPage";
 import MyPage from "../pages/MyPage";
@@ -30,34 +31,33 @@ import LoginPage from "../pages/LoginPage";
 const Placeholder = (label) => () => <div style={{ padding: 24 }}>{label}</div>;
 
 const router = createBrowserRouter([
-  { path: "/", element: <FeedPage /> },
-  { path: "/gallery", element: <Gallery3D /> },
-  { path: "/museum", element: <MuseumPage /> },
-  { path: "/mytype", element: <MyTypePage /> },
-  { path: "/exhibition/:id", element: <ExhibitionDetailPage /> },
-  { path: "/artwork/:id", element: <ArtworkDetailPage /> },
-  { path: "/creator/:id", element: <CreatorDetailPage /> },
-  { path: "/reviews/:exhibitionId", element: <ReviewsPage /> },
-  { path: "/write-review/:exhibitionId", element: <WriteReviewPage /> },
-  { path: "/search", element: <SearchPage /> },
-  { path: "/taste", element: <TastePage /> },
+  { path: "/", element: <AuthGuard><FeedPage /></AuthGuard> },
+  { path: "/gallery", element: <AuthGuard><Gallery3D /></AuthGuard> },
+  { path: "/museum", element: <AuthGuard><MuseumPage /></AuthGuard> },
+  { path: "/mytype", element: <AuthGuard><MyTypePage /></AuthGuard> },
+  { path: "/exhibition/:id", element: <AuthGuard><ExhibitionDetailPage /></AuthGuard> },
+  { path: "/artwork/:id", element: <AuthGuard><ArtworkDetailPage /></AuthGuard> },
+  { path: "/creator/:id", element: <AuthGuard><CreatorDetailPage /></AuthGuard> },
+  { path: "/reviews/:exhibitionId", element: <AuthGuard><ReviewsPage /></AuthGuard> },
+  { path: "/write-review/:exhibitionId", element: <AuthGuard><WriteReviewPage /></AuthGuard> },
+  { path: "/search", element: <AuthGuard><SearchPage /></AuthGuard> },
+  { path: "/taste", element: <AuthGuard><TastePage /></AuthGuard> },
   { path: "/login", element: <LoginPage /> },
-  { path: "/user", element: <MyPage /> },
-  { path: "/user/profile", element: <UserProfileDetailPage /> },
-  { path: "/user/edit", element: <UserEditPage /> },
-  { path: "/user/contact", element: <ContactEditPage /> },
-  { path: "/artwork", element: <MyArtworkPage /> },
-  { path: "/artwork/my", element: <MyArtworkPage /> },
-  { path: "/artwork/drafts", element: <DraftArtworkPage /> },
-  { path: "/artwork/upload", element: <ArtworkUploadPage /> },
-  { path: "/artwork/edit/:id", element: <ArtworkUploadPage /> },
-  { path: "/exhibition", element: <MyExhibitionPage /> },
-  { path: "/exhibition/my", element: <MyExhibitionPage /> },
-  { path: "/exhibition/upload", element: <ExhibitionUploadPage /> },
-  { path: "/exhibition/participants", element: <ExhibitionParticipantPage /> },
-  { path: "/exhibition/offline-location", element: <OfflineLocationPage /> },
-  { path: "/artwork/library", element: <ArtworkLibraryPage /> },
-  { path: "/exhibition/date-picker", element: <ExhibitionDatePicker /> },
+  { path: "/user", element: <AuthGuard><MyPage /></AuthGuard> },
+  { path: "/user/profile", element: <AuthGuard><UserProfileDetailPage /></AuthGuard> },
+  { path: "/user/edit", element: <AuthGuard><UserEditPage /></AuthGuard> },
+  { path: "/user/contact", element: <AuthGuard><ContactEditPage /></AuthGuard> },
+  { path: "/artwork", element: <AuthGuard><MyArtworkPage /></AuthGuard> },
+  { path: "/artwork/my", element: <AuthGuard><MyArtworkPage /></AuthGuard> },
+  { path: "/artwork/drafts", element: <AuthGuard><DraftArtworkPage /></AuthGuard> },
+  { path: "/artwork/upload", element: <AuthGuard><ArtworkUploadPage /></AuthGuard> },
+  { path: "/exhibition", element: <AuthGuard><MyExhibitionPage /></AuthGuard> },
+  { path: "/exhibition/my", element: <AuthGuard><MyExhibitionPage /></AuthGuard> },
+  { path: "/exhibition/upload", element: <AuthGuard><ExhibitionUploadPage /></AuthGuard> },
+  { path: "/exhibition/participants", element: <AuthGuard><ExhibitionParticipantPage /></AuthGuard> },
+  { path: "/exhibition/offline-location", element: <AuthGuard><OfflineLocationPage /></AuthGuard> },
+  { path: "/artwork/library", element: <AuthGuard><ArtworkLibraryPage /></AuthGuard> },
+  { path: "/exhibition/date-picker", element: <AuthGuard><ExhibitionDatePicker /></AuthGuard> },
 ]);
 
 export default router;

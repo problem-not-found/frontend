@@ -1,19 +1,13 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import styles from './footer.module.css';
-
-import iconMuseum from '../../assets/footer/museum.svg';
-import iconSearch from '../../assets/footer/search.svg';
-import iconFeed from '../../assets/footer/feed.svg';
-import iconHeart from '../../assets/footer/heart.svg';
-import iconUser from '../../assets/footer/user.svg';
+import React from "react";
+import { NavLink } from "react-router-dom";
+import styles from "./footer.module.css";
 
 const items = [
-  { to: '/museum', label: '내 전시장', icon: iconMuseum },
-  { to: '/search', label: '검색', icon: iconSearch },
-  { to: '/', label: '피드', icon: iconFeed, exact: true },
-  { to: '/taste', label: '내 취향', icon: iconHeart },
-  { to: '/user', label: '내 정보', icon: iconUser },
+  { to: "/museum", label: "내 전시장" },
+  { to: "/search", label: "검색" },
+  { to: "/", label: "피드", exact: true },
+  { to: "/taste", label: "내 취향" },
+  { to: "/user", label: "내 정보" },
 ];
 
 function AppFooter() {
@@ -24,15 +18,13 @@ function AppFooter() {
           key={it.to}
           to={it.to}
           end={it.exact}
-          className={({ isActive }) => `${styles.item} ${isActive ? styles.active : ''}`}
+          className={({ isActive }) =>
+            `${styles.item} ${isActive ? styles.active : ""}`
+          }
         >
           <span
-            className={styles.icon}
+            className={`${styles.icon} ${styles[`icon_${it.to.replace('/', '') || 'home'}`]}`}
             aria-hidden
-            style={{
-              WebkitMaskImage: `url(${it.icon})`,
-              maskImage: `url(${it.icon})`,
-            }}
           />
           <span className={styles.label}>{it.label}</span>
           <span className={styles.underline} />
@@ -43,5 +35,3 @@ function AppFooter() {
 }
 
 export default AppFooter;
-
-

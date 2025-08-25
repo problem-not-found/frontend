@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,14 +15,7 @@ export default defineConfig({
       { find: '@stores', replacement: '/src/stores' },
       { find: '@assets', replacement: '/src/assets' },
       { find: '@museum', replacement: '/src/components/museum' },
+      { find: "@api", replacement: "/src/api" },
     ],
   },
-  server: {
-    proxy: {
-      '/api': {
-        target: 'https://api.artium.life',
-        changeOrigin: true,
-      }
-    }
-  }
 });

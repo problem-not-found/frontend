@@ -28,13 +28,85 @@ function SafeImagePlane({
     console.log("이미지 로딩 시작:", imageUrl);
     console.log("환경:", import.meta.env.MODE);
 
-    const loader = new TextureLoader();
-
-    // 배포 환경이거나 S3 원본 URL인 경우 CORS 설정 적용
     const isS3Url = imageUrl.includes(
       "likelion13-artium.s3.ap-northeast-2.amazonaws.com"
     );
     const isProduction = import.meta.env.PROD;
+
+    // S3 이미지는 fetch + blob 방식으로 CORS 우회 시도
+    if (isS3Url && isProduction) {
+      console.log("🔄 S3 이미지 - fetch 방식으로 로드 시도");
+
+      const loadImageViaFetch = async () => {
+        try {
+          // fetch로 이미지를 blob으로 가져오기
+          const response = await fetch(imageUrl, {
+            mode: "cors",
+            credentials: "omit",
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+
+          const blob = await response.blob();
+          const objectUrl = URL.createObjectURL(blob);
+
+          console.log("📦 Blob URL 생성 성공:", objectUrl);
+
+          // TextureLoader로 blob URL 로드
+          const loader = new TextureLoader();
+          loader.load(
+            objectUrl,
+            (loadedTexture) => {
+              console.log("✅ Blob URL로 로딩 성공:", imageUrl);
+              loadedTexture.flipY = true;
+              setTexture(loadedTexture);
+              setLoading(false);
+
+              // 메모리 정리
+              URL.revokeObjectURL(objectUrl);
+            },
+            undefined,
+            (textureErr) => {
+              console.error("❌ Blob URL 텍스처 로드 실패:", textureErr);
+              URL.revokeObjectURL(objectUrl);
+              fallbackToDirectLoad();
+            }
+          );
+        } catch (fetchErr) {
+          console.error("❌ Fetch 실패:", fetchErr);
+          fallbackToDirectLoad();
+        }
+      };
+
+      const fallbackToDirectLoad = () => {
+        console.log("🔄 직접 로드 방식으로 fallback");
+        const loader = new TextureLoader();
+        loader.setCrossOrigin("anonymous");
+        loader.load(
+          imageUrl,
+          (loadedTexture) => {
+            console.log("✅ 직접 로드 성공:", imageUrl);
+            loadedTexture.flipY = true;
+            setTexture(loadedTexture);
+            setLoading(false);
+          },
+          undefined,
+          (err) => {
+            console.error("❌ 최종 실패:", err);
+            setError(true);
+            setLoading(false);
+          }
+        );
+      };
+
+      loadImageViaFetch();
+      return;
+    }
+
+    // 일반적인 TextureLoader 방식
+    const loader = new TextureLoader();
 
     if (isProduction || isS3Url) {
       console.log("CORS 설정 적용");
@@ -44,16 +116,16 @@ function SafeImagePlane({
     loader.load(
       imageUrl,
       (loadedTexture) => {
-        console.log(" 이미지 로딩 성공:", imageUrl);
+        console.log("✅ 이미지 로딩 성공:", imageUrl);
         loadedTexture.flipY = true; // 이미지 뒤집힘 문제 해결
         setTexture(loadedTexture);
         setLoading(false);
       },
       (progress) => {
-        console.log(" 이미지 로딩 진행:", imageUrl, progress);
+        console.log("📥 이미지 로딩 진행:", imageUrl, progress);
       },
       (err) => {
-        console.error(" 이미지 로드 실패:", imageUrl);
+        console.error("❌ 이미지 로드 실패:", imageUrl);
         console.error("에러 상세:", err);
 
         // 개발 환경에서 프록시 실패 시에만 원본 URL로 재시도

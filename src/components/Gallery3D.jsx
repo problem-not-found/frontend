@@ -48,7 +48,25 @@ function Gallery3D({ exhibitionId: propExhibitionId = "1" }) {
 
   const handleArtworkClick = (artwork) => {
     console.log('🖱️ 작품 클릭:', artwork);
-    setSelectedArtwork(artwork);
+    
+    // pieceImages에서 해당 작품의 상세 정보 찾기
+    const pieceInfo = pieceImages?.find(piece => piece.pieceId === artwork.id);
+    
+    if (pieceInfo) {
+      // API에서 가져온 실제 데이터로 작품 정보 구성
+      const artworkData = {
+        id: pieceInfo.pieceId,
+        title: pieceInfo.title || `작품 ${pieceInfo.pieceId}`,
+        artist: pieceInfo.creatorName || "작가 미상",
+        year: pieceInfo.createdYear || new Date().getFullYear(),
+        description: pieceInfo.description || "작품 설명이 없습니다.",
+        image: pieceInfo.imageUrl || "/artwork1.png"
+      };
+      setSelectedArtwork(artworkData);
+    } else {
+      // fallback: 클릭된 artwork 데이터 사용
+      setSelectedArtwork(artwork);
+    }
   };
 
   const closeModal = () => {
@@ -193,15 +211,12 @@ function Gallery3D({ exhibitionId: propExhibitionId = "1" }) {
               </div>
               <div className="artwork-info">
                 <div className="artist-info">
-                  <h3>{selectedArtwork.artist || "작가명 없음"}</h3>
+                  <h3>{selectedArtwork.artist || "작가 미상"}</h3>
                   <p className="year">{selectedArtwork.year || "연도 없음"}</p>
                 </div>
                 <p className="description">
                   {selectedArtwork.description || "작품 설명이 없습니다."}
                 </p>
-                <div className="price">
-                  {selectedArtwork.price || "가격 정보 없음"}
-                </div>
               </div>
             </div>
           </div>

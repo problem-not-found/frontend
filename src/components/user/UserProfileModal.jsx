@@ -14,7 +14,18 @@ export default function UserProfileModal({ isOpen, onClose, onEditClick }) {
       const fetchUserData = async () => {
         try {
           const response = await getCurrentUser();
-          setUserFromAPI(response);
+          console.log('UserProfileModal API 응답:', response);
+          
+          // API 응답 구조에 맞게 데이터 파싱
+          if (response && response.data && response.data.data) {
+            const userData = response.data.data;
+            console.log('UserProfileModal 파싱된 사용자 데이터:', userData);
+            
+            // userStore에 올바른 데이터 구조로 설정
+            setUserFromAPI({
+              data: userData
+            });
+          }
         } catch (error) {
           console.error('사용자 정보 조회 실패:', error);
         }
@@ -43,7 +54,7 @@ export default function UserProfileModal({ isOpen, onClose, onEditClick }) {
             <div 
               className={styles.profileDetailImage}
               style={{
-                backgroundImage: user.profileImage ? `url(${user.profileImage})` : 'none'
+                backgroundImage: user.profileImageUrl ? `url(${user.profileImageUrl})` : 'none'
               }}
             />
             <div className={styles.profileDetailText}>
@@ -54,6 +65,7 @@ export default function UserProfileModal({ isOpen, onClose, onEditClick }) {
             편집하기
           </button>
         </div>
+        
 
         <div className={styles.bioSection}>
           <p className={styles.bioText}>

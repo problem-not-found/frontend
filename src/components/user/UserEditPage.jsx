@@ -178,23 +178,20 @@ export default function UserEditPage() {
         const userResponse = await getCurrentUser();
         console.log('사용자 정보 API 응답:', userResponse);
         
-        if (userResponse && userResponse.data) {
-          const userData = userResponse.data;
-          const newUser = {
-            id: userData.userId,
-            name: userData.nickname,
-            nickname: userData.code,        // code를 nickname으로 매핑
-            introduction: userData.introduction || '',
-            profileImageUrl: userData.profileImageUrl,
-            code: userData.code
-          };
-          
-          setUser(newUser);
-          setUserId(userData.code || '');   // code를 userId로 설정
-          setFormData({
-            name: userData.nickname || '',      // nickname을 name으로
-            nickname: userData.code || '',      // code를 nickname으로
-            introduction: userData.introduction || ''
+        if (userResponse && userResponse.data && userResponse.data.data) {
+          const userData = userResponse.data.data;
+          console.log('UserEditPage 파싱된 사용자 데이터:', userData);
+          setUser({
+            nickname: userData.nickname || "",
+            code: userData.code || "",
+            introduction: userData.introduction || "",
+            profileImageUrl: userData.profileImageUrl || null,
+          });
+          setOriginalUser({
+            nickname: userData.nickname || "",
+            code: userData.code || "",
+            introduction: userData.introduction || "",
+            profileImageUrl: userData.profileImageUrl || null,
           });
         }
       } catch (error) {
@@ -236,8 +233,19 @@ export default function UserEditPage() {
               style={{
                 backgroundImage: user.profileImageUrl ? `url(${user.profileImageUrl})` : 'none'
               }}
+              onClick={handleImageClick}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleImageClick();
+                }
+              }}
             />
-            <img src={cameraIcon} alt="camera" className={styles.cameraIcon} />
+            {/* 프로필 이미지가 있을 때는 카메라 아이콘을 숨김 */}
+            {!user.profileImageUrl && (
+              <img src={cameraIcon} alt="camera" className={styles.cameraIcon} />
+            )}
 
             {/* 숨겨진 파일 입력 */}
             <input

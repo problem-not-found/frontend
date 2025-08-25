@@ -29,8 +29,13 @@ export default function MyExhibitionPage() {
   };
 
   const handleExhibitionClick = (exhibition) => {
-    // 전시 상세 페이지로 이동 (추후 구현)
-    console.log('전시 클릭:', exhibition);
+    // 전시 수정 페이지로 이동
+    navigate(`/exhibition/edit/${exhibition.exhibitionId}`, {
+      state: {
+        isEditMode: true,
+        exhibitionId: exhibition.exhibitionId
+      }
+    });
   };
 
   return (

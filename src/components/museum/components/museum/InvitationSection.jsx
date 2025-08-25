@@ -5,6 +5,9 @@ import styles from './invitationSection.module.css';
 export default function InvitationSection({ hasInvitation, hasSharedLibraryRequest, invitationCount = 0 }) {
   const navigate = useNavigate();
 
+  // 디버깅을 위한 로그
+  console.log('InvitationSection props:', { hasInvitation, hasSharedLibraryRequest, invitationCount });
+
   const handleInvitationClick = () => {
     navigate('/exhibition/invitations');
   };

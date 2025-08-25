@@ -32,6 +32,37 @@ export const createExhibition = async (exhibitionData, imageFile) => {
 };
 
 /**
+ * 전시 수정 API (multipart/form-data)
+ * @param {number} exhibitionId - 전시 ID
+ * @param {Object} exhibitionData - DTO 그대로 JSON으로 보낼 데이터 (Swagger의 request object와 동일)
+ * @param {File=} imageFile - 썸네일 파일(선택). 없으면 생략 가능
+ * @returns {Promise}
+ */
+export const updateExhibition = async (exhibitionId, exhibitionData, imageFile) => {
+  try {
+    const formData = new FormData();
+
+    // ✅ 서버가 기대하는 "request" 파트에 JSON 통째로 담기
+    formData.append(
+      "request",
+      new Blob([JSON.stringify(exhibitionData)], { type: "application/json" })
+    );
+
+    // ✅ 이미지 파일 파트명은 Swagger의 "image"와 동일해야 함
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
+    // axios는 boundary 자동 설정
+    const res = await APIService.private.put(`/api/exhibitions/${exhibitionId}`, formData);
+    return res;
+  } catch (err) {
+    console.error("전시 수정 실패:", err);
+    throw err;
+  }
+};
+
+/**
  * 전시 상세 정보 조회 API
  * @param {number} exhibitionId - 전시 ID
  * @returns {Promise} 전시 상세 정보
@@ -134,6 +165,59 @@ export const getMyExhibitions = async (params = { pageNum: 1, pageSize: 3, fillA
     return response;
   } catch (error) {
     console.error('내 전시 목록 조회 실패:', error);
+    throw error;
+  }
+};
+
+/**
+ * 전시 정보 조회 API
+ * @param {string} exhibitionId - 전시 ID
+ * @returns {Promise} API 응답 데이터
+ */
+export const getExhibitionById = async (exhibitionId) => {
+  console.log('📡 API 호출: getExhibitionById', { exhibitionId });
+  
+  try {
+    const response = await APIService.public.get(`/api/exhibitions/${exhibitionId}`);
+    console.log('✅ getExhibitionById 성공:', response);
+    return response;
+  } catch (error) {
+    console.error('❌ getExhibitionById 실패:', error);
+    throw error;
+  }
+};
+
+/**
+ * 전시 작품 목록 조회 API
+ * @param {Object} params - 쿼리 파라미터
+ * @param {number} params.pageNum - 페이지 번호 (기본값: 1)
+ * @param {number} params.pageSize - 페이지 크기 (기본값: 20)
+ * @param {string} params.status - 작품 상태 필터
+ * @returns {Promise} API 응답 데이터
+ */
+export const getExhibitionArtworks = async (params = {}) => {
+  console.log('📡 API 호출: getExhibitionArtworks', { params });
+  
+  try {
+    const { pageNum = 1, pageSize = 20, status } = params;
+    
+    const queryParams = {
+      pageNum,
+      pageSize
+    };
+    
+    if (status) {
+      queryParams.status = status;
+    }
+    
+    const response = await APIService.public.get('/api/exhibitions/artworks', {
+      params: queryParams
+    });
+    
+    console.log('✅ getExhibitionArtworks 성공:', response);
+    return response;
+  } catch (error) {
+    console.error('❌ getExhibitionArtworks 실패:', error);
     throw error;
   }
 };

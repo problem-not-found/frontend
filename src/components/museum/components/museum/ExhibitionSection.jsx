@@ -1,7 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import exhibitionStyles from './exhibitionSection.module.css';
 import commonStyles from './common.module.css';
 
 export default function ExhibitionSection({ exhibitions = [], totalElements = 0 }) {
+  const navigate = useNavigate();
   console.log('ExhibitionSection 렌더링:', { exhibitions, totalElements, exhibitionsType: typeof exhibitions, totalElementsType: typeof totalElements });
   
   const maxVisible = 5;
@@ -19,7 +21,7 @@ export default function ExhibitionSection({ exhibitions = [], totalElements = 0 
   };
 
   const handleShowMore = () => {
-    console.log('전체 전시 페이지로 이동');
+    navigate('/exhibition/my');
   };
 
   return (
@@ -32,28 +34,63 @@ export default function ExhibitionSection({ exhibitions = [], totalElements = 0 
       </div>
       
       <div className={exhibitionStyles.exhibitionGrid}>
-        {visibleExhibitions.map((exhibition, index) => (
-          <div key={exhibition.exhibitionId || index}>
-            <div 
-              className={`${exhibitionStyles.exhibitionCard} ${exhibitionStyles.large}`}
-              style={{
-                backgroundImage: exhibition.thumbnailImageUrl ? `url(${exhibition.thumbnailImageUrl})` : 'none',
-                backgroundColor: exhibition.thumbnailImageUrl ? 'transparent' : '#f0f0f0'
-              }}
-            />
-            <div className={exhibitionStyles.exhibitionInfo}>
-               <h4 className={exhibitionStyles.exhibitionTitle}>
-                 {exhibition.title || `전시 ${exhibition.exhibitionId || index + 1}`}
-               </h4>
-               <p className={exhibitionStyles.exhibitionDate}>
-                 {exhibition.startDate && exhibition.endDate ? 
-                   `${formatDate(exhibition.startDate)} - ${formatDate(exhibition.endDate)}` : 
-                   '등록 완료'
+                 {visibleExhibitions.map((exhibition, index) => (
+           <div key={exhibition.exhibitionId || index}>
+             <div 
+               className={`${exhibitionStyles.exhibitionCard} ${exhibitionStyles.large} ${exhibitionStyles.clickable}`}
+               style={{
+                 backgroundImage: exhibition.thumbnailImageUrl ? `url(${exhibition.thumbnailImageUrl})` : 'none',
+                 backgroundColor: exhibition.thumbnailImageUrl ? 'transparent' : '#f0f0f0'
+               }}
+               onClick={() => navigate(`/exhibition/edit/${exhibition.exhibitionId}`, {
+                 state: {
+                   isEditMode: true,
+                   exhibitionId: exhibition.exhibitionId
                  }
-               </p>
-             </div>
-          </div>
-        ))}
+               })}
+             />
+             <div className={exhibitionStyles.exhibitionInfo}>
+                <h4 className={exhibitionStyles.exhibitionTitle}>
+                  {exhibition.title || `전시 ${exhibition.exhibitionId || index + 1}`}
+                </h4>
+                <p className={exhibitionStyles.exhibitionDate}>
+                  {exhibition.startDate && exhibition.endDate ? 
+                    `${formatDate(exhibition.startDate)} - ${formatDate(exhibition.endDate)}` : 
+                    '등록 완료'
+                  }
+                </p>
+                
+                {/* 전시에 포함된 작품들 표시 */}
+                {exhibition.pieceIdList && exhibition.pieceIdList.length > 0 && (
+                  <div className={exhibitionStyles.artworkList}>
+                    <p className={exhibitionStyles.artworkCount}>
+                      작품 {exhibition.pieceIdList.length}개
+                    </p>
+                    {/* 작품 이미지들을 작게 표시 */}
+                    <div className={exhibitionStyles.artworkThumbnails}>
+                      {exhibition.pieceIdList.slice(0, 3).map((pieceId, pieceIndex) => (
+                        <div 
+                          key={pieceId} 
+                          className={exhibitionStyles.artworkThumbnail}
+                          title={`작품 ${pieceId}`}
+                        >
+                          {/* 실제로는 작품 이미지를 가져와서 표시해야 함 */}
+                          <div className={exhibitionStyles.artworkPlaceholder}>
+                            {pieceIndex + 1}
+                          </div>
+                        </div>
+                      ))}
+                      {exhibition.pieceIdList.length > 3 && (
+                        <div className={exhibitionStyles.artworkMore}>
+                          +{exhibition.pieceIdList.length - 3}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+           </div>
+         ))}
         
         {hasMoreExhibitions && (
           <div onClick={handleShowMore}>

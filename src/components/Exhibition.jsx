@@ -6,33 +6,10 @@ import { useExhibitionArtworks } from "../hooks/useExhibitionArtworks";
 import ArtworkFrame from "./ArtworkFrame";
 
 function Exhibition({ onArtworkClick, exhibition, pieceImages }) {
-  // 배포 환경에서는 원본 URL을 직접 사용 (개발환경에서는 프록시 사용)
+  // React 방식처럼 원본 URL 그대로 사용
   const convertToProxyUrl = (imageUrl) => {
-    if (!imageUrl) return imageUrl;
-
-    console.log("원본 이미지 URL:", imageUrl);
-
-    // 배포 환경에서는 원본 URL을 그대로 사용
-    if (import.meta.env.PROD) {
-      console.log("배포 환경: 원본 URL 사용");
-      return imageUrl;
-    }
-
-    // 개발 환경에서만 프록시 사용
-    if (
-      imageUrl.includes("likelion13-artium.s3.ap-northeast-2.amazonaws.com")
-    ) {
-      const path = imageUrl.replace(
-        "https://likelion13-artium.s3.ap-northeast-2.amazonaws.com",
-        ""
-      );
-      const proxyUrl = `/s3-proxy${path}`;
-      console.log("개발 환경: 프록시 URL로 변환:", proxyUrl);
-      return proxyUrl;
-    }
-
-    console.log("S3 URL이 아님, 원본 사용:", imageUrl);
-    return imageUrl;
+    console.log("🔧 원본 S3 URL 사용:", imageUrl);
+    return imageUrl; // React img 태그처럼 원본 URL 직접 사용
   };
 
   // 실제 전시 데이터가 있으면 사용하고, 없으면 더미 데이터 사용

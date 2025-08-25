@@ -48,18 +48,91 @@ import axios from "axios";
  * 쿠키에서 특정 이름의 값을 가져오는 함수 (개선된 버전)
  */
 const getCookie = (name) => {
-  // 여러 가지 방법으로 쿠키 읽기 시도
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-
-  if (parts.length === 2) {
-    const cookieValue = parts.pop().split(";").shift();
-    return cookieValue ? decodeURIComponent(cookieValue) : null;
+  // 디버깅을 위한 로그
+  console.log(`🍪 [getCookie] ${name} 쿠키 찾는 중...`);
+  console.log("🍪 [getCookie] 전체 쿠키:", document.cookie);
+  
+  if (!document.cookie || document.cookie.trim() === '') {
+    console.log("🍪 [getCookie] 쿠키가 없습니다.");
+    return null;
   }
 
-  // 대안 방법
-  const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return matches ? decodeURIComponent(matches[1]) : null;
+  // 방법 1: 기본 방식
+  try {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    
+    if (parts.length === 2) {
+      const cookieValue = parts.pop().split(";").shift();
+      if (cookieValue) {
+        const decoded = decodeURIComponent(cookieValue);
+        console.log(`🍪 [getCookie] ${name} 찾음 (방법1):`, decoded.substring(0, 50) + '...');
+        return decoded;
+      }
+    }
+  } catch (e) {
+    console.log(`🍪 [getCookie] 방법1 실패:`, e);
+  }
+
+  // 방법 2: 정규식 방식
+  try {
+    const matches = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+    if (matches) {
+      const decoded = decodeURIComponent(matches[1]);
+      console.log(`🍪 [getCookie] ${name} 찾음 (방법2):`, decoded.substring(0, 50) + '...');
+      return decoded;
+    }
+  } catch (e) {
+    console.log(`🍪 [getCookie] 방법2 실패:`, e);
+  }
+
+  // 방법 3: 모든 쿠키를 파싱해서 찾기
+  try {
+    const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+      const [key, value] = cookie.trim().split('=');
+      if (key && value) {
+        acc[key.trim()] = value.trim();
+      }
+      return acc;
+    }, {});
+    
+    console.log(`🍪 [getCookie] 파싱된 모든 쿠키:`, cookies);
+    
+    if (cookies[name]) {
+      const decoded = decodeURIComponent(cookies[name]);
+      console.log(`🍪 [getCookie] ${name} 찾음 (방법3):`, decoded.substring(0, 50) + '...');
+      return decoded;
+    }
+  } catch (e) {
+    console.log(`🍪 [getCookie] 방법3 실패:`, e);
+  }
+
+  // 방법 4: 대소문자 구분 없이 찾기 (혹시 이름이 다를 경우)
+  try {
+    const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+      const [key, value] = cookie.trim().split('=');
+      if (key && value) {
+        acc[key.trim().toLowerCase()] = { 
+          originalKey: key.trim(), 
+          value: value.trim() 
+        };
+      }
+      return acc;
+    }, {});
+    
+    const lowerName = name.toLowerCase();
+    if (cookies[lowerName]) {
+      const decoded = decodeURIComponent(cookies[lowerName].value);
+      console.log(`🍪 [getCookie] ${name} 찾음 (방법4 - 대소문자무시):`, decoded.substring(0, 50) + '...');
+      console.log(`🍪 [getCookie] 원본 키 이름:`, cookies[lowerName].originalKey);
+      return decoded;
+    }
+  } catch (e) {
+    console.log(`🍪 [getCookie] 방법4 실패:`, e);
+  }
+
+  console.log(`🍪 [getCookie] ${name} 쿠키를 찾을 수 없습니다.`);
+  return null;
 };
 
 /**
@@ -143,21 +216,36 @@ export const checkAuthStatus = () => {
 /**
  * 강제로 로그아웃 처리 (쿠키 정리 + 로그인 페이지 이동)
  */
-export const forceLogout = (
-  message = "로그인이 만료되었습니다. 다시 로그인해주세요."
-) => {
+export const forceLogout = (reason = "401/403 인증 에러") => {
+  console.log("🚪 강제 로그아웃 실행 - 이유:", reason);
+  
   // 모든 관련 쿠키 정리
   const cookiesToClear = ["ACCESS_TOKEN", "REFRESH_TOKEN", "JSESSIONID"];
+  const currentDomain = window.location.hostname;
+  
+  // 다양한 도메인/경로 조합으로 쿠키 삭제
+  const domains = [
+    '',
+    currentDomain,
+    `.${currentDomain}`,
+    currentDomain.replace('www.', ''),
+    `.${currentDomain.replace('www.', '')}`
+  ];
+  const paths = ['/', '/api', ''];
 
   cookiesToClear.forEach((cookieName) => {
-    // 여러 도메인과 경로에서 쿠키 삭제 시도
-    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=localhost;`;
-    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.localhost;`;
+    domains.forEach(domain => {
+      paths.forEach(path => {
+        const cookieString = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path};${domain ? ` domain=${domain};` : ''}`;
+        document.cookie = cookieString;
+      });
+    });
   });
 
-  console.log("쿠키 정리 완료");
-  alert(message);
+  console.log("🍪 쿠키 정리 후 상태:", document.cookie);
+  console.log("➡️ 로그인 페이지로 리다이렉트");
+  
+  // 알림 없이 바로 리다이렉트 (더 부드러운 UX)
   window.location.href = "/login";
 };
 
@@ -257,52 +345,33 @@ privateApi.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        console.log("Attempting token refresh...");
-        debugCookies(); // 현재 쿠키 상태 확인
-
-        // 토큰 상태 먼저 확인
-        const tokenStatus = checkTokenStatus();
-        if (!tokenStatus.refreshToken) {
-          throw new Error("REFRESH_TOKEN이 없습니다.");
-        }
+        console.log("🔄 401/403 에러 발생 - 토큰 갱신 시도 중...");
 
         const refreshResponse = await publicApi.post(
           "/api/auths/refresh",
           {},
           {
-            withCredentials: true, // 토큰 갱신 시에도 쿠키 전송 보장
+            withCredentials: true, // 쿠키로 REFRESH_TOKEN 전송
           }
         );
-        console.log("Refresh response:", refreshResponse);
+        console.log("✅ 토큰 갱신 성공:", refreshResponse.status);
 
         // 토큰 갱신 성공
         isRefreshing = false;
         processQueue(null, refreshResponse);
 
-        console.log("Token refresh successful, retrying original request");
+        console.log("🔁 원본 요청 재시도");
         return privateApi(originalRequest);
       } catch (refreshError) {
         // 리프레시 실패
         isRefreshing = false;
         processQueue(refreshError, null);
 
-        console.log("Refresh failed:", refreshError);
-        console.log("Refresh error details:", {
-          status: refreshError.response?.status,
-          statusText: refreshError.response?.statusText,
-          data: refreshError.response?.data,
-          headers: refreshError.response?.headers,
-        });
-        debugCookies(); // 실패 시에도 쿠키 상태 확인
+        console.log("❌ 토큰 갱신 실패:", refreshError.response?.status);
+        console.log("🚪 로그인 페이지로 리다이렉트");
 
-        // 401, 403이면 토큰이 완전히 만료된 것이므로 로그인 페이지로
-        if (
-          refreshError.response?.status === 401 ||
-          refreshError.response?.status === 403 ||
-          refreshError.message === "REFRESH_TOKEN이 없습니다."
-        ) {
-          forceLogout("세션이 만료되었습니다. 다시 로그인해주세요.");
-        }
+        // 토큰 갱신 실패 시 무조건 로그아웃 처리
+        forceLogout(`토큰 갱신 실패 (${refreshError.response?.status || 'Network Error'})`);
         return Promise.reject(refreshError);
       }
     }

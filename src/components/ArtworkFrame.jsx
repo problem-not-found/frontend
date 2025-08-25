@@ -3,6 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { Text, Box, Plane } from "@react-three/drei";
 import { TextureLoader } from "three";
 import PropTypes from "prop-types";
+import { APIService } from "../apis/axios";
 
 // 안전한 이미지 로더 컴포넌트
 function SafeImagePlane({
@@ -51,77 +52,54 @@ function SafeImagePlane({
     const filename = extractFilenameFromS3Url(imageUrl);
     console.log("추출된 파일명:", filename);
     
-    // HTML Image 객체를 사용하여 백엔드 프록시를 통해 이미지 로드
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    
-    img.onload = () => {
-      console.log("✅ HTML Image 로드 성공, TextureLoader로 변환 중...");
-
-      // HTML Image를 Three.js TextureLoader로 변환
-      const loader = new TextureLoader();
-      const texture = loader.load(
-        `https://api.artium.life/api/piece?filename=${filename}`, // 파일명만 전송
-        undefined,
-        undefined,
-        (err) => {
-          console.error("❌ TextureLoader 로드 실패", err);
-          setError(true);
-          setLoading(false);
-        }
-      );
-
-      // 이미지 뒤집기 설정
-      texture.flipY = true;
-
-      setTexture(texture);ㅎ
-      setLoading(false);
-      console.log("🎨 Three.js 텍스처 변환 완료!");
-    };
-
-    img.onerror = (err) => {
-      console.error("❌ HTML Image 로드 실패:", imageUrl);
-      console.error("에러 상세:", err);
-      
-      // 백엔드 프록시 URL로 재시도 (파일명만 사용)
-      const proxyUrl = `https://api.artium.life/api/piece?filename=${filename}`;
-      console.log("🔄 백엔드 프록시 URL로 재시도:", proxyUrl);
-      
-      const retryImg = new Image();
-      retryImg.crossOrigin = "anonymous";
-      
-      retryImg.onload = () => {
-        console.log("✅ 백엔드 프록시로 로딩 성공:", proxyUrl);
+    // APIService.private를 사용하여 인증된 이미지 요청
+    const loadImageWithAuth = async () => {
+      try {
+        console.log("🔑 APIService.private로 이미지 요청:", filename);
         
-        const retryLoader = new TextureLoader();
-        const retryTexture = retryLoader.load(
-          proxyUrl,
+        // APIService.private.get을 사용하여 이미지 요청
+        const response = await APIService.private.get(`/api/piece?filename=${filename}`, {
+          responseType: 'blob', // 이미지 데이터를 blob으로 받기
+        });
+        
+        console.log("✅ APIService로 이미지 로드 성공, TextureLoader로 변환 중...");
+
+        // Blob 데이터를 URL로 변환
+        const blob = new Blob([response], { type: 'image/jpeg' });
+        const imageUrl = URL.createObjectURL(blob);
+
+        // Blob URL을 TextureLoader로 변환
+        const loader = new TextureLoader();
+        const texture = loader.load(
+          imageUrl,
           undefined,
           undefined,
-          (retryErr) => {
-            console.error("❌ 백엔드 프록시로도 실패:", retryErr);
+          (err) => {
+            console.error("❌ TextureLoader 로드 실패", err);
             setError(true);
             setLoading(false);
           }
         );
-        
-        retryTexture.flipY = true;
-        setTexture(retryTexture);
+
+        // 이미지 뒤집기 설정
+        texture.flipY = true;
+
+        setTexture(texture);
         setLoading(false);
-      };
-      
-      retryImg.onerror = (retryErr) => {
-        console.error("❌ 백엔드 프록시로도 실패:", retryErr);
+        console.log("🎨 Three.js 텍스처 변환 완료!");
+        
+        // Blob URL 정리
+        URL.revokeObjectURL(imageUrl);
+        
+      } catch (error) {
+        console.error("❌ 이미지 로드 실패:", error);
         setError(true);
         setLoading(false);
-      };
-      
-      retryImg.src = proxyUrl;
+      }
     };
 
-    // 백엔드 프록시 URL로 이미지 로드 시작 (파일명만 사용)
-    const proxyUrl = `https://api.artium.life/api/piece?filename=${filename}`;
-    img.src = proxyUrl;
+    // 이미지 로드 시작
+    loadImageWithAuth();
   }, [imageUrl]);
 
   if (loading) {

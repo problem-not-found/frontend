@@ -24,6 +24,16 @@
   height: 224px;
 }
 
+.exhibitionCard.clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.exhibitionCard.clickable:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 .moreOverlay {
   position: absolute;
   top: 0;
@@ -83,3 +93,55 @@
   line-height: 26px;
   margin: 0;
 }
+
+/* 작품 목록 스타일 */
+.artworkList {
+  margin-top: 8px;
+}
+
+.artworkCount {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  color: #666666;
+  letter-spacing: -0.28px;
+  line-height: 16px;
+  margin: 0 0 6px 0;
+}
+
+.artworkThumbnails {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.artworkThumbnail {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.artworkPlaceholder {
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  color: #666666;
+}
+
+.artworkMore {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 10px;
+  color: #999999;
+  margin-left: 2px;
+}
+

@@ -60,7 +60,8 @@ export default function DraftArtworkList({
     if (draftId === 'draft-1') {
       // localStorage에서 draft 제거
       localStorage.removeItem('artworkDraft');
-      setDrafts([]);
+      // 로컬 상태에서도 즉시 제거
+      setDrafts(prev => prev.filter(draft => draft.id !== draftId));
     }
   };
 

@@ -159,8 +159,16 @@
     transform: translateX(-50%) translateY(-1px);
   }
   
-  .acceptButton.disabledButton {
-    color: #000;
-    background: #F6F1EB;
-    border: 1px solid #000;
-  }
+.acceptButton.disabledButton {
+  color: #000;
+  background: #F6F1EB;
+  border: 1px solid #000;
+}
+
+  /* 이미지 스타일 */
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}

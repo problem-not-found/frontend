@@ -189,6 +189,67 @@ export const updatePiece = async (pieceId, formData, saveStatus = 'APPLICATION',
   }
 };
 
+/**
+ * 작품 상세 정보 조회 API (전시용)
+ * @param {string} pieceId - 작품 ID
+ * @returns {Promise} API 응답 데이터
+ */
+export const getPieceDetail = async (pieceId) => {
+  console.log('📡 API 호출: getPieceDetail', { pieceId });
+  
+  try {
+    const response = await APIService.public.get(`/api/pieces/${pieceId}`);
+    console.log('✅ getPieceDetail 성공:', { pieceId, response });
+    return response;
+  } catch (error) {
+    console.error('❌ getPieceDetail 실패:', { pieceId, error });
+    throw error;
+  }
+};
+
+/**
+ * 여러 작품의 상세 정보를 일괄 조회하는 API
+ * @param {string[]} pieceIds - 작품 ID 배열
+ * @returns {Promise} API 응답 데이터
+ */
+export const getMultiplePieceDetails = async (pieceIds) => {
+  console.log('📡 API 호출: getMultiplePieceDetails', { pieceIds });
+  
+  try {
+    // 여러 작품을 한 번에 조회하는 API가 있다면 사용, 없다면 개별 조회
+    const promises = pieceIds.map(id => getPieceDetail(id));
+    console.log('🔄 개별 작품 조회 시작, 총 개수:', pieceIds.length);
+    
+    const responses = await Promise.all(promises);
+    console.log('✅ getMultiplePieceDetails 성공:', { pieceIds, responses });
+    
+    // API 응답 구조를 정확히 파악하여 데이터 추출
+    const result = responses.map((response, index) => {
+      console.log(`🔍 응답 ${index + 1} 구조:`, response);
+      
+      // 다양한 응답 구조 시도
+      let pieceData = null;
+      
+      if (response?.data?.data) {
+        pieceData = response.data.data;
+      } else if (response?.data) {
+        pieceData = response.data;
+      } else if (response) {
+        pieceData = response;
+      }
+      
+      console.log(`🎨 작품 ${index + 1} 추출된 데이터:`, pieceData);
+      return pieceData;
+    });
+    
+    console.log('🎨 최종 가공된 작품 데이터:', result);
+    
+    return result;
+  } catch (error) {
+    console.error('❌ getMultiplePieceDetails 실패:', { pieceIds, error });
+    throw error;
+  }
+};
 
 /**
  * 무한스크롤을 위한 작품 목록 관리 훅

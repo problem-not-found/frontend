@@ -89,8 +89,14 @@ export default function ContactEditPage() {
         instagram: formData.instagram
       });
 
-      // 편집 완료 후 전시 정보가 있으면 전시 업로드 페이지로, 없으면 프로필 페이지로 이동
-      if (draft) {
+      // 편집 완료 후 returnTo가 있으면 해당 페이지로, 전시 정보가 있으면 전시 업로드 페이지로, 없으면 프로필 페이지로 이동
+      if (location.state?.returnTo) {
+        navigate(location.state.returnTo, {
+          state: { 
+            contactUpdated: true 
+          }
+        });
+      } else if (draft) {
         navigate('/exhibition/upload', {
           state: { 
             draft: draft,
@@ -116,8 +122,14 @@ export default function ContactEditPage() {
   };
 
   const handleBackClick = () => {
-    // 전시 등록 페이지에서 이동한 경우 전시 업로드 페이지로, 아니면 프로필 페이지로 이동
-    if (draft) {
+    // returnTo가 있으면 해당 페이지로, 전시 등록 페이지에서 이동한 경우 전시 업로드 페이지로, 아니면 프로필 페이지로 이동
+    if (location.state?.returnTo) {
+      navigate(location.state.returnTo, {
+        state: { 
+          contactUpdated: false // 뒤로가기이므로 contactUpdated는 false
+        }
+      });
+    } else if (draft) {
       navigate('/exhibition/upload', {
         state: { 
           draft: draft,

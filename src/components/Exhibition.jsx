@@ -2,7 +2,7 @@ import { useLoader } from "@react-three/fiber";
 import { Text, Box, Plane, SpotLight } from "@react-three/drei";
 import { TextureLoader, RepeatWrapping } from "three";
 import PropTypes from "prop-types";
-import { artworks } from "../dummy";
+import { useExhibitionArtworks } from "../hooks/useExhibitionArtworks";
 import ArtworkFrame from "./ArtworkFrame";
 
 function Exhibition({ onArtworkClick, exhibition, pieceImages }) {
@@ -50,6 +50,24 @@ function Exhibition({ onArtworkClick, exhibition, pieceImages }) {
     woodTexture.wrapT = RepeatWrapping;
     woodTexture.repeat.set(8, 6); // 바닥 크기에 맞게 반복
   }
+
+  // 로딩 중이거나 에러가 있으면 빈 그룹 반환
+  if (loading) {
+    console.log('⏳ Exhibition: 로딩 중...');
+    return <group />;
+  }
+  
+  if (error) {
+    console.log('❌ Exhibition: 에러 발생:', error);
+    return <group />;
+  }
+  
+  if (!exhibition) {
+    console.log('⚠️ Exhibition: 전시 정보가 없습니다.');
+    return <group />;
+  }
+
+  console.log('🎨 Exhibition: 작품 렌더링 시작, 작품 수:', artworks.length);
 
   return (
     <group>
@@ -228,6 +246,7 @@ function Exhibition({ onArtworkClick, exhibition, pieceImages }) {
 }
 
 Exhibition.propTypes = {
+  exhibitionId: PropTypes.string.isRequired,
   onArtworkClick: PropTypes.func.isRequired,
   exhibition: PropTypes.object,
   pieceImages: PropTypes.array,

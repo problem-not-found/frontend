@@ -58,7 +58,7 @@ function SafeImagePlane({
       // HTML Image를 Three.js TextureLoader로 변환
       const loader = new TextureLoader();
       const texture = loader.load(
-        `https://api.artium.life/api/piece?filename=${encodeURIComponent(filename)}`, // 파일명만 전송
+        `https://api.artium.life/api/piece?filename=${(filename)}`, // 파일명만 전송
         undefined,
         undefined,
         (err) => {
@@ -71,7 +71,7 @@ function SafeImagePlane({
       // 이미지 뒤집기 설정
       texture.flipY = true;
 
-      setTexture(texture);
+      setTexture(texture);ㅎ
       setLoading(false);
       console.log("🎨 Three.js 텍스처 변환 완료!");
     };

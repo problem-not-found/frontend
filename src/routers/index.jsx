@@ -194,6 +194,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/artwork/edit/:id",
+    element: (
+      <AuthGuard>
+        <ArtworkUploadPage />
+      </AuthGuard>
+    ),
+  },
+  {
     path: "/exhibition",
     element: (
       <AuthGuard>

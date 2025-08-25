@@ -31,16 +31,19 @@ function SafeImagePlane({
     const extractFilenameFromS3Url = (url) => {
       if (!url) return '';
       
-      // S3 URL 패턴 확인
-      const s3Pattern = /https:\/\/likelion13-artium\.s3\.ap-northeast-2\.amazonaws\.com\/piece\/(.+)/;
-      const match = url.match(s3Pattern);
+      console.log("원본 URL:", url);
       
+      // UUID 패턴으로 파일명 추출 (가장 우선순위)
+      const uuidPattern = /([a-f0-9-]{36})/;
+      const match = url.match(uuidPattern);
       if (match && match[1]) {
-        // 파일명 부분만 반환
-        return match[1];
+        const filename = match[1];
+        console.log("UUID 패턴에서 추출:", filename);
+        return filename;
       }
       
-      // S3 URL이 아닌 경우 원본 URL 반환
+      // UUID가 없는 경우 원본 반환
+      console.log("UUID 패턴 매칭 실패, 원본 반환:", url);
       return url;
     };
     

@@ -272,16 +272,18 @@ export const forceLogout = (reason = "401/403 인증 에러") => {
  * 토큰이 필요없는 일반 요청 (public API)
  */
 const publicApi = axios.create({
-  baseURL: import.meta.env.DEV ? "" : import.meta.env.VITE_APP_API_URL,
+  baseURL: import.meta.env.VITE_APP_API_URL,
   timeout: 30000,
+  withCredentials: true, // 쿠키 자동 전송
 });
 
 /**
  * 토큰이 필요한 인증 요청 (private API)
  */
 const privateApi = axios.create({
-  baseURL: import.meta.env.DEV ? "" : import.meta.env.VITE_APP_API_URL,
+  baseURL: import.meta.env.VITE_APP_API_URL,
   timeout: 30000,
+  withCredentials: true, // 쿠키 자동 전송
 });
 
 /**

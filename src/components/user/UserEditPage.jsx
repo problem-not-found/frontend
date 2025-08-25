@@ -181,18 +181,26 @@ export default function UserEditPage() {
         if (userResponse && userResponse.data && userResponse.data.data) {
           const userData = userResponse.data.data;
           console.log('UserEditPage 파싱된 사용자 데이터:', userData);
+          
+          // user 상태 설정 - API 응답 구조에 맞춰 매핑
           setUser({
+            id: userData.userId || null,           // userId로 매핑
+            name: userData.nickname || "",
             nickname: userData.nickname || "",
-            code: userData.code || "",
             introduction: userData.introduction || "",
             profileImageUrl: userData.profileImageUrl || null,
+            code: userData.code || ""
           });
-          setOriginalUser({
-            nickname: userData.nickname || "",
-            code: userData.code || "",
-            introduction: userData.introduction || "",
-            profileImageUrl: userData.profileImageUrl || null,
+          
+          // formData 상태 설정 - 각 필드를 올바른 값으로 매핑
+          setFormData({
+            name: userData.nickname || "",         // 닉네임 필드
+            nickname: userData.code || "",         // 아이디(code) 필드
+            introduction: userData.introduction || ""
           });
+          
+          // userId 상태 설정 - 아이디 입력 필드용
+          setUserId(userData.code || "");
         }
       } catch (error) {
         console.error('사용자 정보 조회 실패:', error);
@@ -231,7 +239,8 @@ export default function UserEditPage() {
             <div 
               className={styles.profileImage}
               style={{
-                backgroundImage: user.profileImageUrl ? `url(${user.profileImageUrl})` : 'none'
+                backgroundImage: previewImage ? `url(${previewImage})` : 
+                               user.profileImageUrl ? `url(${user.profileImageUrl})` : 'none'
               }}
               onClick={handleImageClick}
               role="button"
@@ -243,7 +252,7 @@ export default function UserEditPage() {
               }}
             />
             {/* 프로필 이미지가 있을 때는 카메라 아이콘을 숨김 */}
-            {!user.profileImageUrl && (
+            {!previewImage && !user.profileImageUrl && (
               <img src={cameraIcon} alt="camera" className={styles.cameraIcon} />
             )}
 

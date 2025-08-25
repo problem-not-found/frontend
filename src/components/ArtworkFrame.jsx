@@ -1,10 +1,9 @@
-햐import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text, Box, Plane } from "@react-three/drei";
 import { TextureLoader } from "three";
 import PropTypes from "prop-types";
 
-// 안전한 이미지 로더 컴포넌트
 function SafeImagePlane({
   imageUrl,
   args,

@@ -58,7 +58,7 @@ function SafeImagePlane({
       // HTML Image를 Three.js TextureLoader로 변환
       const loader = new TextureLoader();
       const texture = loader.load(
-        `https://api.artium.life/api/piece?filename=${(filename)}`, // 파일명만 전송
+        `https://api.artium.life/api/piece?filename=${filename}`, // 파일명만 전송
         undefined,
         undefined,
         (err) => {
@@ -81,7 +81,7 @@ function SafeImagePlane({
       console.error("에러 상세:", err);
       
       // 백엔드 프록시 URL로 재시도 (파일명만 사용)
-      const proxyUrl = `https://api.artium.life/api/piece?filename=${encodeURIComponent(filename)}`;
+      const proxyUrl = `https://api.artium.life/api/piece?filename=${filename}`;
       console.log("🔄 백엔드 프록시 URL로 재시도:", proxyUrl);
       
       const retryImg = new Image();
@@ -117,7 +117,7 @@ function SafeImagePlane({
     };
 
     // 백엔드 프록시 URL로 이미지 로드 시작 (파일명만 사용)
-    const proxyUrl = `https://api.artium.life/api/piece?filename=${encodeURIComponent(filename)}`;
+    const proxyUrl = `https://api.artium.life/api/piece?filename=${filename}`;
     img.src = proxyUrl;
   }, [imageUrl]);
 

@@ -31,7 +31,7 @@ const AuthGuard = ({ children }) => {
         );
 
         // 간단한 인증 체크 API 호출 (예: 사용자 정보 가져오기)
-        await APIService.private.get("/api/users/me");
+        await APIService.private.get("/api/users");
 
         console.log("✅ 인증 성공");
         setIsAuthenticated(true);
